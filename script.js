@@ -1,7 +1,8 @@
 const state = {
   data: [],
   filtered: [],
-  filters: { genres: new Set() }
+  filters: { genres: new Set() },
+  limit: 50
 };
 
 const listPage   = document.getElementById('listPage');
@@ -15,6 +16,7 @@ const btnSearch= document.getElementById('btnSearch');
 const btnReset = document.getElementById('btnReset');
 const genreChips = document.getElementById('genreChips');
 const countEl  = document.getElementById('count');
+const moreWrap = document.getElementById('moreWrap');
 
 const dCover = document.getElementById('dCover');
 const dAlbum = document.getElementById('dAlbum');
@@ -40,7 +42,7 @@ function mapRow(row){
 }
 
 async function fetchCSV(){
-  const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + 'ts=' + Date.now();
+  const url = SHEET_CSV_URL; // 캐시 허용 (버전업으로 갱신 추천)
   return new Promise((resolve, reject)=>{
     Papa.parse(url, {
       download: true,
@@ -91,8 +93,9 @@ function normalizeCover(u){
   if (s.startsWith('http://img.discogs.com') || s.startsWith('http://i.discogs.com')){
     s = s.replace('http://','https://');
   }
-  // proxy to avoid CORS/hotlink issues
-  return 'https://images.weserv.nl/?url=' + encodeURIComponent(s.replace(/^https?:\/\//, ''));
+  // proxy to avoid CORS/hotlink issues + thumbnail sizing
+  const core = s.replace(/^https?:\/\//, '');
+  return 'https://images.weserv.nl/?url=' + encodeURIComponent(core) + '&w=150&h=150&fit=cover';
 }
 
 function matchesQuery(item, q){
@@ -114,6 +117,7 @@ function applyFilters(){
     .filter(isValidItem)
     .filter(it => matchesQuery(it, q) && matchesFilters(it));
   defaultSortByArtist(state.filtered);
+  state.limit = 50; // reset window
   renderList();
 }
 
@@ -128,21 +132,24 @@ function clearAll(){
 function makeImg(el, src, alt){
   el.src = normalizeCover(src) || COVER_PLACEHOLDER;
   el.alt = alt || '';
-  el.loading = 'eager';
+  el.loading = 'lazy';
   el.onerror = () => { el.src = COVER_PLACEHOLDER; };
   return el;
 }
 
 function renderList(){
-  countEl.textContent = `${state.filtered.length}개 결과`;
+  const total = state.filtered.length;
+  const shown = Math.min(state.limit, total);
+  countEl.textContent = `${total}개 앨범 중 ${shown}개 표시`;
+
   listEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-  state.filtered.forEach((item) => {
+  state.filtered.slice(0, shown).forEach((item) => {
     const row = document.createElement('article'); row.className = 'row'; row.tabIndex = 0;
     row.addEventListener('click', ()=> openDetail(item));
     row.addEventListener('keydown', (e)=>{ if(e.key==='Enter') openDetail(item); });
 
-    const img = document.createElement('img'); img.className='thumb';
+    const img = document.createElement('img'); img.className='thumb'; img.loading='lazy';
     makeImg(img, item.cover, `${item.album} 자켓`);
 
     const info = document.createElement('div'); info.className='info';
@@ -160,6 +167,20 @@ function renderList(){
     frag.appendChild(row);
   });
   listEl.appendChild(frag);
+
+  // load more
+  moreWrap.innerHTML = '';
+  if (shown < total){
+    const more = document.createElement('button');
+    more.id = 'btnLoadMore';
+    more.className = 'btn primary';
+    more.textContent = '더보기';
+    more.addEventListener('click', ()=>{
+      state.limit += 50;
+      renderList();
+    });
+    moreWrap.appendChild(more);
+  }
 }
 
 function openDetail(item){
