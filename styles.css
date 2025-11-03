@@ -26,6 +26,7 @@ html,body{
 }
 .logo-center{display:flex; justify-content:center; align-items:center; margin-bottom:8px}
 .logo{height:44px; object-fit:contain}
+.detail-mode .header { border-bottom: none; }
 
 /* ===== TOOLBAR (Search + Chips) ===== */
 .toolbar{padding:0 12px 8px}
