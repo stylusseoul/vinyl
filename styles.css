@@ -1,3 +1,4 @@
+
 :root{
   --bg:#EF7C1C;
   --text:#F4F9FF;
@@ -85,7 +86,7 @@ html,body{
 .more-wrap{display:flex; justify-content:center; padding:8px 12px 24px}
 .more-wrap .btn{min-width:120px}
 
-/* FOOTER (일반 흐름, 플로팅 제거) */
+/* FOOTER (일반 흐름) */
 .footer{
   position:static;
   background:var(--bg);
@@ -137,5 +138,6 @@ html,body{
 .d-tracks li{padding:12px 14px; border-bottom:1px solid var(--line); font-size:14px; color:#fff}
 .d-tracks li:last-child{border-bottom:none}
 
-/* DEBUG: 강제 display 조정 */
+/* DETAIL FIX */
 .hidden{display:none !important}
+#detailPage.hidden{display:none !important}
