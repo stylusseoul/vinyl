@@ -42,7 +42,7 @@ function mapRow(row){
 }
 
 async function fetchCSV(){
-  const url = SHEET_CSV_URL; // 캐시 허용 (버전업으로 갱신 추천)
+  const url = SHEET_CSV_URL;
   return new Promise((resolve, reject)=>{
     Papa.parse(url, {
       download: true,
@@ -86,17 +86,23 @@ function buildGenreChips(){
   });
 }
 
-function normalizeCover(u){
-  if(!u) return '';
-  let s = String(u).trim().replace(/&amp;/g, '&');
+// Proxy helpers
+function proxify(rawUrl, { w=null, h=null, fit='cover' } = {}) {
+  if (!rawUrl) return '';
+  let s = String(rawUrl).trim().replace(/&amp;/g, '&');
   if (s.startsWith('//')) s = 'https:' + s;
-  if (s.startsWith('http://img.discogs.com') || s.startsWith('http://i.discogs.com')){
-    s = s.replace('http://','https://');
+  if (s.startsWith('http://img.discogs.com') || s.startsWith('http://i.discogs.com')) {
+    s = s.replace('http://', 'https://');
   }
-  // proxy to avoid CORS/hotlink issues + thumbnail sizing
   const core = s.replace(/^https?:\/\//, '');
-  return 'https://images.weserv.nl/?url=' + encodeURIComponent(core) + '&w=150&h=150&fit=cover';
+  let q = `https://images.weserv.nl/?url=${encodeURIComponent(core)}`;
+  if (w) q += `&w=${w}`;
+  if (h) q += `&h=${h}`;
+  q += `&fit=${fit}`;
+  return q;
 }
+function coverThumb(rawUrl){ return proxify(rawUrl, { w:150, h:150, fit:'cover' }); }
+function coverLarge(rawUrl){ return proxify(rawUrl, { w:900, h:900, fit:'contain' }); }
 
 function matchesQuery(item, q){
   if(!q) return true;
@@ -117,7 +123,7 @@ function applyFilters(){
     .filter(isValidItem)
     .filter(it => matchesQuery(it, q) && matchesFilters(it));
   defaultSortByArtist(state.filtered);
-  state.limit = 50; // reset window
+  state.limit = 50;
   renderList();
 }
 
@@ -127,14 +133,6 @@ function clearAll(){
   Array.from(genreChips.children).forEach(c=> c.classList.remove('active'));
   applyFilters();
   inputEl.focus();
-}
-
-function makeImg(el, src, alt){
-  el.src = normalizeCover(src) || COVER_PLACEHOLDER;
-  el.alt = alt || '';
-  el.loading = 'lazy';
-  el.onerror = () => { el.src = COVER_PLACEHOLDER; };
-  return el;
 }
 
 function renderList(){
@@ -150,7 +148,8 @@ function renderList(){
     row.addEventListener('keydown', (e)=>{ if(e.key==='Enter') openDetail(item); });
 
     const img = document.createElement('img'); img.className='thumb'; img.loading='lazy';
-    makeImg(img, item.cover, `${item.album} 자켓`);
+    img.src = coverThumb(item.cover) || COVER_PLACEHOLDER;
+    img.onerror = () => { img.src = COVER_PLACEHOLDER; };
 
     const info = document.createElement('div'); info.className='info';
     const album = document.createElement('p'); album.className='album'; album.textContent = item.album || '(제목 없음)';
@@ -184,7 +183,19 @@ function renderList(){
 }
 
 function openDetail(item){
-  makeImg(dCover, item.cover, `${item.album} 자켓`);
+  // large + responsive set
+  const base = item.cover || '';
+  dCover.loading = 'lazy';
+  dCover.src = coverLarge(base) || COVER_PLACEHOLDER;
+  dCover.srcset = [
+    proxify(base, { w: 320,  h: 320,  fit: 'contain' }) + ' 320w',
+    proxify(base, { w: 640,  h: 640,  fit: 'contain' }) + ' 640w',
+    proxify(base, { w: 900,  h: 900,  fit: 'contain' }) + ' 900w',
+    proxify(base, { w: 1200, h: 1200, fit: 'contain' }) + ' 1200w'
+  ].join(', ');
+  dCover.sizes = '(max-width: 420px) 90vw, 560px';
+  dCover.onerror = () => { dCover.src = COVER_PLACEHOLDER; dCover.removeAttribute('srcset'); };
+
   dAlbum.textContent = item.album || '';
   dArtist.textContent = item.artist || '';
   dTracks.innerHTML = '';
@@ -198,6 +209,7 @@ function openDetail(item){
   toolbar.classList.add('hidden');
   detailHdr.classList.remove('hidden');
   detailPage.classList.remove('hidden');
+  document.body.classList.add('detail-mode');
   location.hash = '#detail';
 }
 
@@ -206,6 +218,7 @@ function backToList(){
   detailHdr.classList.add('hidden');
   listPage.classList.remove('hidden');
   toolbar.classList.remove('hidden');
+  document.body.classList.remove('detail-mode');
   location.hash = '#list';
 }
 
@@ -213,9 +226,7 @@ async function load(){
   try{
     countEl.textContent = '불러오는 중…';
     const data = await fetchCSV();
-    state.data = data
-      .filter(isValidItem)
-      .map(it => ({ ...it, cover: normalizeCover(it.cover), tracks: (it.tracks||[]) }));
+    state.data = data.filter(isValidItem);
     defaultSortByArtist(state.data);
     state.filtered = state.data.slice();
     buildGenreChips();
