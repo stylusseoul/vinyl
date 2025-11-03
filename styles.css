@@ -1,3 +1,5 @@
+
+/* Stylus Vinyl v10.5 — restore logo + ensure back button */
 :root{
   --bg:#EF7C1C;
   --text:#F4F9FF;
@@ -26,13 +28,13 @@ html,body{
 .logo-center{display:flex; justify-content:center; align-items:center; margin-bottom:8px}
 .logo{height:44px; object-fit:contain}
 
-/* 상세 모드에서는 공용 헤더를 아예 숨김 (이중 라인 완전 차단) */
-.detail-mode .header{ display:none !important; }
+/* 상세 모드: 공용 헤더 라인만 제거 (로고는 유지) */
+.detail-mode .header{ border-bottom:none !important; padding-bottom:0 !important; }
+/* 상세 모드: 툴바만 숨김 */
+.detail-mode #toolbar{ display:none !important; }
 
-/* ===== TOOLBAR (Search + Chips) ===== */
+/* ===== TOOLBAR ===== */
 .toolbar{padding:0 12px 8px}
-
-/* 검색 한 줄 유지 */
 .search-row{
   display:grid; grid-template-columns:minmax(0,1fr) auto auto;
   gap:8px; align-items:center; margin-bottom:10px;
@@ -52,7 +54,6 @@ html,body{
   .search-row{gap:6px}
 }
 
-/* 필터칩 */
 .filters{display:flex; flex-direction:column; gap:8px; padding-bottom:6px}
 .filtergroup label{display:block; font-size:12px; color:var(--text-dim); margin:0 0 4px 2px; font-weight:500}
 .chips{display:flex; gap:8px; flex-wrap:wrap}
@@ -76,7 +77,7 @@ html,body{
   border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,0.15);
 }
 .row .info{flex:1; min-width:0; display:flex; flex-direction:column; gap:6px}
-.row .album{font-size:16px; font-weight:700; margin:0; line-height:1.25; letter-spacing:.2px; color:#fff}
+.row .album{font-size:16px; font-weight:700; margin:0; line-height:1.25; color:#fff}
 .row .artist{font-size:13px; color:var(--text); opacity:.95; margin:0; font-weight:500}
 .row .meta{font-size:12px; color:var(--text-dim); margin:0; font-weight:500}
 .row .tracks{
@@ -84,7 +85,6 @@ html,body{
   display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; line-height:1.42; font-weight:400;
 }
 
-/* LOAD MORE */
 .more-wrap{display:flex; justify-content:center; padding:8px 12px 24px}
 .more-wrap .btn{min-width:120px}
 
@@ -99,21 +99,19 @@ html,body{
   margin-top:24px;
 }
 
-/* ===== DETAIL HEADER (상세 전용 헤더만 보임) ===== */
+/* ===== DETAIL HEADER (back button) ===== */
 .detail-header{display:none}
 .detail-header.hidden{display:none !important}
-
 .detail-mode .detail-header{
-  display:flex; align-items:center; justify-content:space-between;
+  display:flex !important; align-items:center; gap:10px;
   padding:12px 16px;
   background:var(--bg);
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--line) !important;
   position:sticky; top:0; z-index:12;
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
 }
 
-/* 뒤로가기 버튼 */
 .btn.back{
   height:auto; line-height:1; padding:10px 14px;
   border-radius:999px; border:1px solid var(--line);
@@ -124,7 +122,7 @@ html,body{
 .btn.back:active{transform:translateY(1px); opacity:.95}
 
 /* ===== DETAIL CONTENT ===== */
-.detail-card{padding:14px 16px 24px}
+.detail-card{padding:14px 16px 24px; margin-top:10px;}
 .d-cover{
   width:100%; max-width:560px; aspect-ratio:1/1; object-fit:cover;
   border-radius:12px; border:1px solid var(--line);
@@ -139,6 +137,6 @@ html,body{
 .d-tracks li{padding:12px 14px; border-bottom:1px solid var(--line); font-size:14px; color:#fff}
 .d-tracks li:last-child{border-bottom:none}
 
-/* ===== HARD FIXES (전환 깨짐/중첩 방지) ===== */
+/* ===== HARD FIXES ===== */
 .hidden{display:none !important}
 #detailPage.hidden{display:none !important}
