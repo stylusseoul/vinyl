@@ -59,7 +59,11 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--te
 .footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg);padding:14px 12px 18px;text-align:center;border-top:1px solid var(--line);color:var(--text-dim)}
 
 .hidden{display:none}
-.detail-header{display:flex;align-items:center;gap:8px;padding:8px 12px 0;border-bottom:1px solid var(--line);background:var(--bg)}
+
+/* detail-mode: 헤더 라인 제거, 상세헤더에만 라인 */
+.detail-mode .header{ border-bottom:none; }
+
+.detail-header{display:flex;align-items:center;gap:8px;padding:8px 12px 0;background:var(--bg);border-bottom:1px solid var(--line)}
 .detail-header.hidden{display:none!important}
 .btn.back{height:36px;padding:0 12px;border-radius:8px}
 
