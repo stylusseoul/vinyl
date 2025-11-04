@@ -208,3 +208,22 @@ html, body {
 }
 
 .hidden { display: none !important; }
+/* ===== 안전 패치: 레이아웃 불변 ===== */
+
+/* 상세페이지: 뒤로가기 버튼 아래 라인과 간격 */
+.detail-mode .detail-header{
+  margin-bottom: 12px !important;               /* 버튼 줄과 구분선 사이 여백 */
+  border-bottom: 1px solid rgba(255,255,255,.28) !important; /* 라인 유지 */
+}
+.btn.back{ margin-bottom: 4px !important; }     /* 버튼이 라인에 붙지 않게 */
+
+/* 푸터: 플로팅 금지 + 적당한 마진 */
+.footer{
+  position: static !important;
+  bottom: auto !important; left: auto !important; right: auto !important;
+  margin: 24px 0 20px !important;               /* 위/아래 여백 */
+  padding: 12px 12px 18px !important;
+  background: transparent !important;           /* 배경은 기존과 충돌 안 나게 */
+  border-top: 1px solid rgba(255,255,255,.28) !important;
+  z-index: 1 !important;
+}
