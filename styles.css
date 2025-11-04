@@ -77,77 +77,38 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--te
 .d-tracks li:last-child{border-bottom:none}
 
 
-/* === PATCH v2: brandbar (back + logo on one line) & divider spacing === */
-.brandbar{
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: grid;
-  grid-template-columns: 44px 1fr 44px; /* 좌: back, 가운데: 로고, 우: 스페이서 */
-  align-items: center;
-  justify-items: center;
-  gap: 6px;
-  padding: calc(env(safe-area-inset-top) + 6px) var(--gutter) 6px;
-  background: var(--bg);
-}
-.brandbar .logo{ height:46px; object-fit:contain; display:block; }
-.brandbar .btn.back{
-  justify-self: start;
-  width:44px; height:44px; padding:0;
-  background: transparent; border:none; border-radius:0;
-  display:grid; place-items:center; color:var(--text);
-}
-.brandbar .spacer{ width:44px; height:44px; } /* 오른쪽 균형 */
+/* === PATCH v3.8: 라인/여백 요청 반영 === */
+/* 1) 로고와 검색창 사이 라인 삭제 */
+.divider { display: none !important; }
 
-.divider{
+/* 2 & 3) 장르 아이콘(칩) 아래 라인과, 검색결과 텍스트 위 라인의 여백을 각각 5px로 통일 */
+.list-divider{
   border: none;
   border-top: 1px solid var(--line);
-  margin: 12px 0; /* 위/아래 동일 값으로 균등 간격 */
+  margin: 5px 0;   /* 위 5px, 아래 5px */
 }
 
-/* 리스트 모드: 뒤로가기 숨김 */
-body:not(.detail-mode) .brandbar .btn.back{ visibility: hidden; }
-
-/* 디테일 모드: 툴바 숨김, 로고는 유지(좌측에 back 붙음) */
-.detail-mode #toolbar{ display:none !important; }
-
-/* 디테일 카드 상단 여백을 divider와 균형 맞춤 */
-.detail-mode .detail-card{ padding-top: 12px; } /* divider 아래 여백과 동일 */
+/* 주변 요소 여백을 중립화해서 .list-divider의 5px이 유일한 간격이 되도록 */
+.filters{ margin-bottom: 0 !important; }
+.count{ margin-top: 0 !important; padding-top: 0 !important; }
 
 
-/* === PATCH v3: SVG 화살표 백버튼 === */
-.brandbar .btn.back svg {
-  width: 28px;
-  height: 28px;
-  stroke: var(--text);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+/* === PATCH v3.8: 헤더-검색 라인 삭제, 칩-라인-카운트 간격 5px === */
+
+/* 로고-검색창 사이 기존 divider는 사용하지 않음 */
+.divider{ display:none !important; }
+
+/* chips 아래 전용 라인: 위/아래 5px */
+.list-divider{
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 5px 0;
 }
+.detail-mode .list-divider{ display:none; } /* 상세 페이지에서는 숨김 */
 
-
-/* === PATCH v3.2: 테두리 있는 백버튼 & 아이콘 크기 보정 === */
-.brandbar .btn.back{
-  width:44px;
-  height:44px;
-  display:grid;
-  place-items:center;
-  background: rgba(255,255,255,0.08);
-  border: 1.5px solid rgba(255,255,255,0.4);
-  border-radius: 10px;
-  color: var(--text);
-  transition: all .15s ease;
-}
-.brandbar .btn.back:hover,
-.brandbar .btn.back:active{
-  background: rgba(255,255,255,0.18);
-  border-color: #fff;
-}
-.brandbar .btn.back svg{
-  width:30px;
-  height:30px;
-  stroke: var(--text);
-  stroke-width:3.2;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+/* 주변 요소 여백/패딩 중립화로 '정확히 5px' 보장 */
+.filters{ margin-bottom: 0 !important; padding-bottom: 0 !important; }
+.count{
+  margin-top: 0 !important;
+  padding-top: 0 !important; /* 텍스트와 윗 라인 사이 실제 거리 = 5px */
 }
