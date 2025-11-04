@@ -1,4 +1,3 @@
-
 const state = {
   data: [],
   filtered: [],
@@ -9,7 +8,7 @@ const state = {
 const listPage   = document.getElementById('listPage');
 const detailPage = document.getElementById('detailPage');
 const toolbar    = document.getElementById('toolbar');
-const detailHdr  = document.getElementById('detailHeader');
+/* detailHeader 제거: brandbar 사용 */
 
 const listEl   = document.getElementById('list');
 const inputEl  = document.getElementById('searchInput');
@@ -28,7 +27,7 @@ const btnBack= document.getElementById('btnBack');
 function toArray(s){ 
   if(Array.isArray(s)) return s; 
   if(!s) return []; 
-  return String(s).split(/\s*;\s*|\s*·\s*|\s*\|\s*|\s*,\s*/).filter(Boolean); 
+  return s.split(/\s*;\s*|\s*·\s*|\s*\|\s*|\s*,\s*/).filter(Boolean); 
 }
 
 function mapRow(row){
@@ -103,7 +102,7 @@ function proxify(rawUrl, { w=null, h=null, fit='cover' } = {}) {
   return q;
 }
 function coverThumb(rawUrl){ return proxify(rawUrl, { w:150, h:150, fit:'cover' }); }
-function coverLarge(rawUrl){ return proxify(rawUrl, { w:900, h:900, fit:'cover' }); } /* CHANGED to cover to match CSS */
+function coverLarge(rawUrl){ return proxify(rawUrl, { w:900, h:900, fit:'contain' }); }
 
 function matchesQuery(item, q){
   if(!q) return true;
@@ -150,7 +149,7 @@ function renderList(){
 
     const img = document.createElement('img'); img.className='thumb'; img.loading='lazy';
     img.src = coverThumb(item.cover) || COVER_PLACEHOLDER;
-    img.onerror = () => { img.src = COVER_PLACEHOLDER; img.removeAttribute('srcset'); };
+    img.onerror = () => { img.src = COVER_PLACEHOLDER; };
 
     const info = document.createElement('div'); info.className='info';
     const album = document.createElement('p'); album.className='album'; album.textContent = item.album || '(제목 없음)';
@@ -184,14 +183,15 @@ function renderList(){
 }
 
 function openDetail(item){
+  // large + responsive set
   const base = item.cover || '';
   dCover.loading = 'lazy';
   dCover.src = coverLarge(base) || COVER_PLACEHOLDER;
   dCover.srcset = [
-    proxify(base, { w: 320,  h: 320,  fit: 'cover' }) + ' 320w',
-    proxify(base, { w: 640,  h: 640,  fit: 'cover' }) + ' 640w',
-    proxify(base, { w: 900,  h: 900,  fit: 'cover' }) + ' 900w',
-    proxify(base, { w: 1200, h: 1200, fit: 'cover' }) + ' 1200w'
+    proxify(base, { w: 320,  h: 320,  fit: 'contain' }) + ' 320w',
+    proxify(base, { w: 640,  h: 640,  fit: 'contain' }) + ' 640w',
+    proxify(base, { w: 900,  h: 900,  fit: 'contain' }) + ' 900w',
+    proxify(base, { w: 1200, h: 1200, fit: 'contain' }) + ' 1200w'
   ].join(', ');
   dCover.sizes = '(max-width: 420px) 90vw, 560px';
   dCover.onerror = () => { dCover.src = COVER_PLACEHOLDER; dCover.removeAttribute('srcset'); };
@@ -207,23 +207,19 @@ function openDetail(item){
 
   listPage.classList.add('hidden');
   toolbar.classList.add('hidden');
-  detailHdr.classList.remove('hidden');
+  /* brandbar는 항상 존재 */
   detailPage.classList.remove('hidden');
   document.body.classList.add('detail-mode');
   location.hash = '#detail';
-  // Assistive tech: move focus to cover
-  dCover.focus && dCover.focus();
 }
 
 function backToList(){
   detailPage.classList.add('hidden');
-  detailHdr.classList.add('hidden');
+  /* brandbar는 항상 존재 */
   listPage.classList.remove('hidden');
   toolbar.classList.remove('hidden');
   document.body.classList.remove('detail-mode');
   location.hash = '#list';
-  // Scroll to top for consistent layout after back
-  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 async function load(){
@@ -244,7 +240,7 @@ btnSearch.addEventListener('click', applyFilters);
 inputEl.addEventListener('input', applyFilters);
 inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') applyFilters(); });
 btnReset.addEventListener('click', clearAll);
-btnBack.addEventListener('click', backToList);
+document.getElementById('btnBack').addEventListener('click', backToList);
 window.addEventListener('hashchange', ()=>{ if(location.hash !== '#detail') backToList(); });
 
 load();
