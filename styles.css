@@ -162,3 +162,16 @@ body:not(.detail-mode) .brandbar .btn.back{ visibility: hidden; }
   padding-top: 0;      /* 위 패딩 제거 */
   margin-top: 14px;    /* chips 하단과 균등한 거리 확보 */
 }
+
+
+/* === PATCH v3.4: chips–line–count 간격을 '정확히 동일'하게 맞춤 === */
+.list-divider{
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 12px 0;           /* 위/아래 동일 간격 */
+}
+.detail-mode .list-divider{ display:none; }  /* 디테일 모드에서는 숨김 */
+
+/* 주변 여백을 중립화하여 divider의 12px이 '절대 기준'이 되도록 */
+.filters{ margin-bottom: 0 !important; }
+.count{ margin-top: 0 !important; padding-top: 0 !important; }
