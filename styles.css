@@ -160,15 +160,3 @@ body:not(.detail-mode) .brandbar .btn.back{ visibility: hidden; }
   stroke-linecap:round;
   stroke-linejoin:round;
 }
-
-/* === 리스트와 푸터 간 간격 밸런스 조정 === */
-.list,
-.more-wrap,
-.detail-card {
-  padding-bottom: 28px !important;   /* 카드영역 끝 여백 */
-}
-
-footer,
-.footer {
-  margin-top: 14px !important;       /* 푸터 위쪽 여백 */
-}
