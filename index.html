@@ -9,10 +9,22 @@
 </head>
 <body>
 <header class="header">
-  <div class="logo-center">
+  <!-- 브랜드 바: 왼쪽은 뒤로가기, 가운데는 로고, 오른쪽은 균형용 스페이서 -->
+  <div class="brandbar" role="banner">
+    <button id="btnBack" class="btn back" aria-label="뒤로가기">
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</button>
     <img class="logo" src="images/logo.png" alt="Stylus 로고" />
+    <i class="spacer" aria-hidden="true"></i>
   </div>
 
+  <!-- 로고 아래 구분선: 디테일 페이지에서 앨범 이미지와의 간격을 균등하게 -->
+  <hr class="divider" />
+
+  <!-- 검색/필터 툴바 (리스트 모드에서만 표시) -->
   <div id="toolbar" class="toolbar">
     <div class="search-row" role="search">
       <input id="searchInput" type="search" placeholder="앨범 · 아티스트 · 트랙 검색" autocomplete="off" />
@@ -25,10 +37,6 @@
         <div id="genreChips" class="chips"></div>
       </div>
     </div>
-  </div>
-
-  <div id="detailHeader" class="detail-header hidden">
-    <button id="btnBack" class="btn back">← 돌아가기</button>
   </div>
 </header>
 
@@ -50,7 +58,11 @@
 </main>
 
 <footer class="footer">
-  <small>@stylus.seoul</small>
+  <small>
+    <a href="https://www.instagram.com/stylus.seoul?igsh=bHFrOXF5OXh2aDRh&utm_source=qr" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">
+      @stylus.seoul
+    </a>
+  </small>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
