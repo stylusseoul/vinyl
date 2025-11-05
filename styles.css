@@ -245,3 +245,27 @@ body:not(.detail-mode) .brandbar .btn.back{ visibility: hidden; }
   margin-top: 8px !important;      /* 라인과 텍스트 사이 거리 확보 */
   padding-top: 2px !important;     /* 내부 여백 약간 */
 }
+
+/* === PATCH v3.9: 장르칩(chips)과 아래 라인 사이 여백 강제 절반 축소 === */
+
+/* filters 블록 자체 여백 최소화 */
+.filters {
+  margin-bottom: 4px !important;   /* 기존 10~14px → 4px */
+  padding-bottom: 0 !important;    /* 내부 패딩 제거 */
+}
+
+/* filtergroup label과 chips 사이 약간의 여백만 유지 */
+.filtergroup label {
+  margin-bottom: 4px !important;
+}
+
+/* chips 아래쪽 여백도 최소화 */
+.chips {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* divider(라인) 위쪽 여백 줄이기 */
+.divider, .list-divider {
+  margin-top: 6px !important;  /* 위쪽 간격 절반 수준 */
+}
