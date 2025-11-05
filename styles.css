@@ -16,7 +16,7 @@ html,body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
 }
 
-/* 헤더 & 로고 */
+/* 헤더 */
 .header{
   position:sticky;
   top:0;
@@ -136,7 +136,7 @@ html,body{
   z-index:auto !important;
 }
 
-/* 디테일 헤더 & 카드 */
+/* 디테일 헤더 */
 .detail-mode .header{border-bottom:none;}
 .detail-header{
   display:flex;
@@ -213,12 +213,12 @@ html,body{
   margin:12px 0;
 }
 
-/* 모드별 */
+/* 모드별 표시 제어 */
 body:not(.detail-mode) .brandbar .btn.back{visibility:hidden}
 .detail-mode #toolbar{display:none!important}
 .detail-mode .detail-card{padding-top:12px}
 
-/* 뒤로가기 아이콘 (순수 화살표만) */
+/* 뒤로가기 화살표 */
 .brandbar .btn.back svg{
   width:30px;
   height:30px;
@@ -226,4 +226,17 @@ body:not(.detail-mode) .brandbar .btn.back{visibility:hidden}
   stroke-width:3.2;
   stroke-linecap:round;
   stroke-linejoin:round;
+}
+
+/* === 상세 이동/복귀시 하단 깨짐 방지 === */
+body.detail-mode .list,
+body.detail-mode .more-wrap {
+  padding-bottom:40px !important;
+}
+body:not(.detail-mode) .detail-header {
+  display:none !important;
+}
+body:not(.detail-mode) footer {
+  margin-top:20px !important;
+  padding-bottom:0 !important;
 }
