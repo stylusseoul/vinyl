@@ -43,30 +43,38 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--te
 .chip.active{background:#fff;color:#EF7C1C;border-color:#fff}
 
 .count{padding:10px 12px;color:var(--text-dim);font-size:13px}
-.list{padding:0 8px 84px}
+
+/* === 하단 간격 조정 (리스트-푸터 밸런스) === */
+.list{padding:0 8px 28px!important}
+.more-wrap{display:flex;justify-content:center;padding:8px 12px 32px!important}
+.detail-card{padding:14px 16px 40px!important}
+
 .row{display:flex;gap:12px;align-items:center;padding:10px 10px;margin:10px 0;border:1px solid var(--line);
   border-radius:var(--radius);background:var(--card);cursor:pointer}
 .thumb{width:80px;height:80px;flex:0 0 80px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,0.15)}
 .row .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
-.row .album{font-size:16px;font-weight:700;margin:0;line-height:1.25;letter-spacing:.2px;color:#fff}
-.row .artist{font-size:13px;color:var(--text);opacity:.95;margin:0;font-weight:500}
-.row .meta{font-size:12px;color:var(--text-dim);margin:0;font-weight:500}
-.row .tracks{font-size:12px;color:#fff;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.42;font-weight:400}
+.row .album{font-size:16px;font-weight:700;margin:0;line-height:1.25;letter-spacing:.2px;color:#fff;text-align:left}
+.row .artist{font-size:13px;color:var(--text);opacity:.95;margin:0;font-weight:500;text-align:left}
+.row .meta{font-size:12px;color:var(--text-dim);margin:0;font-weight:500;text-align:left}
+.row .tracks{font-size:12px;color:#fff;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.42;font-weight:400;text-align:left}
 
-.more-wrap{display:flex;justify-content:center;padding:8px 12px 96px}
 .more-wrap .btn{min-width:120px}
 
+/* === Footer === */
 .footer {
-  position: static !important;   /* 문서 흐름에 따라 배치 */
+  position: static !important;
   bottom: auto !important;
   left: auto !important;
   right: auto !important;
   width: 100%;
-  border-top: 1px solid var(--line); /* 필요 시 삭제 가능 */
-  background: var(--bg);            /* 배경색 유지 */
-  padding: 16px 0;                  /* 상하 여백 */
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  padding: 16px 0;
   z-index: auto !important;
+  text-align:center;  /* 중앙 정렬 */
+  margin-top:14px;    /* 위쪽 여백 살짝 */
 }
+
 .hidden{display:none}
 
 /* detail-mode: 헤더 라인 제거, 상세헤더에만 라인 */
@@ -76,7 +84,6 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--te
 .detail-header.hidden{display:none!important}
 .btn.back{height:36px;padding:0 12px;border-radius:8px}
 
-.detail-card{padding:14px 16px 96px}
 .d-cover{width:100%;max-width:560px;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);
   background:rgba(255,255,255,0.15);display:block;margin:8px auto 14px auto}
 .d-album{margin:0 0 6px 0;text-align:center;font-size:20px;font-weight:700;color:#fff}
@@ -85,14 +92,13 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--te
 .d-tracks li{padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px;color:#fff}
 .d-tracks li:last-child{border-bottom:none}
 
-
 /* === PATCH v2: brandbar (back + logo on one line) & divider spacing === */
 .brandbar{
   position: sticky;
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: 44px 1fr 44px; /* 좌: back, 가운데: 로고, 우: 스페이서 */
+  grid-template-columns: 44px 1fr 44px;
   align-items: center;
   justify-items: center;
   gap: 6px;
@@ -106,12 +112,12 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--te
   background: transparent; border:none; border-radius:0;
   display:grid; place-items:center; color:var(--text);
 }
-.brandbar .spacer{ width:44px; height:44px; } /* 오른쪽 균형 */
+.brandbar .spacer{ width:44px; height:44px; }
 
 .divider{
   border: none;
   border-top: 1px solid var(--line);
-  margin: 12px 0; /* 위/아래 동일 값으로 균등 간격 */
+  margin: 12px 0;
 }
 
 /* 리스트 모드: 뒤로가기 숨김 */
@@ -120,9 +126,8 @@ body:not(.detail-mode) .brandbar .btn.back{ visibility: hidden; }
 /* 디테일 모드: 툴바 숨김, 로고는 유지(좌측에 back 붙음) */
 .detail-mode #toolbar{ display:none !important; }
 
-/* 디테일 카드 상단 여백을 divider와 균형 맞춤 */
-.detail-mode .detail-card{ padding-top: 12px; } /* divider 아래 여백과 동일 */
-
+/* 디테일 카드 상단 여백 */
+.detail-mode .detail-card{ padding-top: 12px; }
 
 /* === PATCH v3: SVG 화살표 백버튼 === */
 .brandbar .btn.back svg {
@@ -133,7 +138,6 @@ body:not(.detail-mode) .brandbar .btn.back{ visibility: hidden; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-
 
 /* === PATCH v3.2: 테두리 있는 백버튼 & 아이콘 크기 보정 === */
 .brandbar .btn.back{
