@@ -3,69 +3,141 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-  <title>Stylus Vinyl</title>
-  <meta name="theme-color" content="#EF7C1C">
+  <title>Stylus Vinyl Explorer</title>
+  <meta name="description" content="스타일러스에 있는 바이닐을 검색합니다">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://stylusseoul.github.io/vinyl/">
+  <meta property="og:title" content="Stylus Vinyl Explorer">
+  <meta property="og:description" content="스타일러스에 있는 바이닐을 검색합니다">
+  <meta property="og:image" content="https://stylusseoul.github.io/vinyl/images/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Stylus Vinyl Explorer">
+  <meta name="twitter:description" content="스타일러스에 있는 바이닐을 검색합니다">
+  <meta name="twitter:image" content="https://stylusseoul.github.io/vinyl/images/og.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="header">
-  <!-- 브랜드 바: 왼쪽은 뒤로가기, 가운데는 로고, 오른쪽은 균형용 스페이서 -->
-  <div class="brandbar" role="banner">
-    <button id="btnBack" class="btn back" aria-label="뒤로가기">
-  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="15 18 9 12 15 6"></polyline>
-  </svg>
-</button>
-    <img class="logo" src="images/logo.png" alt="Stylus 로고" />
-    <i class="spacer" aria-hidden="true"></i>
-  </div>
 
-  <!-- 로고 아래 구분선: 디테일 페이지에서 앨범 이미지와의 간격을 균등하게 -->
-  <hr class="divider" />
+<div id="app">
 
-  <!-- 검색/필터 툴바 (리스트 모드에서만 표시) -->
-  <div id="toolbar" class="toolbar">
-    <div class="search-row" role="search">
-      <input id="searchInput" type="search" placeholder="앨범 · 아티스트 · 트랙 검색" autocomplete="off" />
-      <button id="btnSearch" class="btn primary">검색</button>
-      <button id="btnReset" class="btn ghost">초기화</button>
-    </div>
-    <div class="filters">
-      <div class="filtergroup">
-        <label>장르</label>
-        <div id="genreChips" class="chips"></div>
+  <!-- ===== LIST VIEW ===== -->
+  <div id="listView" class="view">
+
+    <header class="list-header">
+
+      <!-- 상단: 로고 + 검색 아이콘 -->
+      <div class="header-top">
+        <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">STYLUS</span>
+        <button id="btnToggleSearch" class="icon-btn" aria-label="검색">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
       </div>
-    </div>
+
+      <!-- 검색창 (토글) -->
+      <div id="searchWrap" class="search-wrap collapsed">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="searchInput" type="search" placeholder="아티스트, 앨범, 트랙…" autocomplete="off" />
+          <button id="btnClear" class="clear-btn" aria-label="초기화">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 장르 탭 -->
+      <div class="genre-scroll">
+        <button class="genre-chip active" data-genre="all" id="chipAll">All</button>
+        <div id="genreChips"></div>
+      </div>
+
+    </header>
+
+    <main class="list-main">
+      <div id="loading" class="loading-state">
+        <div class="spinner"></div>
+      </div>
+      <div id="emptyState" class="empty-state hidden">
+        <p>검색 결과가 없어요</p>
+      </div>
+      <p id="countLabel" class="count-label"></p>
+      <div id="grid" class="grid"></div>
+      <div id="moreWrap" class="more-wrap"></div>
+    </main>
+
+    <footer class="list-footer">
+      <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
+      <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4.5"/>
+          <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>stylus.seoul</span>
+      </a>
+    </footer>
+
+  </div>
+
+  <!-- ===== DETAIL VIEW ===== -->
+  <div id="detailView" class="view hidden">
+
+    <header class="detail-header">
+      <button id="btnBack" class="back-btn" aria-label="뒤로가기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <span class="detail-header-label">VINYL</span>
+      <div style="width:36px"></div>
+    </header>
+
+    <main class="detail-main">
+      <div class="detail-cover-wrap">
+        <img id="dCover" class="detail-cover" alt="앨범 커버" loading="lazy">
+      </div>
+
+      <div class="detail-info">
+        <h1 id="dAlbum" class="detail-album"></h1>
+        <p id="dArtist" class="detail-artist"></p>
+        <div id="dMeta" class="detail-meta-row"></div>
+      </div>
+
+      <div class="detail-tracks-section">
+        <div class="tracks-header">
+          <span class="tracks-label">Tracklist</span>
+          <span id="dTrackCount" class="tracks-count"></span>
+        </div>
+        <ul id="dTracks" class="track-list"></ul>
+      </div>
+    </main>
+
+    <footer class="detail-footer">
+      <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
+      <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4.5"/>
+          <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>stylus.seoul</span>
+      </a>
+    </footer>
+
+  </div>
+
 </div>
-</header>
 
-<main>
-  <div id="listPage">
-    <div id="count" class="count"></div>
-    <section id="list" class="list" aria-live="polite"></section>
-    <div id="moreWrap" class="more-wrap"></div>
-  </div>
-
-  <div id="detailPage" class="hidden">
-    <article class="detail-card">
-      <img id="dCover" class="d-cover" alt="앨범 자켓" loading="lazy">
-      <h2 id="dAlbum" class="d-album"></h2>
-      <p id="dArtist" class="d-artist"></p>
-      <ul id="dTracks" class="d-tracks"></ul>
-    </article>
-  </div>
-</main>
-
-<footer class="footer">
-  <small>
-    <a href="https://www.instagram.com/stylus.seoul?igsh=bHFrOXF5OXh2aDRh&utm_source=qr" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">
-      @stylus.seoul
-    </a>
-  </small>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="config.js"></script>
 <script src="script.js"></script>
 </body>

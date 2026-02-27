@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Stylus Vinyl</title>
+  <meta name="theme-color" content="#EF7C1C">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <!-- 브랜드 바: 왼쪽은 뒤로가기, 가운데는 로고, 오른쪽은 균형용 스페이서 -->
+  <div class="brandbar" role="banner">
+    <button id="btnBack" class="btn back" aria-label="뒤로가기">
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+</button>
+    <img class="logo" src="images/logo.png" alt="Stylus 로고" />
+    <i class="spacer" aria-hidden="true"></i>
+  </div>
+
+  <!-- 로고 아래 구분선: 디테일 페이지에서 앨범 이미지와의 간격을 균등하게 -->
+  <hr class="divider" />
+
+  <!-- 검색/필터 툴바 (리스트 모드에서만 표시) -->
+  <div id="toolbar" class="toolbar">
+    <div class="search-row" role="search">
+      <input id="searchInput" type="search" placeholder="앨범 · 아티스트 · 트랙 검색" autocomplete="off" />
+      <button id="btnSearch" class="btn primary">검색</button>
+      <button id="btnReset" class="btn ghost">초기화</button>
+    </div>
+    <div class="filters">
+      <div class="filtergroup">
+        <label>장르</label>
+        <div id="genreChips" class="chips"></div>
+      </div>
+    </div>
+</div>
+</header>
+
+<main>
+  <div id="listPage">
+    <div id="count" class="count"></div>
+    <section id="list" class="list" aria-live="polite"></section>
+    <div id="moreWrap" class="more-wrap"></div>
+  </div>
+
+  <div id="detailPage" class="hidden">
+    <article class="detail-card">
+      <img id="dCover" class="d-cover" alt="앨범 자켓" loading="lazy">
+      <h2 id="dAlbum" class="d-album"></h2>
+      <p id="dArtist" class="d-artist"></p>
+      <ul id="dTracks" class="d-tracks"></ul>
+    </article>
+  </div>
+</main>
+
+<footer class="footer">
+  <small>
+    <a href="https://www.instagram.com/stylus.seoul?igsh=bHFrOXF5OXh2aDRh&utm_source=qr" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">
+      @stylus.seoul
+    </a>
+  </small>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

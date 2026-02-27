@@ -1,99 +1,66 @@
+/* ============================================================
+   STYLUS VINYL — script.js
+   ============================================================ */
+
 const state = {
   data: [],
   filtered: [],
-  filters: { genres: new Set() },
-  limit: 50
+  activeGenre: 'all',
+  query: '',
+  limit: 40,
 };
 
-const listPage   = document.getElementById('listPage');
-const detailPage = document.getElementById('detailPage');
-const toolbar    = document.getElementById('toolbar');
-/* detailHeader 제거: brandbar 사용 */
+/* DOM */
+const listView        = document.getElementById('listView');
+const detailView      = document.getElementById('detailView');
+const searchInput     = document.getElementById('searchInput');
+const searchWrap      = document.getElementById('searchWrap');
+const btnToggleSearch = document.getElementById('btnToggleSearch');
+const btnClear        = document.getElementById('btnClear');
+const btnBack         = document.getElementById('btnBack');
+const genreChips      = document.getElementById('genreChips');
+const countLabel      = document.getElementById('countLabel');
+const grid            = document.getElementById('grid');
+const moreWrap        = document.getElementById('moreWrap');
+const loadingEl       = document.getElementById('loading');
+const emptyEl         = document.getElementById('emptyState');
+const dCover          = document.getElementById('dCover');
+const dAlbum          = document.getElementById('dAlbum');
+const dArtist         = document.getElementById('dArtist');
+const dMeta           = document.getElementById('dMeta');
+const dTracks         = document.getElementById('dTracks');
+const dTrackCount     = document.getElementById('dTrackCount');
 
-const listEl   = document.getElementById('list');
-const inputEl  = document.getElementById('searchInput');
-const btnSearch= document.getElementById('btnSearch');
-const btnReset = document.getElementById('btnReset');
-const genreChips = document.getElementById('genreChips');
-const countEl  = document.getElementById('count');
-const moreWrap = document.getElementById('moreWrap');
+/* ── Utils ──────────────────────────────────────────────────── */
 
-const dCover = document.getElementById('dCover');
-const dAlbum = document.getElementById('dAlbum');
-const dArtist= document.getElementById('dArtist');
-const dTracks= document.getElementById('dTracks');
-const btnBack= document.getElementById('btnBack');
-
-function toArray(s){ 
-  if(Array.isArray(s)) return s; 
-  if(!s) return []; 
-  return s.split(/\s*;\s*|\s*·\s*|\s*\|\s*|\s*,\s*/).filter(Boolean); 
+function toTracks(s) {
+  if (Array.isArray(s)) return s;
+  if (!s) return [];
+  return s.split(/\s*;\s*|\s*·\s*|\s*\|\s*/).map(t => t.trim()).filter(Boolean);
 }
 
-function mapRow(row){
-  const get = (k)=> row.hasOwnProperty(k) ? row[k] : (row[k.toLowerCase()] ?? row[k.toUpperCase()] ?? '');
-  const artist = get('Artist');
-  const album  = get('Album');
-  const year   = String(get('Year')||'');
-  const genre  = get('Genre');
-  const cover  = get('Cover') || get('F') || get('cover') || get('COVER');
-  const tracks = toArray(get('Tracks'));
-  return { artist, album, year, genre, cover, tracks };
+function isValid(it) {
+  const a = (it.album  || '').trim();
+  const b = (it.artist || '').trim();
+  return (a || b) && a.toLowerCase() !== 'ok' && b.toLowerCase() !== 'ok';
 }
 
-async function fetchCSV(){
-  const url = SHEET_CSV_URL;
-  return new Promise((resolve, reject)=>{
-    Papa.parse(url, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: ({data})=> resolve(data.map(mapRow)),
-      error: reject
-    });
-  });
+function sortByArtist(arr) {
+  return [...arr].sort((a, b) =>
+    (a.artist || '').localeCompare(b.artist || '', 'ko', { sensitivity: 'base' })
+  );
 }
 
-function isValidItem(it){
-  const hasAlbum  = (it.album || '').trim() !== '';
-  const hasArtist = (it.artist || '').trim() !== '';
-  const notStatus = !((it.album || '').trim().toUpperCase() === 'OK' || (it.artist || '').trim().toUpperCase() === 'OK');
-  return (hasAlbum || hasArtist) && notStatus;
+function sortRandom(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function defaultSortByArtist(arr){
-  arr.sort((a,b)=>(a.artist||'').localeCompare(b.artist||'', 'ko', {sensitivity:'base'}));
-}
-
-function buildGenreChips(){
-  const set = new Set(state.data.map(d=> (d.genre||'').trim()).filter(Boolean));
-  const items = [...set].sort((a,b)=> a.localeCompare(b, 'ko', {sensitivity:'base'}));
-  genreChips.innerHTML='';
-  items.forEach(val=>{
-    const btn = document.createElement('button');
-    btn.className = 'chip';
-    btn.textContent = val;
-    btn.addEventListener('click', ()=>{
-      if(state.filters.genres.has(val)){
-        state.filters.genres.delete(val);
-      }else{
-        state.filters.genres.add(val);
-      }
-      btn.classList.toggle('active');
-      applyFilters();
-    });
-    genreChips.appendChild(btn);
-  });
-}
-
-// Proxy helpers
-function proxify(rawUrl, { w=null, h=null, fit='cover' } = {}) {
-  if (!rawUrl) return '';
-  let s = String(rawUrl).trim().replace(/&amp;/g, '&');
-  if (s.startsWith('//')) s = 'https:' + s;
-  if (s.startsWith('http://img.discogs.com') || s.startsWith('http://i.discogs.com')) {
-    s = s.replace('http://', 'https://');
-  }
+function proxify(url, { w, h, fit = 'cover' } = {}) {
+  if (!url) return '';
+  let s = String(url).trim()
+    .replace(/&amp;/g, '&')
+    .replace(/^\/\//, 'https://')
+    .replace(/^http:\/\//, 'https://');
   const core = s.replace(/^https?:\/\//, '');
   let q = `https://images.weserv.nl/?url=${encodeURIComponent(core)}`;
   if (w) q += `&w=${w}`;
@@ -101,146 +68,278 @@ function proxify(rawUrl, { w=null, h=null, fit='cover' } = {}) {
   q += `&fit=${fit}`;
   return q;
 }
-function coverThumb(rawUrl){ return proxify(rawUrl, { w:150, h:150, fit:'cover' }); }
-function coverLarge(rawUrl){ return proxify(rawUrl, { w:900, h:900, fit:'contain' }); }
+const thumb = url => proxify(url, { w: 400, h: 400, fit: 'cover' });
+const large = url => proxify(url, { w: 900, h: 900, fit: 'contain' });
 
-function matchesQuery(item, q){
-  if(!q) return true;
-  const hay = [(item.album||''), (item.artist||''), (item.tracks||[]).join(' '), (item.genre||'')]
-                .join(' ').toLowerCase();
-  return hay.includes(q);
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function matchesFilters(item){
-  const gs = state.filters.genres;
-  const okGenre = gs.size ? gs.has((item.genre||'').trim()) : true;
-  return okGenre;
+/* ── Fetch (gviz JSON) ──────────────────────────────────────── */
+
+function parseGviz(text) {
+  // /*O_o*/ google.visualization.Query.setResponse({...}); 에서 JSON 추출
+  const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+  const cols = json.table.cols.map(c => c.label || c.id);
+  return json.table.rows
+    .filter(r => r && r.c)
+    .map(r => {
+      const row = {};
+      r.c.forEach((cell, i) => {
+        row[cols[i]] = cell ? (cell.v ?? '') : '';
+      });
+      return row;
+    });
 }
 
-function applyFilters(){
-  const q = (inputEl.value||'').trim().toLowerCase();
-  state.filtered = state.data
-    .filter(isValidItem)
-    .filter(it => matchesQuery(it, q) && matchesFilters(it));
-  defaultSortByArtist(state.filtered);
-  state.limit = 50;
-  renderList();
+function mapGvizRow(row) {
+  const g = k => {
+    for (const key of Object.keys(row)) {
+      if (key.toLowerCase() === k.toLowerCase()) return row[key] ?? '';
+    }
+    return '';
+  };
+  return {
+    artist:  String(g('Artist') || ''),
+    album:   String(g('Album')  || ''),
+    year:    String(g('Year')   || '').replace(/\.0$/, ''),
+    genre:   String(g('Genre')  || ''),
+    cover:   String(g('cover')  || g('Cover') || ''),
+    discogs: String(g('Discogs URL') || g('Discogs') || ''),
+    tracks:  toTracks(g('Tracks')),
+  };
 }
 
-function clearAll(){
-  inputEl.value = '';
-  state.filters.genres.clear();
-  Array.from(genreChips.children).forEach(c=> c.classList.remove('active'));
+async function fetchData() {
+  const res = await fetch(SHEET_GVIZ_URL);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  const rows = parseGviz(text);
+  return rows.map(mapGvizRow).filter(isValid);
+}
+
+/* ── Filters ────────────────────────────────────────────────── */
+
+function applyFilters() {
+  const q = state.query.toLowerCase();
+  const filtered = state.data.filter(it => {
+    const genreOk = state.activeGenre === 'all' || it.genre.trim() === state.activeGenre;
+    if (!genreOk) return false;
+    if (!q) return true;
+    return [it.album, it.artist, it.genre, ...it.tracks].join(' ').toLowerCase().includes(q);
+  });
+
+  state.filtered = (state.activeGenre === 'all' && !q)
+    ? sortRandom(filtered)
+    : sortByArtist(filtered);
+
+  state.limit = 40;
+  renderGrid();
+}
+
+/* ── Genre chips ────────────────────────────────────────────── */
+
+function buildGenreChips() {
+  const genres = [...new Set(state.data.map(d => (d.genre || '').trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
+  genreChips.innerHTML = '';
+  genres.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'genre-chip';
+    btn.dataset.genre = g;
+    btn.textContent = g;
+    btn.addEventListener('click', () => selectGenre(g));
+    genreChips.appendChild(btn);
+  });
+  document.getElementById('chipAll').addEventListener('click', () => selectGenre('all'));
+}
+
+function selectGenre(genre) {
+  state.activeGenre = genre;
+  document.querySelectorAll('.genre-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.genre === genre)
+  );
   applyFilters();
-  inputEl.focus();
 }
 
-function renderList(){
+/* ── Render grid ────────────────────────────────────────────── */
+
+function renderGrid() {
   const total = state.filtered.length;
   const shown = Math.min(state.limit, total);
-  countEl.textContent = `${total}개 앨범 중 ${shown}개 표시`;
 
-  listEl.innerHTML = '';
+  loadingEl.classList.add('hidden');
+  countLabel.textContent = `${total} records`;
+
+  if (total === 0) {
+    emptyEl.classList.remove('hidden');
+    grid.innerHTML = '';
+    moreWrap.innerHTML = '';
+    return;
+  }
+  emptyEl.classList.add('hidden');
+  grid.innerHTML = '';
+
   const frag = document.createDocumentFragment();
-  state.filtered.slice(0, shown).forEach((item) => {
-    const row = document.createElement('article'); row.className = 'row'; row.tabIndex = 0;
-    row.addEventListener('click', ()=> openDetail(item));
-    row.addEventListener('keydown', (e)=>{ if(e.key==='Enter') openDetail(item); });
+  state.filtered.slice(0, shown).forEach(item => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.addEventListener('click', () => openDetail(item));
 
-    const img = document.createElement('img'); img.className='thumb'; img.loading='lazy';
-    img.src = coverThumb(item.cover) || COVER_PLACEHOLDER;
+    const img = document.createElement('img');
+    img.className = 'card-thumb';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.src = item.cover ? thumb(item.cover) : COVER_PLACEHOLDER;
     img.onerror = () => { img.src = COVER_PLACEHOLDER; };
+    img.alt = item.album || '';
 
-    const info = document.createElement('div'); info.className='info';
-    const album = document.createElement('p'); album.className='album'; album.textContent = item.album || '(제목 없음)';
-    const artist = document.createElement('p'); artist.className='artist'; artist.textContent = item.artist || '';
-    const meta = document.createElement('p'); meta.className='meta'; meta.textContent = [item.year, item.genre].filter(Boolean).join(' · ');
-    const tracks = document.createElement('p'); tracks.className='tracks'; tracks.textContent = (item.tracks||[]).join(' · ');
+    const info = document.createElement('div');
+    info.className = 'card-info';
+    info.innerHTML = `
+      <p class="card-album">${esc(item.album || '(제목 없음)')}</p>
+      <p class="card-artist">${esc(item.artist || '')}</p>
+    `;
 
-    info.appendChild(album); 
-    info.appendChild(artist);
-    info.appendChild(meta); 
-    info.appendChild(tracks);
-    row.appendChild(img); 
-    row.appendChild(info); 
-    frag.appendChild(row);
+    card.appendChild(img);
+    card.appendChild(info);
+    frag.appendChild(card);
   });
-  listEl.appendChild(frag);
+  grid.appendChild(frag);
 
-  // load more
   moreWrap.innerHTML = '';
-  if (shown < total){
-    const more = document.createElement('button');
-    more.id = 'btnLoadMore';
-    more.className = 'btn primary';
-    more.textContent = '더보기';
-    more.addEventListener('click', ()=>{
-      state.limit += 50;
-      renderList();
-    });
-    moreWrap.appendChild(more);
+  if (shown < total) {
+    // sentinel — IntersectionObserver가 감지
+    const sentinel = document.createElement('div');
+    sentinel.id = 'sentinel';
+    moreWrap.appendChild(sentinel);
+    observeSentinel();
   }
 }
 
-function openDetail(item){
-  // large + responsive set
-  const base = item.cover || '';
-  dCover.loading = 'lazy';
-  dCover.src = coverLarge(base) || COVER_PLACEHOLDER;
-  dCover.srcset = [
-    proxify(base, { w: 320,  h: 320,  fit: 'contain' }) + ' 320w',
-    proxify(base, { w: 640,  h: 640,  fit: 'contain' }) + ' 640w',
-    proxify(base, { w: 900,  h: 900,  fit: 'contain' }) + ' 900w',
-    proxify(base, { w: 1200, h: 1200, fit: 'contain' }) + ' 1200w'
-  ].join(', ');
-  dCover.sizes = '(max-width: 420px) 90vw, 560px';
+/* ── Infinite scroll ────────────────────────────────────────── */
+
+let observer = null;
+
+function observeSentinel() {
+  if (observer) observer.disconnect();
+  const sentinel = document.getElementById('sentinel');
+  if (!sentinel) return;
+  observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      state.limit += 40;
+      renderGrid();
+    }
+  }, { rootMargin: '200px' });
+  observer.observe(sentinel);
+}
+
+/* ── Detail ─────────────────────────────────────────────────── */
+
+function openDetail(item) {
+  dCover.src = item.cover ? large(item.cover) : COVER_PLACEHOLDER;
+  dCover.srcset = item.cover ? [
+    proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
+    proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
+    proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
+  ].join(', ') : '';
+  dCover.sizes = '100vw';
   dCover.onerror = () => { dCover.src = COVER_PLACEHOLDER; dCover.removeAttribute('srcset'); };
 
-  dAlbum.textContent = item.album || '';
+  dAlbum.textContent  = item.album  || '';
   dArtist.textContent = item.artist || '';
+
+  dMeta.innerHTML = '';
+  [item.year, item.genre].filter(Boolean).forEach(val => {
+    const span = document.createElement('span');
+    span.className = 'meta-tag';
+    span.textContent = val;
+    dMeta.appendChild(span);
+  });
+
+  const tracks = item.tracks || [];
+  dTrackCount.textContent = `${tracks.length}곡`;
   dTracks.innerHTML = '';
-  (item.tracks||[]).forEach(t => {
+  tracks.forEach((t, i) => {
     const li = document.createElement('li');
-    li.textContent = t;
+    li.className = 'track-item';
+    li.innerHTML = `<span class="track-num">${i + 1}</span><span class="track-name">${esc(t)}</span>`;
     dTracks.appendChild(li);
   });
 
-  listPage.classList.add('hidden');
-  toolbar.classList.add('hidden');
-  /* brandbar는 항상 존재 */
-  detailPage.classList.remove('hidden');
-  document.body.classList.add('detail-mode');
-  location.hash = '#detail';
+  listView.classList.add('hidden');
+  detailView.classList.remove('hidden');
+  window.scrollTo(0, 0);
+  history.pushState({ detail: true }, '', '#detail');
 }
 
-function backToList(){
-  detailPage.classList.add('hidden');
-  /* brandbar는 항상 존재 */
-  listPage.classList.remove('hidden');
-  toolbar.classList.remove('hidden');
-  document.body.classList.remove('detail-mode');
-  location.hash = '#list';
+function closeDetail() {
+  detailView.classList.add('hidden');
+  listView.classList.remove('hidden');
 }
 
-async function load(){
-  try{
-    countEl.textContent = '불러오는 중…';
-    const data = await fetchCSV();
-    state.data = data.filter(isValidItem);
-    defaultSortByArtist(state.data);
-    state.filtered = state.data.slice();
+/* ── Search toggle ──────────────────────────────────────────── */
+
+function openSearch() {
+  searchWrap.classList.add('open');
+  btnToggleSearch.classList.add('active');
+  requestAnimationFrame(() => searchInput.focus());
+}
+
+function closeSearch() {
+  searchWrap.classList.remove('open');
+  btnToggleSearch.classList.remove('active');
+  searchInput.value = '';
+  state.query = '';
+  btnClear.classList.remove('visible');
+  applyFilters();
+}
+
+btnToggleSearch.addEventListener('click', () => {
+  searchWrap.classList.contains('open') ? closeSearch() : openSearch();
+});
+
+/* ── Events ─────────────────────────────────────────────────── */
+
+searchInput.addEventListener('input', () => {
+  state.query = searchInput.value.trim();
+  btnClear.classList.toggle('visible', state.query.length > 0);
+  applyFilters();
+});
+
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); searchInput.blur(); }
+  if (e.key === 'Escape') closeSearch();
+});
+
+btnClear.addEventListener('click', () => {
+  searchInput.value = '';
+  state.query = '';
+  btnClear.classList.remove('visible');
+  applyFilters();
+  searchInput.focus();
+});
+
+btnBack.addEventListener('click', () => history.back());
+
+window.addEventListener('popstate', () => {
+  if (location.hash !== '#detail') closeDetail();
+});
+
+/* ── Init ───────────────────────────────────────────────────── */
+
+async function init() {
+  try {
+    const data = await fetchData();
+    state.data = data;
+    state.filtered = sortRandom(data);
     buildGenreChips();
-    renderList();
-  }catch(e){
-    document.body.insertAdjacentHTML('beforeend', `<div style="color:#300;padding:10px;background:#fff8;border-top:1px solid #900">불러오기 실패: ${e.message}</div>`);
+    renderGrid();
+  } catch (e) {
+    loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
   }
 }
 
-btnSearch.addEventListener('click', applyFilters);
-inputEl.addEventListener('input', applyFilters);
-inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') applyFilters(); });
-btnReset.addEventListener('click', clearAll);
-document.getElementById('btnBack').addEventListener('click', backToList);
-window.addEventListener('hashchange', ()=>{ if(location.hash !== '#detail') backToList(); });
-
-load();
+init();
