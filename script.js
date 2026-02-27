@@ -5,7 +5,7 @@
 const state = {
   data: [],
   filtered: [],
-  activeGenre: 'all',
+  activeGenres: new Set(),   // 빈 Set = all
   query: '',
   limit: 40,
 };
@@ -123,14 +123,16 @@ async function fetchData() {
 
 function applyFilters() {
   const q = state.query.toLowerCase();
+  const isAll = state.activeGenres.size === 0;
+
   const filtered = state.data.filter(it => {
-    const genreOk = state.activeGenre === 'all' || it.genre.trim() === state.activeGenre;
+    const genreOk = isAll || state.activeGenres.has(it.genre.trim());
     if (!genreOk) return false;
     if (!q) return true;
     return [it.album, it.artist, it.genre, ...it.tracks].join(' ').toLowerCase().includes(q);
   });
 
-  state.filtered = (state.activeGenre === 'all' && !q)
+  state.filtered = (isAll && !q)
     ? sortRandom(filtered)
     : sortByArtist(filtered);
 
@@ -143,24 +145,46 @@ function applyFilters() {
 function buildGenreChips() {
   const genres = [...new Set(state.data.map(d => (d.genre || '').trim()).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
+
   genreChips.innerHTML = '';
   genres.forEach(g => {
     const btn = document.createElement('button');
     btn.className = 'genre-chip';
     btn.dataset.genre = g;
     btn.textContent = g;
-    btn.addEventListener('click', () => selectGenre(g));
+    btn.addEventListener('click', () => toggleGenre(g));
     genreChips.appendChild(btn);
   });
-  document.getElementById('chipAll').addEventListener('click', () => selectGenre('all'));
+
+  document.getElementById('chipAll').addEventListener('click', () => selectAll());
 }
 
-function selectGenre(genre) {
-  state.activeGenre = genre;
-  document.querySelectorAll('.genre-chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.genre === genre)
-  );
+function toggleGenre(genre) {
+  if (state.activeGenres.has(genre)) {
+    state.activeGenres.delete(genre);
+  } else {
+    state.activeGenres.add(genre);
+  }
+  updateChipUI();
   applyFilters();
+}
+
+function selectAll() {
+  state.activeGenres.clear();
+  updateChipUI();
+  applyFilters();
+}
+
+function updateChipUI() {
+  const isAll = state.activeGenres.size === 0;
+  // All 칩
+  document.getElementById('chipAll')
+    .classList.toggle('active', isAll);
+  // 나머지 칩
+  document.querySelectorAll('.genre-chip[data-genre]').forEach(c => {
+    const isActive = state.activeGenres.has(c.dataset.genre);
+    c.classList.toggle('active', isActive);
+  });
 }
 
 /* ── Render grid ────────────────────────────────────────────── */
@@ -187,7 +211,6 @@ function renderGrid() {
     card.className = 'card';
     card.addEventListener('click', () => openDetail(item));
 
-    // ✅ 래퍼 div 추가
     const wrap = document.createElement('div');
     wrap.className = 'card-thumb-wrap';
 
@@ -199,7 +222,6 @@ function renderGrid() {
     img.onerror = () => { img.src = COVER_PLACEHOLDER; };
     img.alt = item.album || '';
 
-    // ✅ img → wrap → card 순서로 조립
     wrap.appendChild(img);
 
     const info = document.createElement('div');
@@ -341,6 +363,7 @@ async function init() {
     state.data = data;
     state.filtered = sortRandom(data);
     buildGenreChips();
+    updateChipUI();
     renderGrid();
   } catch (e) {
     loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
