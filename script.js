@@ -5,7 +5,7 @@
 const state = {
   data: [],
   filtered: [],
-  activeGenres: new Set(),   // 빈 Set = all
+  activeGenres: new Set(),
   query: '',
   limit: 40,
 };
@@ -19,6 +19,7 @@ const btnToggleSearch = document.getElementById('btnToggleSearch');
 const btnClear        = document.getElementById('btnClear');
 const btnBack         = document.getElementById('btnBack');
 const genreChips      = document.getElementById('genreChips');
+const chipAll         = document.getElementById('chipAll');
 const countLabel      = document.getElementById('countLabel');
 const grid            = document.getElementById('grid');
 const moreWrap        = document.getElementById('moreWrap');
@@ -147,6 +148,7 @@ function buildGenreChips() {
     .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
 
   genreChips.innerHTML = '';
+
   genres.forEach(g => {
     const btn = document.createElement('button');
     btn.className = 'genre-chip';
@@ -155,8 +157,6 @@ function buildGenreChips() {
     btn.addEventListener('click', () => toggleGenre(g));
     genreChips.appendChild(btn);
   });
-
-  document.getElementById('chipAll').addEventListener('click', () => selectAll());
 }
 
 function toggleGenre(genre) {
@@ -177,13 +177,13 @@ function selectAll() {
 
 function updateChipUI() {
   const isAll = state.activeGenres.size === 0;
-  // All 칩
-  document.getElementById('chipAll')
-    .classList.toggle('active', isAll);
-  // 나머지 칩
-  document.querySelectorAll('.genre-chip[data-genre]').forEach(c => {
-    const isActive = state.activeGenres.has(c.dataset.genre);
-    c.classList.toggle('active', isActive);
+
+  // ✅ chipAll 따로 처리
+  chipAll.classList.toggle('active', isAll);
+
+  // ✅ #genreChips 안의 칩만 선택 (chipAll 제외)
+  genreChips.querySelectorAll('.genre-chip').forEach(c => {
+    c.classList.toggle('active', state.activeGenres.has(c.dataset.genre));
   });
 }
 
@@ -348,6 +348,9 @@ btnClear.addEventListener('click', () => {
   applyFilters();
   searchInput.focus();
 });
+
+// ✅ chipAll 이벤트 — 여기서 한 번만 등록
+chipAll.addEventListener('click', () => selectAll());
 
 btnBack.addEventListener('click', () => history.back());
 
