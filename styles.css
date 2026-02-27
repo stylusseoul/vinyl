@@ -247,7 +247,9 @@ body {
 
 .card-info {
   padding: 9px 2px 0;
-  min-width: 0; /* ✅ 추가 */
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .card-album {
@@ -268,7 +270,6 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%; /* ✅ 추가 */
 }
 
 
