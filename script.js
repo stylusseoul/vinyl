@@ -77,6 +77,15 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+/* ✅ 검색 디바운스 — 타이핑할 때마다 렌더 방지 */
+function debounce(fn, ms) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
+
 /* ── Fetch (gviz JSON) ──────────────────────────────────────── */
 
 function parseGviz(text) {
@@ -135,7 +144,7 @@ function applyFilters() {
     : sortByArtist(filtered);
 
   state.limit = 40;
-  renderGrid(false);
+  renderGrid();
 }
 
 /* ── Genre chips ────────────────────────────────────────────── */
@@ -197,10 +206,9 @@ function createCard(item) {
 
 /* ── Render grid ────────────────────────────────────────────── */
 
-function renderGrid(append = false) {
-  const total    = state.filtered.length;
-  const prevShown = append ? Math.min(state.limit - 40, total) : 0;
-  const shown     = Math.min(state.limit, total);
+function renderGrid() {
+  const total = state.filtered.length;
+  const shown = Math.min(state.limit, total);
 
   loadingEl.classList.add('hidden');
   countLabel.textContent = `${total} records`;
@@ -213,48 +221,40 @@ function renderGrid(append = false) {
   }
   emptyEl.classList.add('hidden');
 
-  if (!append) grid.innerHTML = '';
+  /* ✅ rAF으로 DOM 조작을 다음 페인트 직전에 배치 — 프레임 드랍 방지 */
+  requestAnimationFrame(() => {
+    grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    state.filtered.slice(0, shown).forEach(item => {
+      frag.appendChild(createCard(item));
+    });
+    grid.appendChild(frag);
 
-  const frag = document.createDocumentFragment();
-  state.filtered.slice(prevShown, shown).forEach(item => {
-    frag.appendChild(createCard(item));
+    moreWrap.innerHTML = '';
+    if (shown < total) {
+      const sentinel = document.createElement('div');
+      sentinel.id = 'sentinel';
+      moreWrap.appendChild(sentinel);
+      observeSentinel();
+    }
   });
-  grid.appendChild(frag);
-
-  // sentinel 갱신
-  moreWrap.innerHTML = '';
-  if (shown < total) {
-    const sentinel = document.createElement('div');
-    sentinel.id = 'sentinel';
-    moreWrap.appendChild(sentinel);
-    observeSentinel();
-  }
 }
 
 /* ── Infinite scroll ────────────────────────────────────────── */
 
-let observer    = null;
-let loadingMore = false; // ✅ 연속 트리거 방지 플래그
+let observer = null;
 
 function observeSentinel() {
   if (observer) observer.disconnect();
   const sentinel = document.getElementById('sentinel');
   if (!sentinel) return;
-
   observer = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting || loadingMore) return;
-    loadingMore = true;
-    observer.disconnect();
-    state.limit += 40;
-    renderGrid(true);
-    // ✅ 렌더 완료 후 다음 프레임에 플래그 해제
-    requestAnimationFrame(() => { loadingMore = false; });
-  }, { rootMargin: '50px', threshold: 0 });
-
-  // ✅ 생성 직후 즉시 발동 방지 — 한 프레임 뒤에 observe 시작
-  requestAnimationFrame(() => {
-    if (sentinel.isConnected) observer.observe(sentinel);
-  });
+    if (entries[0].isIntersecting) {
+      state.limit += 40;
+      renderGrid();
+    }
+  }, { rootMargin: '200px' });
+  observer.observe(sentinel);
 }
 
 /* ── Detail ─────────────────────────────────────────────────── */
@@ -324,11 +324,14 @@ btnToggleSearch.addEventListener('click', () => {
 
 /* ── Events ─────────────────────────────────────────────────── */
 
-searchInput.addEventListener('input', () => {
+/* ✅ 검색 300ms 디바운스 적용 */
+const handleSearch = debounce(() => {
   state.query = searchInput.value.trim();
   btnClear.classList.toggle('visible', state.query.length > 0);
   applyFilters();
-});
+}, 300);
+
+searchInput.addEventListener('input', handleSearch);
 
 searchInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); searchInput.blur(); }
@@ -357,7 +360,7 @@ async function init() {
     state.data = data;
     state.filtered = sortRandom(data);
     buildGenreChips();
-    renderGrid(false);
+    renderGrid();
   } catch (e) {
     loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
   }
