@@ -58,6 +58,7 @@ body {
   opacity: 0.95;
   display: block;
 }
+
 .logo-text {
   font-size: 16px;
   font-weight: 800;
@@ -220,9 +221,10 @@ body {
   -webkit-tap-highlight-color: transparent;
   background: none;
   min-width: 0;
-  overflow: hidden; /* ✅ 추가 */
+  max-width: 100%;
+  overflow: hidden;
 }
-/* ✅ card-thumb-wrap: 비율 확보 전담 */
+
 .card-thumb-wrap {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -231,7 +233,6 @@ body {
   overflow: hidden;
 }
 
-/* ✅ card-thumb: 래퍼를 꽉 채우기만 */
 .card-thumb {
   width: 100%;
   height: 100%;
@@ -240,15 +241,13 @@ body {
   transition: opacity 0.15s;
 }
 
-/* ✅ active 타겟을 wrap으로 변경 */
 .card:active .card-thumb-wrap { opacity: 0.7; }
-
 .card-overlay { display: none; }
 
 .card-info {
   padding: 9px 2px 0;
-  min-width: 0;
   width: 100%;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -258,6 +257,8 @@ body {
   color: var(--text);
   line-height: 1.35;
   margin-bottom: 2px;
+  display: block;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -267,6 +268,8 @@ body {
   font-size: 12px;
   font-weight: 400;
   color: var(--sub);
+  display: block;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -429,7 +432,6 @@ body {
   padding: 28px 48px 0;
 }
 
-/* ✅ detail-cover-box: 비율·shadow·radius 전담 */
 .detail-cover-box {
   width: 100%;
   max-width: 280px;
@@ -440,7 +442,6 @@ body {
   box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
 }
 
-/* ✅ detail-cover: 래퍼를 꽉 채우기만 */
 .detail-cover {
   width: 100%;
   height: 100%;
