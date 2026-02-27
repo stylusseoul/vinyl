@@ -43,7 +43,6 @@ body {
   box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
 }
 
-/* Top bar: logo + search toggle */
 .header-top {
   display: flex;
   align-items: center;
@@ -85,7 +84,6 @@ body {
 .icon-btn svg { width: 20px; height: 20px; display: block; }
 .icon-btn:active, .icon-btn.active { color: var(--accent); }
 
-/* Search bar */
 .search-wrap {
   overflow: hidden;
   max-height: 0;
@@ -151,7 +149,6 @@ body {
 .clear-btn svg { width: 11px; height: 11px; stroke: #fff; }
 .clear-btn.visible { opacity: 1; pointer-events: auto; }
 
-/* Genre tabs */
 .genre-scroll {
   display: flex;
   gap: 0;
@@ -211,7 +208,6 @@ body {
   padding: 14px 0 14px;
 }
 
-/* Grid — 2열, Spotify style */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -224,27 +220,34 @@ body {
   -webkit-tap-highlight-color: transparent;
   background: none;
   min-width: 0;
+  overflow: hidden; /* ✅ 추가 */
 }
-.card:active .card-thumb { opacity: 0.7; }
-
-/* 정사각형 썸네일 */
-.card-thumb {
+/* ✅ card-thumb-wrap: 비율 확보 전담 */
+.card-thumb-wrap {
   width: 100%;
   aspect-ratio: 1 / 1;
-  object-fit: cover;
-  display: block;
   border-radius: 6px;
   background: var(--surface);
-  transition: opacity 0.15s;
-  /* 로딩 전에도 공간 확보 */
-  min-height: 0;
+  overflow: hidden;
 }
 
-/* 오버레이 불필요 — 제거 */
+/* ✅ card-thumb: 래퍼를 꽉 채우기만 */
+.card-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.15s;
+}
+
+/* ✅ active 타겟을 wrap으로 변경 */
+.card:active .card-thumb-wrap { opacity: 0.7; }
+
 .card-overlay { display: none; }
 
 .card-info {
   padding: 9px 2px 0;
+  min-width: 0; /* ✅ 추가 */
 }
 
 .card-album {
@@ -257,6 +260,7 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word; /* ✅ 추가 */
 }
 
 .card-artist {
@@ -266,6 +270,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%; /* ✅ 추가 */
 }
 
 
@@ -419,25 +424,32 @@ body {
 .discogs-btn svg { width: 18px; height: 18px; }
 .discogs-btn.no-link { opacity: 0; pointer-events: none; }
 
-/* Cover — 작고 여백 있게 */
 .detail-cover-wrap {
   display: flex;
   justify-content: center;
   padding: 28px 48px 0;
 }
 
-.detail-cover {
+/* ✅ detail-cover-box: 비율·shadow·radius 전담 */
+.detail-cover-box {
   width: 100%;
   max-width: 280px;
   aspect-ratio: 1 / 1;
-  object-fit: cover;
-  display: block;
-  background: var(--surface);
   border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface);
   box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
 }
 
-/* Info */
+/* ✅ detail-cover: 래퍼를 꽉 채우기만 */
+.detail-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: var(--surface);
+}
+
 .detail-info {
   padding: 24px 24px 0;
   text-align: center;
@@ -466,7 +478,6 @@ body {
   justify-content: center;
 }
 
-/* 메타 태그 — pill 버튼 스타일 */
 .meta-tag {
   font-size: 11px;
   font-weight: 500;
@@ -478,7 +489,6 @@ body {
 }
 .meta-tag + .meta-tag::before { content: none; }
 
-/* Tracklist */
 .detail-tracks-section {
   padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
 }
@@ -514,7 +524,6 @@ body {
   padding: 11px 0;
 }
 
-/* Detail footer */
 .detail-footer {
   padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 14px);
   border-top: 1px solid var(--border);
@@ -523,6 +532,7 @@ body {
   align-items: center;
   gap: 12px;
 }
+
 .track-num {
   font-size: 12px;
   font-weight: 400;
