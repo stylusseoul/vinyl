@@ -135,9 +135,10 @@ function applyFilters() {
     ? sortRandom(filtered)
     : sortByArtist(filtered);
 
-  // ✅ 필터 변경 시 → 그리드 완전 초기화 후 재렌더
+  window.scrollTo(0, 0);
   resetGrid();
 }
+
 
 /* ── Genre chips ────────────────────────────────────────────── */
 
