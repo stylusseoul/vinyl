@@ -5,7 +5,7 @@
 const state = {
   data: [],
   filtered: [],
-  activeGenres: new Set(),
+  activeGenre: 'all',
   query: '',
   limit: 40,
 };
@@ -19,7 +19,6 @@ const btnToggleSearch = document.getElementById('btnToggleSearch');
 const btnClear        = document.getElementById('btnClear');
 const btnBack         = document.getElementById('btnBack');
 const genreChips      = document.getElementById('genreChips');
-const chipAll         = document.getElementById('chipAll');
 const countLabel      = document.getElementById('countLabel');
 const grid            = document.getElementById('grid');
 const moreWrap        = document.getElementById('moreWrap');
@@ -124,16 +123,14 @@ async function fetchData() {
 
 function applyFilters() {
   const q = state.query.toLowerCase();
-  const isAll = state.activeGenres.size === 0;
-
   const filtered = state.data.filter(it => {
-    const genreOk = isAll || state.activeGenres.has(it.genre.trim());
+    const genreOk = state.activeGenre === 'all' || it.genre.trim() === state.activeGenre;
     if (!genreOk) return false;
     if (!q) return true;
     return [it.album, it.artist, it.genre, ...it.tracks].join(' ').toLowerCase().includes(q);
   });
 
-  state.filtered = (isAll && !q)
+  state.filtered = (state.activeGenre === 'all' && !q)
     ? sortRandom(filtered)
     : sortByArtist(filtered);
 
@@ -146,45 +143,24 @@ function applyFilters() {
 function buildGenreChips() {
   const genres = [...new Set(state.data.map(d => (d.genre || '').trim()).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
-
   genreChips.innerHTML = '';
-
   genres.forEach(g => {
     const btn = document.createElement('button');
     btn.className = 'genre-chip';
     btn.dataset.genre = g;
     btn.textContent = g;
-    btn.addEventListener('click', () => toggleGenre(g));
+    btn.addEventListener('click', () => selectGenre(g));
     genreChips.appendChild(btn);
   });
+  document.getElementById('chipAll').addEventListener('click', () => selectGenre('all'));
 }
 
-function toggleGenre(genre) {
-  if (state.activeGenres.has(genre)) {
-    state.activeGenres.delete(genre);
-  } else {
-    state.activeGenres.add(genre);
-  }
-  updateChipUI();
+function selectGenre(genre) {
+  state.activeGenre = genre;
+  document.querySelectorAll('.genre-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.genre === genre)
+  );
   applyFilters();
-}
-
-function selectAll() {
-  state.activeGenres.clear();
-  updateChipUI();
-  applyFilters();
-}
-
-function updateChipUI() {
-  const isAll = state.activeGenres.size === 0;
-
-  // ✅ chipAll 따로 처리
-  chipAll.classList.toggle('active', isAll);
-
-  // ✅ #genreChips 안의 칩만 선택 (chipAll 제외)
-  genreChips.querySelectorAll('.genre-chip').forEach(c => {
-    c.classList.toggle('active', state.activeGenres.has(c.dataset.genre));
-  });
 }
 
 /* ── Render grid ────────────────────────────────────────────── */
@@ -349,9 +325,6 @@ btnClear.addEventListener('click', () => {
   searchInput.focus();
 });
 
-// ✅ chipAll 이벤트 — 여기서 한 번만 등록
-chipAll.addEventListener('click', () => selectAll());
-
 btnBack.addEventListener('click', () => history.back());
 
 window.addEventListener('popstate', () => {
@@ -366,7 +339,6 @@ async function init() {
     state.data = data;
     state.filtered = sortRandom(data);
     buildGenreChips();
-    updateChipUI();
     renderGrid();
   } catch (e) {
     loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
