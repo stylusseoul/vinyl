@@ -225,12 +225,17 @@ body {
   overflow: hidden;
 }
 
-.card-thumb-wrap {
+.detail-cover-box {
   width: 100%;
+  max-width: 280px;
   aspect-ratio: 1 / 1;
-  border-radius: 6px;
-  background: var(--surface);
+  border-radius: 8px;
   overflow: hidden;
+  background: var(--surface);
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 16px 48px rgba(0,0,0,0.6),
+    0 4px 12px rgba(0,0,0,0.4);
 }
 
 .card-thumb {
