@@ -216,12 +216,14 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px 16px;
+  align-items: start;
 }
 
 .card {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   background: none;
+  min-width: 0;
 }
 .card:active .card-thumb { opacity: 0.7; }
 
@@ -234,6 +236,8 @@ body {
   border-radius: 6px;
   background: var(--surface);
   transition: opacity 0.15s;
+  /* 로딩 전에도 공간 확보 */
+  min-height: 0;
 }
 
 /* 오버레이 불필요 — 제거 */
