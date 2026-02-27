@@ -36,10 +36,9 @@ function mapRow(row){
   const album  = get('Album');
   const year   = String(get('Year')||'');
   const genre  = get('Genre');
-  const cover  =
-  get('image name') ||
-  get('Cover') ||
+  const cover =
   get('cover') ||
+  get('Cover') ||
   get('COVER') ||
   get('Discogs URL');
   const tracks = toArray(get('Tracks'));
