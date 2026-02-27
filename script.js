@@ -80,7 +80,6 @@ function esc(s) {
 /* ── Fetch (gviz JSON) ──────────────────────────────────────── */
 
 function parseGviz(text) {
-  // /*O_o*/ google.visualization.Query.setResponse({...}); 에서 JSON 추출
   const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
   const cols = json.table.cols.map(c => c.label || c.id);
   return json.table.rows
@@ -188,6 +187,10 @@ function renderGrid() {
     card.className = 'card';
     card.addEventListener('click', () => openDetail(item));
 
+    // ✅ 래퍼 div 추가
+    const wrap = document.createElement('div');
+    wrap.className = 'card-thumb-wrap';
+
     const img = document.createElement('img');
     img.className = 'card-thumb';
     img.loading = 'lazy';
@@ -196,6 +199,9 @@ function renderGrid() {
     img.onerror = () => { img.src = COVER_PLACEHOLDER; };
     img.alt = item.album || '';
 
+    // ✅ img → wrap → card 순서로 조립
+    wrap.appendChild(img);
+
     const info = document.createElement('div');
     info.className = 'card-info';
     info.innerHTML = `
@@ -203,7 +209,7 @@ function renderGrid() {
       <p class="card-artist">${esc(item.artist || '')}</p>
     `;
 
-    card.appendChild(img);
+    card.appendChild(wrap);
     card.appendChild(info);
     frag.appendChild(card);
   });
@@ -211,7 +217,6 @@ function renderGrid() {
 
   moreWrap.innerHTML = '';
   if (shown < total) {
-    // sentinel — IntersectionObserver가 감지
     const sentinel = document.createElement('div');
     sentinel.id = 'sentinel';
     moreWrap.appendChild(sentinel);
