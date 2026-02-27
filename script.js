@@ -135,7 +135,7 @@ function applyFilters() {
     : sortByArtist(filtered);
 
   state.limit = 40;
-  renderGrid(false); // ← 필터 변경 시 전체 재렌더
+  renderGrid(false);
 }
 
 /* ── Genre chips ────────────────────────────────────────────── */
@@ -198,8 +198,7 @@ function createCard(item) {
 /* ── Render grid ────────────────────────────────────────────── */
 
 function renderGrid(append = false) {
-  const total = state.filtered.length;
-  // append 모드일 때 이전까지 렌더된 수 계산
+  const total    = state.filtered.length;
   const prevShown = append ? Math.min(state.limit - 40, total) : 0;
   const shown     = Math.min(state.limit, total);
 
@@ -214,19 +213,15 @@ function renderGrid(append = false) {
   }
   emptyEl.classList.add('hidden');
 
-  // ✅ 전체 재렌더 시에만 grid 초기화
-  if (!append) {
-    grid.innerHTML = '';
-  }
+  if (!append) grid.innerHTML = '';
 
-  // ✅ 새 카드만 추가
   const frag = document.createDocumentFragment();
   state.filtered.slice(prevShown, shown).forEach(item => {
     frag.appendChild(createCard(item));
   });
   grid.appendChild(frag);
 
-  // sentinel
+  // sentinel 갱신
   moreWrap.innerHTML = '';
   if (shown < total) {
     const sentinel = document.createElement('div');
@@ -238,20 +233,28 @@ function renderGrid(append = false) {
 
 /* ── Infinite scroll ────────────────────────────────────────── */
 
-let observer = null;
+let observer    = null;
+let loadingMore = false; // ✅ 연속 트리거 방지 플래그
 
 function observeSentinel() {
   if (observer) observer.disconnect();
   const sentinel = document.getElementById('sentinel');
   if (!sentinel) return;
+
   observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      observer.disconnect(); // ✅ 중복 트리거 방지
-      state.limit += 40;
-      renderGrid(true); // ✅ append 모드 — 기존 카드 유지
-    }
-  }, { rootMargin: '100px' });
-  observer.observe(sentinel);
+    if (!entries[0].isIntersecting || loadingMore) return;
+    loadingMore = true;
+    observer.disconnect();
+    state.limit += 40;
+    renderGrid(true);
+    // ✅ 렌더 완료 후 다음 프레임에 플래그 해제
+    requestAnimationFrame(() => { loadingMore = false; });
+  }, { rootMargin: '50px', threshold: 0 });
+
+  // ✅ 생성 직후 즉시 발동 방지 — 한 프레임 뒤에 observe 시작
+  requestAnimationFrame(() => {
+    if (sentinel.isConnected) observer.observe(sentinel);
+  });
 }
 
 /* ── Detail ─────────────────────────────────────────────────── */
