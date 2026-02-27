@@ -221,7 +221,9 @@ btnSearch.addEventListener('click', applyFilters);
 inputEl.addEventListener('input', applyFilters);
 inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') applyFilters(); });
 btnReset.addEventListener('click', clearAll);
-document.getElementById('btnBack').addEventListener('click', backToList);
+if (btnBack) {
+  btnBack.addEventListener('click', backToList);
+}
 window.addEventListener('hashchange', ()=>{ if(location.hash !== '#detail') backToList(); });
 
 load();
