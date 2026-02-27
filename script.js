@@ -135,7 +135,7 @@ function applyFilters() {
     : sortByArtist(filtered);
 
   state.limit = 40;
-  renderGrid();
+  renderGrid(false); // ← 필터 변경 시 전체 재렌더
 }
 
 /* ── Genre chips ────────────────────────────────────────────── */
@@ -163,11 +163,45 @@ function selectGenre(genre) {
   applyFilters();
 }
 
+/* ── 카드 생성 ───────────────────────────────────────────────── */
+
+function createCard(item) {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.addEventListener('click', () => openDetail(item));
+
+  const wrap = document.createElement('div');
+  wrap.className = 'card-thumb-wrap';
+
+  const img = document.createElement('img');
+  img.className = 'card-thumb';
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  img.src = item.cover ? thumb(item.cover) : COVER_PLACEHOLDER;
+  img.onerror = () => { img.src = COVER_PLACEHOLDER; };
+  img.alt = item.album || '';
+
+  wrap.appendChild(img);
+
+  const info = document.createElement('div');
+  info.className = 'card-info';
+  info.innerHTML = `
+    <p class="card-album">${esc(item.album || '(제목 없음)')}</p>
+    <p class="card-artist">${esc(item.artist || '')}</p>
+  `;
+
+  card.appendChild(wrap);
+  card.appendChild(info);
+  return card;
+}
+
 /* ── Render grid ────────────────────────────────────────────── */
 
-function renderGrid() {
+function renderGrid(append = false) {
   const total = state.filtered.length;
-  const shown = Math.min(state.limit, total);
+  // append 모드일 때 이전까지 렌더된 수 계산
+  const prevShown = append ? Math.min(state.limit - 40, total) : 0;
+  const shown     = Math.min(state.limit, total);
 
   loadingEl.classList.add('hidden');
   countLabel.textContent = `${total} records`;
@@ -179,40 +213,20 @@ function renderGrid() {
     return;
   }
   emptyEl.classList.add('hidden');
-  grid.innerHTML = '';
 
+  // ✅ 전체 재렌더 시에만 grid 초기화
+  if (!append) {
+    grid.innerHTML = '';
+  }
+
+  // ✅ 새 카드만 추가
   const frag = document.createDocumentFragment();
-  state.filtered.slice(0, shown).forEach(item => {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.addEventListener('click', () => openDetail(item));
-
-    const wrap = document.createElement('div');
-    wrap.className = 'card-thumb-wrap';
-
-    const img = document.createElement('img');
-    img.className = 'card-thumb';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    img.src = item.cover ? thumb(item.cover) : COVER_PLACEHOLDER;
-    img.onerror = () => { img.src = COVER_PLACEHOLDER; };
-    img.alt = item.album || '';
-
-    wrap.appendChild(img);
-
-    const info = document.createElement('div');
-    info.className = 'card-info';
-    info.innerHTML = `
-      <p class="card-album">${esc(item.album || '(제목 없음)')}</p>
-      <p class="card-artist">${esc(item.artist || '')}</p>
-    `;
-
-    card.appendChild(wrap);
-    card.appendChild(info);
-    frag.appendChild(card);
+  state.filtered.slice(prevShown, shown).forEach(item => {
+    frag.appendChild(createCard(item));
   });
   grid.appendChild(frag);
 
+  // sentinel
   moreWrap.innerHTML = '';
   if (shown < total) {
     const sentinel = document.createElement('div');
@@ -232,10 +246,11 @@ function observeSentinel() {
   if (!sentinel) return;
   observer = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) {
+      observer.disconnect(); // ✅ 중복 트리거 방지
       state.limit += 40;
-      renderGrid();
+      renderGrid(true); // ✅ append 모드 — 기존 카드 유지
     }
-  }, { rootMargin: '200px' });
+  }, { rootMargin: '100px' });
   observer.observe(sentinel);
 }
 
@@ -339,7 +354,7 @@ async function init() {
     state.data = data;
     state.filtered = sortRandom(data);
     buildGenreChips();
-    renderGrid();
+    renderGrid(false);
   } catch (e) {
     loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
   }
