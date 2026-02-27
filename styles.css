@@ -3,14 +3,14 @@
    ============================================================ */
 
 :root {
-  --bg:       #080808;
-  --surface:  #111;
-  --border:   rgba(255,255,255,0.05);
-  --text:     #fff;
-  --sub:      rgba(255,255,255,0.38);
-  --sub2:     rgba(255,255,255,0.18);
-  --accent:   #EF7C1C;
-  --font:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg:      #080808;
+  --surface: #111;
+  --border:  rgba(255,255,255,0.05);
+  --text:    #fff;
+  --sub:     rgba(255,255,255,0.38);
+  --sub2:    rgba(255,255,255,0.18);
+  --accent:  #EF7C1C;
+  --font:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,6 +41,9 @@ body {
   background: var(--bg);
   padding-top: env(safe-area-inset-top, 0);
   box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
+  /* ✅ 헤더를 별도 레이어로 분리 — 스크롤 중 리페인트 방지 */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .header-top {
@@ -223,31 +226,33 @@ body {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
+  /* ✅ 카드 영역을 독립 페인트 레이어로 분리 */
+  contain: paint;
 }
+.card:active .card-thumb-wrap { opacity: 0.7; }
+.card-overlay { display: none; }
 
-.detail-cover-box {
+/* ✅ padding-bottom 트릭 — 이미지 로드 전후 높이 완전 고정 */
+.card-thumb-wrap {
   width: 100%;
-  max-width: 280px;
-  aspect-ratio: 1 / 1;
-  border-radius: 8px;
-  overflow: hidden;
+  position: relative;
+  padding-bottom: 100%;
+  border-radius: 6px;
   background: var(--surface);
-  box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.08),
-    0 16px 48px rgba(0,0,0,0.6),
-    0 4px 12px rgba(0,0,0,0.4);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
 }
 
 .card-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   transition: opacity 0.15s;
 }
-
-.card:active .card-thumb-wrap { opacity: 0.7; }
-.card-overlay { display: none; }
 
 .card-info {
   padding: 9px 2px 0;
@@ -309,13 +314,8 @@ body {
   letter-spacing: 0.02em;
 }
 
-.more-wrap {
-  height: 24px;
-}
-
-#sentinel {
-  height: 1px;
-}
+.more-wrap { height: 24px; }
+#sentinel  { height: 1px; }
 
 
 /* ============================================================
@@ -358,16 +358,8 @@ body {
   border-radius: 999px;
   padding: 8px 14px;
 }
-.footer-insta svg {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-  display: block;
-}
-.footer-insta span {
-  display: block;
-  line-height: 1;
-}
+.footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
+.footer-insta span { display: block; line-height: 1; }
 .footer-insta:active { color: var(--text); }
 
 
@@ -390,6 +382,8 @@ body {
   padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
   background: var(--bg);
   box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .back-btn {
@@ -437,10 +431,12 @@ body {
   padding: 28px 48px 0;
 }
 
+/* ✅ detail도 padding-bottom 트릭 적용 */
 .detail-cover-box {
   width: 100%;
   max-width: 280px;
-  aspect-ratio: 1 / 1;
+  position: relative;
+  padding-bottom: min(280px, 100%);
   border-radius: 8px;
   overflow: hidden;
   background: var(--surface);
@@ -448,6 +444,9 @@ body {
 }
 
 .detail-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
