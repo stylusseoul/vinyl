@@ -2,9 +2,6 @@
    STYLUS VINYL — script.js
 ============================================================ */
 
-// 대체 이미지 경로 추가
-const COVER_PLACEHOLDER = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
-
 const state = {
   data: [],
   filtered: [],
@@ -180,8 +177,9 @@ function createCard(item) {
   img.className = 'card-thumb';
   img.loading = 'lazy';
   img.decoding = 'async';
-  img.src = item.cover ? thumb(item.cover) : COVER_PLACEHOLDER;
-  img.onerror = () => { img.src = COVER_PLACEHOLDER; };
+  // 변수 대신 이미지 URL 직접 사용
+  img.src = item.cover ? thumb(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
+  img.onerror = () => { img.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg'; };
   img.alt = item.album || '';
   
   wrap.appendChild(img);
@@ -203,10 +201,6 @@ function createCard(item) {
 let renderedCount = 0;
 let observer = null;
 
-/**
- * resetGrid — 필터·검색 변경 시만 호출
- * 그리드를 비우고 처음부터 다시 그림
- */
 function resetGrid() {
   if (observer) {
     observer.disconnect();
@@ -226,13 +220,9 @@ function resetGrid() {
     return;
   }
   emptyEl.classList.add('hidden');
-  appendCards(); // 첫 40장 동기 렌더
+  appendCards();
 }
 
-/**
- * appendCards — 무한스크롤 시 호출
- * 기존 카드는 절대 건드리지 않고 새 카드만 추가
- */
 function appendCards() {
   const total = state.filtered.length;
   const shown = Math.min(state.limit, total);
@@ -245,7 +235,6 @@ function appendCards() {
     renderedCount = shown;
   }
   
-  // sentinel 갱신 — 더 불러올 게 있을 때만
   moreWrap.innerHTML = '';
   if (renderedCount < total) {
     const sentinel = document.createElement('div');
@@ -263,9 +252,9 @@ function observeSentinel() {
   
   observer = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
-    observer.disconnect(); // 중복 방지
+    observer.disconnect();
     state.limit += 40;
-    appendCards(); // 기존 DOM 유지, 카드만 추가
+    appendCards();
   }, { rootMargin: '300px', threshold: 0 });
   
   observer.observe(sentinel);
@@ -273,7 +262,8 @@ function observeSentinel() {
 
 /* ── Detail ─────────────────────────────────────────────────── */
 function openDetail(item) {
-  dCover.src = item.cover ? large(item.cover) : COVER_PLACEHOLDER;
+  // 변수 대신 이미지 URL 직접 사용
+  dCover.src = item.cover ? large(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
   dCover.srcset = item.cover ? [
     proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
     proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
@@ -282,7 +272,7 @@ function openDetail(item) {
   dCover.sizes = '100vw';
   
   dCover.onerror = () => {
-    dCover.src = COVER_PLACEHOLDER;
+    dCover.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
     dCover.removeAttribute('srcset');
   };
   
