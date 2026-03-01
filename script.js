@@ -35,7 +35,7 @@ const dTrackCount = document.getElementById('dTrackCount');
 function toTracks(s) {
   if (Array.isArray(s)) return s;
   if (!s) return [];
-  return s.split(/\s*;\s*|\s*·\s*|\s*\|\s*/).map(function(t) { return t.trim(); }).filter(Boolean);
+  return s.split(/\s*;\s*|\s*·\s*|\s*\|\s*/).map(t => t.trim()).filter(Boolean);
 }
 
 function isValid(it) {
@@ -45,46 +45,40 @@ function isValid(it) {
 }
 
 function sortByArtist(arr) {
-  return [].concat(arr).sort(function(a, b) {
-    return (a.artist || '').localeCompare(b.artist || '', 'ko', { sensitivity: 'base' });
-  });
+  return [...arr].sort((a, b) =>
+    (a.artist || '').localeCompare(b.artist || '', 'ko', { sensitivity: 'base' })
+  );
 }
 
 function sortRandom(arr) {
-  return [].concat(arr).sort(function() { return Math.random() - 0.5; });
+  return [...arr].sort(() => Math.random() - 0.5);
 }
 
 function debounce(fn, ms) {
   let t;
-  return function() {
-    const args = arguments;
+  return (...args) => {
     clearTimeout(t);
-    t = setTimeout(function() { fn.apply(null, args); }, ms);
+    t = setTimeout(() => fn(...args), ms);
   };
 }
 
-function proxify(url, options) {
+function proxify(url, { w, h, fit = 'cover' } = {}) {
   if (!url) return '';
-  options = options || {};
-  let w = options.w;
-  let h = options.h;
-  let fit = options.fit || 'cover';
-
   let s = String(url).trim()
     .replace(/&amp;/g, '&')
     .replace(/^\/\//, 'https://')
     .replace(/^http:\/\//, 'https://');
   
   const core = s.replace(/^https?:\/\//, '');
-  let q = 'https://images.weserv.nl/?url=' + encodeURIComponent(core);
-  if (w) q += '&w=' + w;
-  if (h) q += '&h=' + h;
-  q += '&fit=' + fit;
+  let q = `https://images.weserv.nl/?url=${encodeURIComponent(core)}`;
+  if (w) q += `&w=${w}`;
+  if (h) q += `&h=${h}`;
+  q += `&fit=${fit}`;
   return q;
 }
 
-const thumb = function(url) { return proxify(url, { w: 400, h: 400, fit: 'cover' }); };
-const large = function(url) { return proxify(url, { w: 900, h: 900, fit: 'contain' }); };
+const thumb = url => proxify(url, { w: 400, h: 400, fit: 'cover' });
+const large = url => proxify(url, { w: 900, h: 900, fit: 'contain' });
 
 function esc(s) {
   return String(s)
@@ -95,23 +89,22 @@ function esc(s) {
 /* ── Fetch ──────────────────────────────────────────────────── */
 function parseGviz(text) {
   const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
-  const cols = json.table.cols.map(function(c) { return c.label || c.id; });
+  const cols = json.table.cols.map(c => c.label || c.id);
   return json.table.rows
-    .filter(function(r) { return r && r.c; })
-    .map(function(r) {
+    .filter(r => r && r.c)
+    .map(r => {
       const row = {};
-      r.c.forEach(function(cell, i) {
-        row[cols[i]] = cell ? (cell.v !== null && cell.v !== undefined ? cell.v : '') : '';
+      r.c.forEach((cell, i) => {
+        row[cols[i]] = cell ? (cell.v ?? '') : '';
       });
       return row;
     });
 }
 
 function mapGvizRow(row) {
-  const g = function(k) {
-    for (const key in row) {
-      if (key.toLowerCase() === k.toLowerCase()) return row[key] !== null && row[key] !== undefined ? row[key] : '';
-    }
+  const g = k => {
+    for (const key of Object.keys(row))
+      if (key.toLowerCase() === k.toLowerCase()) return row[key] ?? '';
     return '';
   };
   return {
@@ -127,23 +120,19 @@ function mapGvizRow(row) {
 
 async function fetchData() {
   const res = await fetch(SHEET_GVIZ_URL);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const text = await res.text();
-  const rows = parseGviz(text);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const rows = parseGviz(await res.text());
   return rows.map(mapGvizRow).filter(isValid);
 }
 
 /* ── Filters ────────────────────────────────────────────────── */
 function applyFilters() {
   const q = state.query.toLowerCase();
-  const filtered = state.data.filter(function(it) {
+  const filtered = state.data.filter(it => {
     const genreOk = state.activeGenre === 'all' || it.genre.trim() === state.activeGenre;
     if (!genreOk) return false;
     if (!q) return true;
-    
-    let trackStr = '';
-    if(it.tracks && it.tracks.length > 0) trackStr = it.tracks.join(' ');
-    return [it.album, it.artist, it.genre, trackStr].join(' ').toLowerCase().includes(q);
+    return [it.album, it.artist, it.genre, ...it.tracks].join(' ').toLowerCase().includes(q);
   });
   state.filtered = (state.activeGenre === 'all' && !q) ? sortRandom(filtered) : sortByArtist(filtered);
   window.scrollTo(0, 0);
@@ -152,34 +141,26 @@ function applyFilters() {
 
 /* ── Genre chips ────────────────────────────────────────────── */
 function buildGenreChips() {
-  const genreList = [];
-  state.data.forEach(function(d) {
-    let g = (d.genre || '').trim();
-    if(g && genreList.indexOf(g) === -1) genreList.push(g);
-  });
-
-  const genres = genreList.sort(function(a, b) {
-    return a.localeCompare(b, 'ko', { sensitivity: 'base' });
-  });
+  const genres = [...new Set(state.data.map(d => (d.genre || '').trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
   
   genreChips.innerHTML = '';
-  genres.forEach(function(g) {
+  genres.forEach(g => {
     const btn = document.createElement('button');
     btn.className = 'genre-chip';
     btn.dataset.genre = g;
     btn.textContent = g;
-    btn.addEventListener('click', function() { selectGenre(g); });
+    btn.addEventListener('click', () => selectGenre(g));
     genreChips.appendChild(btn);
   });
-  document.getElementById('chipAll').addEventListener('click', function() { selectGenre('all'); });
+  document.getElementById('chipAll').addEventListener('click', () => selectGenre('all'));
 }
 
 function selectGenre(genre) {
   state.activeGenre = genre;
-  document.querySelectorAll('.genre-chip').forEach(function(c) {
-    if(c.dataset.genre === genre) c.classList.add('active');
-    else c.classList.remove('active');
-  });
+  document.querySelectorAll('.genre-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.genre === genre)
+  );
   applyFilters();
 }
 
@@ -187,7 +168,7 @@ function selectGenre(genre) {
 function createCard(item) {
   const card = document.createElement('article');
   card.className = 'card';
-  card.addEventListener('click', function() { openDetail(item); });
+  card.addEventListener('click', () => openDetail(item));
   
   const wrap = document.createElement('div');
   wrap.className = 'card-thumb-wrap';
@@ -196,20 +177,20 @@ function createCard(item) {
   img.className = 'card-thumb';
   img.loading = 'lazy';
   img.decoding = 'async';
+  
+  // 변경점: 커버 이미지가 없을 때 지정하신 prepare.jpg를 사용하도록 직접 입력했습니다.
   img.src = item.cover ? thumb(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
-  img.onerror = function() { img.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg'; };
+  img.onerror = () => { img.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg'; };
   img.alt = item.album || '';
   
   wrap.appendChild(img);
   
   const info = document.createElement('div');
   info.className = 'card-info';
-  
-  let albumName = item.album ? item.album : '(제목 없음)';
-  let artistName = item.artist ? item.artist : '';
-  
-  info.innerHTML = '<p class="card-album">' + esc(albumName) + '</p>' +
-                   '<p class="card-artist">' + esc(artistName) + '</p>';
+  info.innerHTML = `
+    <p class="card-album">${esc(item.album || '(제목 없음)')}</p>
+    <p class="card-artist">${esc(item.artist || '')}</p>
+  `;
   
   card.appendChild(wrap);
   card.appendChild(info);
@@ -232,7 +213,7 @@ function resetGrid() {
   
   const total = state.filtered.length;
   loadingEl.classList.add('hidden');
-  countLabel.textContent = total + ' records';
+  countLabel.textContent = `${total} records`;
   
   if (total === 0) {
     emptyEl.classList.remove('hidden');
@@ -247,7 +228,7 @@ function appendCards() {
   const shown = Math.min(state.limit, total);
   if (renderedCount < shown) {
     const frag = document.createDocumentFragment();
-    state.filtered.slice(renderedCount, shown).forEach(function(item) {
+    state.filtered.slice(renderedCount, shown).forEach(item => {
       frag.appendChild(createCard(item));
     });
     grid.appendChild(frag);
@@ -269,7 +250,7 @@ function observeSentinel() {
   const sentinel = document.getElementById('sentinel');
   if (!sentinel) return;
   
-  observer = new IntersectionObserver(function(entries) {
+  observer = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
     observer.disconnect();
     state.limit += 40;
@@ -281,18 +262,16 @@ function observeSentinel() {
 
 /* ── Detail ─────────────────────────────────────────────────── */
 function openDetail(item) {
+  // 변경점: 상세 페이지에서도 커버가 없을 때 prepare.jpg를 띄우도록 수정했습니다.
   dCover.src = item.cover ? large(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
-  
-  if(item.cover) {
-    dCover.srcset = proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w, ' +
-                    proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w, ' +
-                    proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w';
-  } else {
-    dCover.srcset = '';
-  }
+  dCover.srcset = item.cover ? [
+    proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
+    proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
+    proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
+  ].join(', ') : '';
   dCover.sizes = '100vw';
   
-  dCover.onerror = function() {
+  dCover.onerror = () => {
     dCover.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
     dCover.removeAttribute('srcset');
   };
@@ -301,11 +280,7 @@ function openDetail(item) {
   dArtist.textContent = item.artist || '';
   dMeta.innerHTML = '';
   
-  let metaItems = [];
-  if(item.year) metaItems.push(item.year);
-  if(item.genre) metaItems.push(item.genre);
-  
-  metaItems.forEach(function(val) {
+  [item.year, item.genre].filter(Boolean).forEach(val => {
     const span = document.createElement('span');
     span.className = 'meta-tag';
     span.textContent = val;
@@ -313,13 +288,12 @@ function openDetail(item) {
   });
   
   const tracks = item.tracks || [];
-  dTrackCount.textContent = tracks.length + '곡';
+  dTrackCount.textContent = `${tracks.length}곡`;
   dTracks.innerHTML = '';
-  
-  tracks.forEach(function(t, i) {
+  tracks.forEach((t, i) => {
     const li = document.createElement('li');
     li.className = 'track-item';
-    li.innerHTML = '<span class="track-num">' + (i + 1) + '</span><span class="track-name">' + esc(t) + '</span>';
+    li.innerHTML = `<span class="track-num">${i + 1}</span><span class="track-name">${esc(t)}</span>`;
     dTracks.appendChild(li);
   });
   
@@ -338,7 +312,7 @@ function closeDetail() {
 function openSearch() {
   searchWrap.classList.add('open');
   btnToggleSearch.classList.add('active');
-  requestAnimationFrame(function() { searchInput.focus(); });
+  requestAnimationFrame(() => searchInput.focus());
 }
 
 function closeSearch() {
@@ -350,20 +324,19 @@ function closeSearch() {
   applyFilters();
 }
 
-btnToggleSearch.addEventListener('click', function() {
+btnToggleSearch.addEventListener('click', () => {
   searchWrap.classList.contains('open') ? closeSearch() : openSearch();
 });
 
 /* ── Events ─────────────────────────────────────────────────── */
-const handleSearch = debounce(function() {
+const handleSearch = debounce(() => {
   state.query = searchInput.value.trim();
-  if(state.query.length > 0) btnClear.classList.add('visible');
-  else btnClear.classList.remove('visible');
+  btnClear.classList.toggle('visible', state.query.length > 0);
   applyFilters();
 }, 300);
 
 searchInput.addEventListener('input', handleSearch);
-searchInput.addEventListener('keydown', function(e) {
+searchInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
     searchInput.blur();
@@ -371,7 +344,7 @@ searchInput.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeSearch();
 });
 
-btnClear.addEventListener('click', function() {
+btnClear.addEventListener('click', () => {
   searchInput.value = '';
   state.query = '';
   btnClear.classList.remove('visible');
@@ -379,8 +352,8 @@ btnClear.addEventListener('click', function() {
   searchInput.focus();
 });
 
-btnBack.addEventListener('click', function() { history.back(); });
-window.addEventListener('popstate', function() {
+btnBack.addEventListener('click', () => history.back());
+window.addEventListener('popstate', () => {
   if (location.hash !== '#detail') closeDetail();
 });
 
@@ -393,7 +366,7 @@ async function init() {
     buildGenreChips();
     resetGrid();
   } catch (e) {
-    loadingEl.innerHTML = '<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ' + e.message + '</p>';
+    loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
   }
 }
 
