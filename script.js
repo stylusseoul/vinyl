@@ -2,6 +2,8 @@
    STYLUS VINYL — script.js
    ============================================================ */
 
+const COVER_PLACEHOLDER = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
+
 const state = {
   data:        [],
   filtered:    [],
@@ -32,6 +34,18 @@ const dTracks         = document.getElementById('dTracks');
 const dTrackCount     = document.getElementById('dTrackCount');
 
 /* ── Utils ──────────────────────────────────────────────────── */
+
+function safeImage(imgEl, url, transformer = null) {
+  const finalUrl = url ? (transformer ? transformer(url) : url) : COVER_PLACEHOLDER;
+
+  imgEl.src = finalUrl;
+
+  imgEl.onerror = () => {
+    imgEl.onerror = null;
+    imgEl.removeAttribute('srcset');
+    imgEl.src = COVER_PLACEHOLDER;
+  };
+}
 
 function toTracks(s) {
   if (Array.isArray(s)) return s;
@@ -139,32 +153,6 @@ function applyFilters() {
   resetGrid();
 }
 
-
-/* ── Genre chips ────────────────────────────────────────────── */
-
-function buildGenreChips() {
-  const genres = [...new Set(state.data.map(d => (d.genre || '').trim()).filter(Boolean))]
-    .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
-  genreChips.innerHTML = '';
-  genres.forEach(g => {
-    const btn = document.createElement('button');
-    btn.className   = 'genre-chip';
-    btn.dataset.genre = g;
-    btn.textContent = g;
-    btn.addEventListener('click', () => selectGenre(g));
-    genreChips.appendChild(btn);
-  });
-  document.getElementById('chipAll').addEventListener('click', () => selectGenre('all'));
-}
-
-function selectGenre(genre) {
-  state.activeGenre = genre;
-  document.querySelectorAll('.genre-chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.genre === genre)
-  );
-  applyFilters();
-}
-
 /* ── 카드 생성 ───────────────────────────────────────────────── */
 
 function createCard(item) {
@@ -179,9 +167,10 @@ function createCard(item) {
   img.className   = 'card-thumb';
   img.loading     = 'lazy';
   img.decoding    = 'async';
-  img.src         = item.cover ? thumb(item.cover) : COVER_PLACEHOLDER;
-  img.onerror     = () => { img.src = COVER_PLACEHOLDER; };
   img.alt         = item.album || '';
+
+  safeImage(img, item.cover, thumb);
+
   wrap.appendChild(img);
 
   const info = document.createElement('div');
@@ -196,90 +185,22 @@ function createCard(item) {
   return card;
 }
 
-/* ── Render ─────────────────────────────────────────────────── */
-
-// 현재 DOM에 렌더된 카드 수
-let renderedCount = 0;
-let observer      = null;
-
-/**
- * resetGrid — 필터·검색 변경 시만 호출
- * 그리드를 비우고 처음부터 다시 그림
- */
-function resetGrid() {
-  if (observer) { observer.disconnect(); observer = null; }
-  grid.innerHTML    = '';
-  moreWrap.innerHTML = '';
-  renderedCount     = 0;
-  state.limit       = 40;
-
-  const total = state.filtered.length;
-  loadingEl.classList.add('hidden');
-  countLabel.textContent = `${total} records`;
-
-  if (total === 0) {
-    emptyEl.classList.remove('hidden');
-    return;
-  }
-  emptyEl.classList.add('hidden');
-  appendCards(); // 첫 40장 동기 렌더
-}
-
-/**
- * appendCards — 무한스크롤 시 호출
- * 기존 카드는 절대 건드리지 않고 새 카드만 추가
- */
-function appendCards() {
-  const total = state.filtered.length;
-  const shown = Math.min(state.limit, total);
-
-  if (renderedCount < shown) {
-    const frag = document.createDocumentFragment();
-    state.filtered.slice(renderedCount, shown).forEach(item => {
-      frag.appendChild(createCard(item));
-    });
-    grid.appendChild(frag);
-    renderedCount = shown;
-  }
-
-  // sentinel 갱신 — 더 불러올 게 있을 때만
-  moreWrap.innerHTML = '';
-  if (renderedCount < total) {
-    const sentinel = document.createElement('div');
-    sentinel.id = 'sentinel';
-    moreWrap.appendChild(sentinel);
-    observeSentinel();
-  }
-}
-
-/* ── Infinite scroll ────────────────────────────────────────── */
-
-function observeSentinel() {
-  if (observer) observer.disconnect();
-  const sentinel = document.getElementById('sentinel');
-  if (!sentinel) return;
-
-  observer = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    observer.disconnect();         // 중복 방지
-    state.limit += 40;
-    appendCards();                 // 기존 DOM 유지, 카드만 추가
-  }, { rootMargin: '300px', threshold: 0 });
-
-  observer.observe(sentinel);
-}
-
 /* ── Detail ─────────────────────────────────────────────────── */
 
 function openDetail(item) {
-  dCover.src    = item.cover ? large(item.cover) : COVER_PLACEHOLDER;
-  dCover.srcset = item.cover ? [
-    proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
-    proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
-    proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
-  ].join(', ') : '';
+  safeImage(dCover, item.cover, large);
+
+  if (item.cover) {
+    dCover.srcset = [
+      proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
+      proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
+      proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
+    ].join(', ');
+  } else {
+    dCover.removeAttribute('srcset');
+  }
+
   dCover.sizes  = '100vw';
-  dCover.onerror = () => { dCover.src = COVER_PLACEHOLDER; dCover.removeAttribute('srcset'); };
 
   dAlbum.textContent  = item.album  || '';
   dArtist.textContent = item.artist || '';
@@ -295,6 +216,7 @@ function openDetail(item) {
   const tracks = item.tracks || [];
   dTrackCount.textContent = `${tracks.length}곡`;
   dTracks.innerHTML = '';
+
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
     li.className = 'track-item';
@@ -307,74 +229,3 @@ function openDetail(item) {
   window.scrollTo(0, 0);
   history.pushState({ detail: true }, '', '#detail');
 }
-
-function closeDetail() {
-  detailView.classList.add('hidden');
-  listView.classList.remove('hidden');
-}
-
-/* ── Search toggle ──────────────────────────────────────────── */
-
-function openSearch() {
-  searchWrap.classList.add('open');
-  btnToggleSearch.classList.add('active');
-  requestAnimationFrame(() => searchInput.focus());
-}
-
-function closeSearch() {
-  searchWrap.classList.remove('open');
-  btnToggleSearch.classList.remove('active');
-  searchInput.value = '';
-  state.query = '';
-  btnClear.classList.remove('visible');
-  applyFilters();
-}
-
-btnToggleSearch.addEventListener('click', () => {
-  searchWrap.classList.contains('open') ? closeSearch() : openSearch();
-});
-
-/* ── Events ─────────────────────────────────────────────────── */
-
-const handleSearch = debounce(() => {
-  state.query = searchInput.value.trim();
-  btnClear.classList.toggle('visible', state.query.length > 0);
-  applyFilters();
-}, 300);
-
-searchInput.addEventListener('input', handleSearch);
-
-searchInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter')  { e.preventDefault(); searchInput.blur(); }
-  if (e.key === 'Escape') closeSearch();
-});
-
-btnClear.addEventListener('click', () => {
-  searchInput.value = '';
-  state.query       = '';
-  btnClear.classList.remove('visible');
-  applyFilters();
-  searchInput.focus();
-});
-
-btnBack.addEventListener('click', () => history.back());
-
-window.addEventListener('popstate', () => {
-  if (location.hash !== '#detail') closeDetail();
-});
-
-/* ── Init ───────────────────────────────────────────────────── */
-
-async function init() {
-  try {
-    const data = await fetchData();
-    state.data     = data;
-    state.filtered = sortRandom(data);
-    buildGenreChips();
-    resetGrid();
-  } catch (e) {
-    loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
-  }
-}
-
-init();
