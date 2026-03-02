@@ -41,7 +41,6 @@ body {
   background: var(--bg);
   padding-top: env(safe-area-inset-top, 0);
   box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
-  /* ✅ 헤더를 별도 레이어로 분리 — 스크롤 중 리페인트 방지 */
   will-change: transform;
   transform: translateZ(0);
 }
@@ -199,9 +198,7 @@ body {
    LIST MAIN
    ============================================================ */
 
-.list-main {
-  padding: 0 16px 0;
-}
+.list-main { padding: 0 16px 0; }
 
 .count-label {
   font-size: 11px;
@@ -226,13 +223,10 @@ body {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  /* ✅ 카드 영역을 독립 페인트 레이어로 분리 */
   contain: paint;
 }
 .card:active .card-thumb-wrap { opacity: 0.7; }
-.card-overlay { display: none; }
 
-/* ✅ padding-bottom 트릭 — 이미지 로드 전후 높이 완전 고정 */
 .card-thumb-wrap {
   width: 100%;
   position: relative;
@@ -290,11 +284,7 @@ body {
    LOADING / EMPTY / MORE
    ============================================================ */
 
-.loading-state {
-  display: flex;
-  justify-content: center;
-  padding: 100px 0;
-}
+.loading-state { display: flex; justify-content: center; padding: 100px 0; }
 
 .spinner {
   width: 20px;
@@ -323,7 +313,7 @@ body {
    ============================================================ */
 
 .list-footer {
-  padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 60px); /* 플로팅 버튼 여백 고려 */
   margin-top: 0;
   border-top: 1px solid var(--border);
   display: flex;
@@ -359,8 +349,42 @@ body {
   padding: 8px 14px;
 }
 .footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
-.footer-insta span { display: block; line-height: 1; }
 .footer-insta:active { color: var(--text); }
+
+
+/* ============================================================
+   FLOATING REQUESTS BUTTON (MAIN PAGE)
+   ============================================================ */
+.floating-requests-btn {
+  position: fixed;
+  bottom: calc(max(24px, env(safe-area-inset-bottom) + 16px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(30, 30, 30, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text);
+  padding: 14px 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
+}
+.floating-requests-btn:active {
+  transform: translateX(-50%) scale(0.95);
+}
+.floating-requests-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(20px);
+}
 
 
 /* ============================================================
@@ -409,29 +433,12 @@ body {
   text-transform: uppercase;
 }
 
-.discogs-btn {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  background: none;
-  border: none;
-  color: var(--sub);
-  text-decoration: none;
-  border-radius: 50%;
-  transition: color 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.discogs-btn svg { width: 18px; height: 18px; }
-.discogs-btn.no-link { opacity: 0; pointer-events: none; }
-
 .detail-cover-wrap {
   display: flex;
   justify-content: center;
   padding: 28px 48px 0;
 }
 
-/* ✅ detail도 padding-bottom 트릭 적용 */
 .detail-cover-box {
   width: 100%;
   max-width: 280px;
@@ -491,10 +498,10 @@ body {
   border-radius: 999px;
   padding: 5px 12px;
 }
-.meta-tag + .meta-tag::before { content: none; }
 
+/* 바텀 시트가 올라올 때 마지막 곡이 가려지지 않도록 하단 여백 충분히 확보 */
 .detail-tracks-section {
-  padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 200px); 
 }
 
 .tracks-header {
@@ -519,6 +526,10 @@ body {
   color: var(--sub);
 }
 
+/* ============================================================
+   TRACK SELECTABLE UI (라디오 버튼 스타일)
+   ============================================================ */
+
 .track-list { list-style: none; }
 
 .track-item {
@@ -528,13 +539,43 @@ body {
   padding: 11px 0;
 }
 
-.detail-footer {
-  padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 14px);
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+.track-item.selectable {
+  cursor: pointer;
+  position: relative;
+  padding: 12px;
+  margin: 0 -12px; /* 좌우 여백 맞춰서 배경색 꽉 차게 */
+  border-radius: 8px;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.track-item.selectable:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* 우측 빈 동그라미 */
+.track-check-circle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 곡이 선택되었을 때 (주황색 체크) */
+.track-item.selected {
+  background: rgba(255, 255, 255, 0.08);
+}
+.track-item.selected .track-check-circle {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .track-num {
@@ -552,7 +593,95 @@ body {
   font-weight: 400;
   color: var(--text);
   line-height: 1.4;
+  padding-right: 32px; /* 체크박스 공간 확보 */
 }
+
+
+/* ============================================================
+   REQUEST BOTTOM SHEET (DETAIL PAGE)
+   ============================================================ */
+
+.request-bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  transform: translateY(0);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s;
+}
+
+.request-bottom-sheet.hidden {
+  display: block !important; /* JS 기본 hidden 무시하고 애니메이션 적용 */
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.request-sheet-header { margin-bottom: 16px; }
+
+.request-sheet-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.request-sheet-subtitle { font-size: 13px; color: var(--sub); }
+
+.request-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.request-sheet-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  padding: 14px 16px;
+  outline: none;
+  font-family: var(--font);
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.request-sheet-input:focus { border-color: var(--accent); }
+.request-sheet-input::placeholder { color: var(--sub2); }
+
+.request-sheet-footer { display: flex; flex-direction: column; gap: 10px; }
+
+.request-sheet-status {
+  font-size: 13px;
+  text-align: center;
+  color: var(--accent);
+  display: none;
+}
+
+.request-sheet-submit {
+  width: 100%;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.request-sheet-submit:active { opacity: 0.8; }
 
 
 /* ============================================================
