@@ -493,10 +493,10 @@ window.addEventListener('popstate', () => {
 /* ── Init ───────────────────────────────────────────────────── */
 async function init() {
   try {
-    // 1. [스위치 확인] B1 셀의 값만 콕 집어서 가져오기 (5분 캐시 방지)
-    // config.js의 SHEET_ID를 재사용하여 B1 범위만 요청합니다.
+    // 1. [스위치 확인] 바이닐 탭(gid=166200406)의 B1 셀 값을 가져오기 (5분 캐시 방지)
     const cacheBuster = `&_=${new Date().getTime()}`;
-    const statusUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=0&range=B1:B1${cacheBuster}`;
+    // ★ gid=0 을 gid=166200406 으로 정확히 수정했습니다!
+    const statusUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=166200406&range=B1:B1${cacheBuster}`;
     
     try {
       const statusRes = await fetch(statusUrl);
