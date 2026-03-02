@@ -35,7 +35,7 @@
     .hidden { display: none !important; }
 
     /* ══════════════════════════════
-       HEADER
+       HEADER (index.html 기준 완벽 동기화)
     ══════════════════════════════ */
     .req-header {
       position: sticky;
@@ -45,34 +45,35 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       padding-top: env(safe-area-inset-top, 0);
-      border-bottom: 1px solid var(--border);
+      /* index.html의 box-shadow 대신 구분선을 유지하되 여백은 일치시킴 */
+      border-bottom: 1px solid var(--border); 
     }
 
-    /* 로고 / 중앙 / PDF 한 줄 */
+    /* 로고 / 중앙 / PDF 한 줄 (index.html의 .header-top과 동일) */
     .req-header-inner {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 52px;
-      padding: 0 16px; /* 좌우 여백 수정 (index.html 기준 맞춤) */
+      height: 56px;           /* index.html 기준 */
+      padding: 12px 16px 10px; /* index.html 기준 */
     }
 
-    /* 좌측 영역 (로고) */
+    /* 좌측 로고 영역 */
     .header-left {
       display: flex;
       align-items: center;
-      flex: 1; /* 중앙 영역 정렬 보정을 위해 flex 할당 */
+      flex: 1; 
     }
 
     .logo-img {
-      height: 24px; /* index.html 로고와 동일 크기 (28px -> 24px) */
+      height: 28px; /* index.html 기준 */
       object-fit: contain;
       filter: brightness(0) invert(1);
-      opacity: 0.85;
+      opacity: 0.95; /* index.html 기준 */
       display: block;
       flex-shrink: 0;
-      margin-left: 4px; /* index.html 로고와 동일한 위치 보정 */
+      /* 기존 margin 삭제 (index.html에 맞춤) */
     }
 
     /* 중앙 영역 (절대 정중앙 고정) */
@@ -88,9 +89,8 @@
       white-space: nowrap;
     }
 
-    /* 페이지 타이틀 */
     .header-page-name {
-      font-size: 14px; /* 레이아웃 밸런스를 위해 17->14로 소폭 하향 */
+      font-size: 14px;
       font-weight: 700;
       letter-spacing: 0.04em;
       color: var(--text);
@@ -98,7 +98,6 @@
       line-height: 1;
     }
 
-    /* Live · 시계 행 */
     .header-live-row {
       display: flex;
       align-items: center;
@@ -139,47 +138,45 @@
       line-height: 1;
     }
 
-    /* 우측 영역 (PDF 버튼) */
+    /* 우측 버튼 영역 */
     .header-right {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      flex: 1; /* 중앙 영역 정렬 보정을 위해 flex 할당 */
+      flex: 1;
     }
 
-    /* PDF 버튼 (위치, 크기, 색상 수정) */
+    /* PDF 버튼 (index.html 검색 버튼 기준 완벽 동기화) */
     .pdf-btn {
-      width: 44px; /* index.html 검색버튼과 동일한 터치영역 */
-      height: 44px; /* index.html 검색버튼과 동일한 터치영역 */
+      width: 32px;  /* index.html 기준 */
+      height: 32px; /* index.html 기준 */
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       background: none;
       border: none;
+      color: #ffffff; /* 흰색 요구사항 반영 */
       cursor: pointer;
-      color: #ffffff; /* 흰색으로 변경 */
-      padding: 0;
+      border-radius: 50%; /* index.html 기준 */
+      transition: color 0.15s;
       -webkit-tap-highlight-color: transparent;
-      border-radius: 50%; /* 터치 피드백을 위한 둥근 모서리 */
-      transition: background-color 0.15s, transform 0.1s;
-      margin-right: -4px; /* 우측 여백 미세조정 */
+      padding: 0;
     }
     .pdf-btn svg { 
-      width: 17px; /* 아이콘 크기 약간 축소 (기존 19px) */
-      height: 17px; 
+      width: 20px;  /* index.html 기준 */
+      height: 20px; /* index.html 기준 */
       display: block; 
     }
     .pdf-btn:active { 
-      background-color: rgba(255,255,255,0.1); 
-      transform: scale(0.95); 
+      color: var(--accent); /* index.html 기준 클릭 효과 */
     }
 
     /* 카운트 · 싱크 바 */
     .req-count-bar {
       display: flex;
       align-items: center;
-      padding: 0 18px 11px;
+      padding: 0 16px 11px; /* index.html 여백 기준 반영 (20px -> 16px) */
       gap: 5px;
     }
     .req-count-num {
@@ -212,7 +209,7 @@
     /* ══════════════════════════════
        LIST
     ══════════════════════════════ */
-    .req-main { padding: 0 18px; }
+    .req-main { padding: 0 16px; } /* index.html 여백 기준 반영 */
     .req-list  { display: flex; flex-direction: column; }
 
     /* ── 아이템 ── */
@@ -470,13 +467,14 @@
   <!-- HEADER -->
   <header class="req-header">
     <div class="req-header-inner">
-      <!-- 좌측 로고 -->
+      <!-- 1. 좌측 로고 -->
       <div class="header-left">
-        <img src="images/logo.png" alt="Stylus" class="logo-img"
-             onerror="this.style.display='none'">
+        <a href="https://stylusseoul.github.io/vinyl/" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+          <img src="images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'">
+        </a>
       </div>
       
-      <!-- 중앙 제목 -->
+      <!-- 2. 중앙 타이틀 -->
       <div class="header-center">
         <span class="header-page-name">Requests</span>
         <div class="header-live-row">
@@ -487,10 +485,10 @@
         </div>
       </div>
       
-      <!-- 우측 PDF 버튼 -->
+      <!-- 3. 우측 PDF 버튼 (index 검색 버튼 기준 적용) -->
       <div class="header-right">
         <button class="pdf-btn" aria-label="PDF 저장">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12m0 0-4-4m4 4 4-4"/>
             <path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/>
           </svg>
