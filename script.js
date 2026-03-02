@@ -115,8 +115,10 @@ function parseGviz(text) {
 
 function mapGvizRow(row) {
   const g = k => {
+    // 띄어쓰기 등 오타 방지용 검사
+    const searchKey = k.replace(/\s+/g, '').toLowerCase();
     for (const key of Object.keys(row)) {
-      if (key.toLowerCase() === k.toLowerCase()) return row[key] ?? '';
+      if (key.replace(/\s+/g, '').toLowerCase() === searchKey) return row[key] ?? '';
     }
     return '';
   };
@@ -129,12 +131,15 @@ function mapGvizRow(row) {
     cover: String(g('cover') || g('Cover') || ''),
     discogs: String(g('Discogs URL') || g('Discogs') || ''),
     tracks: toTracks(g('Tracks')),
-    status: String(g('신청상태') || g('Status') || ''), // ★ 추가됨: 시트에서 ON/OFF 여부 가져오기
+    status: String(g('신청상태') || g('Status') || ''), // 시트에서 상태값 가져오기
   };
 }
 
 async function fetchData() {
-  const res = await fetch(SHEET_GVIZ_URL);
+  // ★ 구글 시트의 5분 캐시를 무시하고 즉각 반영되도록 타임스탬프 추가
+  const cacheBuster = `&_=${new Date().getTime()}`;
+  const res = await fetch(SHEET_GVIZ_URL + cacheBuster);
+  
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
   const rows = parseGviz(await res.text());
@@ -317,7 +322,6 @@ function openDetail(item) {
   selectedTrackData = null;
   reqSheet.classList.add('hidden');
   
-  // 상세 진입 시 플로팅 버튼 숨김 처리
   if (floatingBtn) {
     floatingBtn.classList.add('hidden');
   }
@@ -325,7 +329,7 @@ function openDetail(item) {
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
     
-    // ★ 변경됨: ON일 때만 selectable 디자인 적용
+    // ON 상태일 때만 신청 UI(selectable) 생성
     if (state.isRequestEnabled) {
       li.className = 'track-item selectable';
       li.innerHTML = `
@@ -355,7 +359,7 @@ function openDetail(item) {
         }
       });
     } else {
-      // ★ 변경됨: OFF일 때는 선택 불가능한 기본 리스트로 표시
+      // OFF 상태일 때는 터치 불가능한 기본 텍스트 리스트
       li.className = 'track-item';
       li.innerHTML = `
         <span class="track-num">${i + 1}</span>
@@ -377,7 +381,7 @@ function closeDetail() {
   listView.classList.remove('hidden');
   reqSheet.classList.add('hidden');
   
-  // ★ 변경됨: 뒤로가기 시 ON 상태일 때만 플로팅 버튼 복구
+  // 뒤로가기 시 ON 상태일 때만 플로팅 버튼 복구
   if (state.isRequestEnabled && floatingBtn) {
     floatingBtn.classList.remove('hidden');
   }
@@ -402,7 +406,6 @@ btnSubmitRequest.addEventListener('click', async () => {
   btnSubmitRequest.textContent = '신청 중...';
 
   try {
-    // ★ 꼬아놨던 거 원상복구: 가장 표준적인 FormData 방식으로 전송
     const formData = new FormData();
     formData.append('album', selectedTrackData.album);
     formData.append('artist', selectedTrackData.artist);
@@ -494,17 +497,17 @@ async function init() {
     state.data = data;
     state.filtered = sortRandom(data);
     
-    // ★ 추가됨: 시트의 첫 번째 행에서 '신청상태' 값을 확인하여 ON/OFF 결정
-    if (data.length > 0) {
-      const globalStatus = data[0].status.toUpperCase();
-      if (globalStatus === 'OFF') {
-        state.isRequestEnabled = false;
-      }
+    // ★ 변경됨: 시트 전체에서 단 1개라도 OFF 값이 있으면 앱 전체를 OFF 처리
+    const isOff = data.some(d => d.status && d.status.trim().toUpperCase() === 'OFF');
+    
+    if (isOff) {
+      state.isRequestEnabled = false;
     }
     
-    // OFF 상태라면 메인 화면 진입 시점부터 플로팅 버튼 숨김
+    // OFF 상태라면 메인 화면 플로팅 버튼 완벽하게 제거
     if (!state.isRequestEnabled && floatingBtn) {
       floatingBtn.style.display = 'none';
+      floatingBtn.classList.add('hidden');
     }
     
     buildGenreChips();
