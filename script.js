@@ -385,10 +385,11 @@ btnSubmitRequest.addEventListener('click', async () => {
         memo: userNote
       };
 
-      // ★ [중요] 한자/일본어 깨짐 완벽 방지를 위한 Base64 변환 로직
-      // encodeURIComponent로 변환 후 btoa를 태워야 일본어/한자 에러가 안 납니다!
+      // ★ [수정됨] 가장 안전한 UTF-8 -> Base64 변환 방식
       const jsonString = JSON.stringify(payload);
-      const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+      // 한글/일본어를 안전하게 바이트 배열로 변환 후 Base64로 인코딩
+      const utf8Bytes = new TextEncoder().encode(jsonString);
+      const encodedData = btoa(String.fromCharCode(...utf8Bytes));
 
       await fetch(REQUEST_API_URL, {
         method: 'POST',
