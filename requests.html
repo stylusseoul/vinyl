@@ -3,260 +3,331 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request Queue - STYLUS</title>
-  <!-- 기존에 쓰시는 config.js를 불러와 시트 ID를 사용합니다 -->
+  <title>STYLUS LIVE QUEUE</title>
   <script src="config.js"></script>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <style>
     :root {
-      --bg: #121212;
-      --surface: #1e1e1e;
-      --surface-hover: #2a2a2a;
-      --text: #ffffff;
-      --sub: #a0a0a0;
+      --bg-base: #050505;
+      --bg-card: #111111;
+      --border-color: #262626;
+      --text-main: #ffffff;
+      --text-muted: #888888;
       --accent: #1DB954;
-      --border: #333333;
+      --accent-dim: rgba(29, 185, 84, 0.15);
+      --played-opacity: 0.35;
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-      padding: 20px;
-      line-height: 1.5;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
     }
 
-    .header {
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 5, 5, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 20px 32px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+      align-items: flex-end;
     }
 
-    .title-wrap {
+    .topbar-left h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
-
-    /* 실시간 깜빡임 효과 */
-    .live-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      color: var(--accent);
-      font-weight: 600;
-      background: rgba(29, 185, 84, 0.1);
-      padding: 6px 12px;
-      border-radius: 20px;
-    }
     .live-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--accent);
+      width: 10px;
+      height: 10px;
+      background-color: #ff3b30;
       border-radius: 50%;
-      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 10px #ff3b30;
+      animation: pulse-red 1.5s infinite;
     }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.7); }
-      70% { box-shadow: 0 0 0 6px rgba(29, 185, 84, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0); }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
     }
 
-    .queue-container {
+    .topbar-left p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .topbar-right {
+      text-align: right;
+      color: var(--text-muted);
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .queue-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
-    .req-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    .track-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      transition: all 0.2s;
-    }
-    
-    /* G열에 '완료'라는 단어가 들어가면 카드를 어둡게 처리 */
-    .req-card.played {
-      opacity: 0.4;
-      background: transparent;
-    }
-    .req-card.played .req-track { text-decoration: line-through; }
-
-    .req-main { flex: 1; }
-    .req-time { font-size: 0.8rem; color: var(--sub); margin-bottom: 6px; display: block; }
-    .req-track { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #fff; word-break: keep-all; }
-    .req-artist { font-size: 0.95rem; color: var(--sub); margin-bottom: 12px; }
-    
-    .req-meta {
-      display: flex;
-      gap: 8px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 24px;
       align-items: center;
-      flex-wrap: wrap;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      animation: slideIn 0.4s ease forwards;
     }
-
-    .badge {
-      font-size: 0.8rem;
-      padding: 4px 8px;
-      border-radius: 6px;
-      background: #333;
-      color: #ddd;
-    }
-    .badge-name { background: rgba(29, 185, 84, 0.15); color: var(--accent); font-weight: 600; }
     
-    .req-memo {
-      margin-top: 12px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.03);
-      border-left: 3px solid var(--accent);
-      border-radius: 0 6px 6px 0;
-      font-size: 0.9rem;
-      color: #ccc;
-      font-style: italic;
+    .track-card:hover { border-color: #444; transform: translateY(-2px); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .req-status {
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 20px;
-      background: #333;
-      color: #aaa;
-      white-space: nowrap;
-      margin-left: 16px;
-    }
-
-    .empty-state {
+    .time-col {
       text-align: center;
-      padding: 60px 20px;
-      color: var(--sub);
-      font-size: 1.1rem;
-      background: var(--surface);
-      border-radius: 12px;
-      border: 1px dashed var(--border);
+      font-family: monospace;
+      color: var(--text-muted);
+      border-right: 1px solid var(--border-color);
+      padding-right: 24px;
+    }
+    .time-time { font-size: 1.1rem; font-weight: 600; color: #ccc; }
+    .time-date { font-size: 0.75rem; margin-top: 4px; letter-spacing: -0.5px; }
+
+    .info-col { display: flex; flex-direction: column; justify-content: center; }
+    .track-title { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; letter-spacing: -0.3px; }
+    .track-artist { font-size: 1.05rem; font-weight: 500; color: var(--text-muted); margin-bottom: 16px; }
+
+    .meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .req-name { display: inline-flex; align-items: center; gap: 6px; background: #222; color: #ddd; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .req-memo { display: inline-block; background: var(--accent-dim); color: var(--accent); padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; }
+
+    .status-col { text-align: right; }
+    .status-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* 상태별 컬러 디자인 */
+    /* 대기중 (N) - 초록색으로 활성화된 느낌 */
+    .status-pending { 
+      background: rgba(29, 185, 84, 0.1); 
+      color: var(--accent); 
+      border: 1px solid rgba(29, 185, 84, 0.3); 
+    }
+    /* 재생완료 (Y) - 회색으로 죽인 느낌 */
+    .status-played { 
+      background: transparent; 
+      color: #555; 
+      border: 1px solid #333; 
+    }
+    .status-custom { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid #555; }
+
+    /* 재생 완료(Played) 카드 전체 디자인 - 확 어둡게 죽임 */
+    .track-card.played {
+      opacity: var(--played-opacity);
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+    .track-card.played:hover { transform: none; border-color: transparent; }
+    .track-card.played .track-title { text-decoration: line-through; color: #666; }
+
+    @media (max-width: 768px) {
+      .track-card { grid-template-columns: 1fr; gap: 16px; }
+      .time-col { border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 12px; text-align: left; display: flex; gap: 12px; align-items: baseline; }
+      .status-col { text-align: left; margin-top: 8px; }
+      .topbar { padding: 16px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="title-wrap">
-      <h1>Request Queue</h1>
-      <div class="live-indicator"><div class="live-dot"></div> 실시간 수신 중</div>
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1><div class="live-dot"></div> REQUEST QUEUE</h1>
+      <p>STYLUS Vinyl & Music</p>
     </div>
-    <div style="font-size: 0.85rem; color: var(--sub);" id="lastUpdate">업데이트: -</div>
-  </div>
+    <div class="topbar-right">
+      <div id="clock">00:00:00</div>
+      <div id="lastUpdate">Sync: -</div>
+    </div>
+  </header>
 
-  <div id="queue" class="queue-container">
-    <div class="empty-state">로딩 중...</div>
-  </div>
+  <main class="queue-wrap" id="queue">
+    <div style="text-align:center; padding:100px 20px; color:var(--text-muted);">로딩 중...</div>
+  </main>
 
   <script>
     const queueEl = document.getElementById('queue');
     const updateEl = document.getElementById('lastUpdate');
+    const clockEl = document.getElementById('clock');
+
+    setInterval(() => {
+      const d = new Date();
+      clockEl.textContent = d.toLocaleTimeString('en-US', { hour12: false });
+    }, 1000);
+
+    function parseDateTime(rawText) {
+      if (!rawText) return { date: '', time: '' };
+      const parts = rawText.split(' ');
+      if (parts.length >= 2) {
+        return { date: parts[0], time: parts.slice(1).join(' ') };
+      }
+      return { date: '', time: rawText };
+    }
+
+    // 날짜 문자열(YYYY.MM.DD HH:MM)을 비교 가능한 숫자로 변환하는 함수
+    function getSortableTime(timeStr) {
+      if (!timeStr) return 0;
+      // "2026.03.03 12:48" -> "2026/03/03 12:48" 형태로 바꿔서 Date 객체 생성
+      const parsed = new Date(timeStr.replace(/\./g, '/'));
+      return isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+    }
 
     async function fetchRequests() {
-      // GViz API를 이용해 Requests 시트를 가장 빠르게 읽어옵니다.
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${new Date().getTime()}`;
       
       try {
         const res = await fetch(url);
         const text = await res.text();
-        // GViz 응답 텍스트에서 순수 JSON만 추출
         const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
-        
         const rows = json.table.rows;
-        const requests = [];
+        let requests = [];
 
         rows.forEach(r => {
           if (!r || !r.c) return;
+          const rawTime = r.c[0] ? (r.c[0].f || r.c[0].v) : '';
+          const artist = r.c[1] ? (r.c[1].v || '') : '';
+          const album = r.c[2] ? (r.c[2].v || '') : '';
+          const track = r.c[3] ? (r.c[3].v || '') : '';
+          const name = r.c[4] ? (r.c[4].v || '') : '';
+          const memo = r.c[5] ? (r.c[5].v || '') : '';
+          const status = r.c[6] ? (r.c[6].v || '') : '';
+
+          if (!track || !rawTime || track === 'Track' || track === '곡명') return;
+
+          requests.push({ 
+            rawTime, 
+            artist, 
+            album, 
+            track, 
+            name, 
+            memo, 
+            status,
+            timestamp: getSortableTime(rawTime) // 정렬용 타임스탬프 추가
+          });
+        });
+
+        // ★ 정렬 로직 (다중 조건 정렬)
+        requests.sort((a, b) => {
+          const aStatus = (a.status || '').toString().trim().toUpperCase();
+          const bStatus = (b.status || '').toString().trim().toUpperCase();
           
-          // 각 열(Column) 데이터 매핑 (A~G열)
-          const time = r.c[0] ? (r.c[0].f || r.c[0].v) : '';
-          const artist = r.c[1] ? r.c[1].v : '';
-          const album = r.c[2] ? r.c[2].v : '';
-          const track = r.c[3] ? r.c[3].v : '';
-          const name = r.c[4] ? r.c[4].v : '';
-          const memo = r.c[5] ? r.c[5].v : '';
-          const status = r.c[6] ? r.c[6].v : ''; // G열 (사장님이 조작하는 상태값)
+          const aIsPlayed = (aStatus === 'Y');
+          const bIsPlayed = (bStatus === 'Y');
 
-          // 1행(ON/OFF)이나 빈 줄, 헤더 등은 건너뛰기 (시간과 트랙명이 있는 것만 유효)
-          if (!track || !time || track === 'Track' || track === '곡명') return;
+          // 1순위: 재생 안 된 것(N 또는 빈값)이 재생 된 것(Y)보다 무조건 위로!
+          if (!aIsPlayed && bIsPlayed) return -1;
+          if (aIsPlayed && !bIsPlayed) return 1;
 
-          requests.push({ time, artist, album, track, name, memo, status });
+          // 2순위: 상태가 같다면, 더 옛날에 신청한 곡(시간 오름차순)이 위로!
+          return a.timestamp - b.timestamp; 
         });
 
         renderQueue(requests);
-
       } catch (err) {
         console.error('Fetch Error:', err);
       }
     }
 
     function renderQueue(requests) {
-      // 시트의 역순(최신 신청곡이 맨 위로 오게)으로 보여주려면 requests.reverse() 적용
-      // 사장님이 들어온 순서대로 위에서부터 아래로 읽으려면 리버스 없이 그냥 사용
-      // 기본 셋팅: 최신곡이 아래에 쌓이도록 (들어온 순서대로 위->아래)
-      
       const now = new Date();
-      updateEl.textContent = `업데이트: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+      updateEl.textContent = `Sync: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
 
       if (requests.length === 0) {
-        queueEl.innerHTML = `<div class="empty-state">아직 신청된 곡이 없습니다.</div>`;
+        queueEl.innerHTML = `<div style="text-align:center; padding:100px 20px; color:var(--text-muted);">현재 대기 중인 신청곡이 없습니다.</div>`;
         return;
       }
 
-      queueEl.innerHTML = '';
+      let html = '';
       
       requests.forEach(req => {
-        const card = document.createElement('div');
-        card.className = 'req-card';
-        
-        // G열에 '완료', '재생', 'O' 등의 텍스트가 있으면 어둡게 처리
-        const isPlayed = req.status && (req.status.includes('완료') || req.status === 'O');
-        if (isPlayed) card.classList.add('played');
+        const s = (req.status || '').toString().trim().toUpperCase();
+        const isPlayed = (s === 'Y');
+        const isPending = (s === 'N' || s === '');
 
-        let memoHtml = '';
-        if (req.memo && req.memo.trim() !== '') {
-          memoHtml = `<div class="req-memo">"${req.memo}"</div>`;
+        const cardClass = isPlayed ? 'track-card played' : 'track-card';
+        const { date, time } = parseDateTime(req.rawTime);
+        const artistAlbumText = req.album ? `${req.artist} · ${req.album}` : req.artist;
+
+        let statusBadge = '';
+        if (isPlayed) {
+          statusBadge = `<span class="status-badge status-played">PLAYED</span>`;
+        } else if (isPending) {
+          statusBadge = `<span class="status-badge status-pending">WAITING</span>`;
+        } else {
+          statusBadge = `<span class="status-badge status-custom">${req.status}</span>`;
         }
 
-        let statusHtml = '';
-        if (req.status) {
-          statusHtml = `<div class="req-status">${req.status}</div>`;
-        }
-
-        card.innerHTML = `
-          <div class="req-main">
-            <span class="req-time">${req.time}</span>
-            <div class="req-track">${req.track}</div>
-            <div class="req-artist">${req.artist} ${req.album ? `· ${req.album}` : ''}</div>
-            <div class="req-meta">
-              <span class="badge badge-name">👤 ${req.name}</span>
+        html += `
+          <div class="${cardClass}">
+            <div class="time-col">
+              <div class="time-time">${time}</div>
+              <div class="time-date">${date}</div>
             </div>
-            ${memoHtml}
+            
+            <div class="info-col">
+              <div class="track-title">${req.track}</div>
+              <div class="track-artist">${artistAlbumText}</div>
+              <div class="meta-row">
+                <span class="req-name">👤 ${req.name}</span>
+                ${req.memo ? `<span class="req-memo">💬 ${req.memo}</span>` : ''}
+              </div>
+            </div>
+
+            <div class="status-col">
+              ${statusBadge}
+            </div>
           </div>
-          ${statusHtml}
         `;
-        
-        queueEl.appendChild(card);
       });
+
+      queueEl.innerHTML = html;
     }
 
-    // 초기 1회 실행 후 10초마다 자동 갱신
     fetchRequests();
     setInterval(fetchRequests, 10000);
-
   </script>
 </body>
 </html>
