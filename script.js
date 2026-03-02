@@ -406,17 +406,24 @@ btnSubmitRequest.addEventListener('click', async () => {
   btnSubmitRequest.textContent = '신청 중...';
 
   try {
-    const formData = new FormData();
-    formData.append('album', selectedTrackData.album);
-    formData.append('artist', selectedTrackData.artist);
-    formData.append('track', selectedTrackData.track);
-    formData.append('name', userName);
-    formData.append('note', userNote);
-
     if (typeof REQUEST_API_URL !== 'undefined') {
+      // ★ 해결: 구글 앱스 스크립트가 100% 인식하는 URL 파라미터 방식으로 전송 데이터 변경!
+      const params = new URLSearchParams();
+      params.append('album', selectedTrackData.album);
+      params.append('artist', selectedTrackData.artist);
+      params.append('track', selectedTrackData.track);
+      params.append('name', userName);
+      params.append('note', userNote);
+
+      // fetch 설정: POST 통신 및 Content-Type 명시
       await fetch(REQUEST_API_URL, {
         method: 'POST',
-        body: formData
+        // no-cors 모드는 성공 여부를 반환하지 않지만 CORS 에러를 우회합니다.
+        mode: 'no-cors', 
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString() // x=1&y=2 형태로 보냄
       });
     }
 
