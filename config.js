@@ -3,5 +3,5 @@ const SHEET_GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/
 const COVER_PLACEHOLDER = "images/logo.png";
 
 // 🔥 신청곡 기능
-const REQUESTS_GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=requests`;
+const REQUESTS_GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests`;
 const REQUEST_API_URL = "https://script.google.com/macros/s/AKfycbzVde9PnAkwtturw80lHkQLVF8wr_2pW0BcJ6qb2lH86Ykq1-cZUwTLlKd8dmaYajfWlQ/exec";
