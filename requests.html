@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Queue - STYLUS</title>
+  <!-- 기존에 쓰시는 config.js를 불러와 시트 ID를 사용합니다 -->
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --surface-hover: #2a2a2a;
+      --text: #ffffff;
+      --sub: #a0a0a0;
+      --accent: #1DB954;
+      --border: #333333;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+
+    /* 실시간 깜빡임 효과 */
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      background: rgba(29, 185, 84, 0.1);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(29, 185, 84, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(29, 185, 84, 0); }
+    }
+
+    .queue-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .req-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+    
+    /* G열에 '완료'라는 단어가 들어가면 카드를 어둡게 처리 */
+    .req-card.played {
+      opacity: 0.4;
+      background: transparent;
+    }
+    .req-card.played .req-track { text-decoration: line-through; }
+
+    .req-main { flex: 1; }
+    .req-time { font-size: 0.8rem; color: var(--sub); margin-bottom: 6px; display: block; }
+    .req-track { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #fff; word-break: keep-all; }
+    .req-artist { font-size: 0.95rem; color: var(--sub); margin-bottom: 12px; }
+    
+    .req-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #333;
+      color: #ddd;
+    }
+    .badge-name { background: rgba(29, 185, 84, 0.15); color: var(--accent); font-weight: 600; }
+    
+    .req-memo {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.9rem;
+      color: #ccc;
+      font-style: italic;
+    }
+
+    .req-status {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #333;
+      color: #aaa;
+      white-space: nowrap;
+      margin-left: 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--sub);
+      font-size: 1.1rem;
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="title-wrap">
+      <h1>Request Queue</h1>
+      <div class="live-indicator"><div class="live-dot"></div> 실시간 수신 중</div>
+    </div>
+    <div style="font-size: 0.85rem; color: var(--sub);" id="lastUpdate">업데이트: -</div>
+  </div>
+
+  <div id="queue" class="queue-container">
+    <div class="empty-state">로딩 중...</div>
+  </div>
+
+  <script>
+    const queueEl = document.getElementById('queue');
+    const updateEl = document.getElementById('lastUpdate');
+
+    async function fetchRequests() {
+      // GViz API를 이용해 Requests 시트를 가장 빠르게 읽어옵니다.
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${new Date().getTime()}`;
+      
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        // GViz 응답 텍스트에서 순수 JSON만 추출
+        const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+        
+        const rows = json.table.rows;
+        const requests = [];
+
+        rows.forEach(r => {
+          if (!r || !r.c) return;
+          
+          // 각 열(Column) 데이터 매핑 (A~G열)
+          const time = r.c[0] ? (r.c[0].f || r.c[0].v) : '';
+          const artist = r.c[1] ? r.c[1].v : '';
+          const album = r.c[2] ? r.c[2].v : '';
+          const track = r.c[3] ? r.c[3].v : '';
+          const name = r.c[4] ? r.c[4].v : '';
+          const memo = r.c[5] ? r.c[5].v : '';
+          const status = r.c[6] ? r.c[6].v : ''; // G열 (사장님이 조작하는 상태값)
+
+          // 1행(ON/OFF)이나 빈 줄, 헤더 등은 건너뛰기 (시간과 트랙명이 있는 것만 유효)
+          if (!track || !time || track === 'Track' || track === '곡명') return;
+
+          requests.push({ time, artist, album, track, name, memo, status });
+        });
+
+        renderQueue(requests);
+
+      } catch (err) {
+        console.error('Fetch Error:', err);
+      }
+    }
+
+    function renderQueue(requests) {
+      // 시트의 역순(최신 신청곡이 맨 위로 오게)으로 보여주려면 requests.reverse() 적용
+      // 사장님이 들어온 순서대로 위에서부터 아래로 읽으려면 리버스 없이 그냥 사용
+      // 기본 셋팅: 최신곡이 아래에 쌓이도록 (들어온 순서대로 위->아래)
+      
+      const now = new Date();
+      updateEl.textContent = `업데이트: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+      if (requests.length === 0) {
+        queueEl.innerHTML = `<div class="empty-state">아직 신청된 곡이 없습니다.</div>`;
+        return;
+      }
+
+      queueEl.innerHTML = '';
+      
+      requests.forEach(req => {
+        const card = document.createElement('div');
+        card.className = 'req-card';
+        
+        // G열에 '완료', '재생', 'O' 등의 텍스트가 있으면 어둡게 처리
+        const isPlayed = req.status && (req.status.includes('완료') || req.status === 'O');
+        if (isPlayed) card.classList.add('played');
+
+        let memoHtml = '';
+        if (req.memo && req.memo.trim() !== '') {
+          memoHtml = `<div class="req-memo">"${req.memo}"</div>`;
+        }
+
+        let statusHtml = '';
+        if (req.status) {
+          statusHtml = `<div class="req-status">${req.status}</div>`;
+        }
+
+        card.innerHTML = `
+          <div class="req-main">
+            <span class="req-time">${req.time}</span>
+            <div class="req-track">${req.track}</div>
+            <div class="req-artist">${req.artist} ${req.album ? `· ${req.album}` : ''}</div>
+            <div class="req-meta">
+              <span class="badge badge-name">👤 ${req.name}</span>
+            </div>
+            ${memoHtml}
+          </div>
+          ${statusHtml}
+        `;
+        
+        queueEl.appendChild(card);
+      });
+    }
+
+    // 초기 1회 실행 후 10초마다 자동 갱신
+    fetchRequests();
+    setInterval(fetchRequests, 10000);
+
+  </script>
+</body>
+</html>
