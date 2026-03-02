@@ -54,12 +54,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 52px;
-      padding: 0 18px;
+      height: 58px;
+      padding: 0 20px;
     }
 
     .logo-img {
-      height: 20px;
+      height: 24px;
       object-fit: contain;
       filter: brightness(0) invert(1);
       opacity: 0.85;
@@ -82,7 +82,7 @@
 
     /* 페이지 타이틀 */
     .header-page-name {
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: 0.04em;
       color: var(--text);
@@ -110,7 +110,7 @@
       50%       { opacity: 0.3; }
     }
     .live-label {
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.12em;
       color: var(--accent);
@@ -119,11 +119,11 @@
     }
     .hd-sep {
       width: 1px;
-      height: 9px;
+      height: 11px;
       background: rgba(255,255,255,0.14);
     }
     .req-clock {
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 400;
       letter-spacing: 0.04em;
       color: var(--sub);
@@ -148,25 +148,25 @@
       border-radius: 6px;
       transition: color 0.15s;
     }
-    .pdf-btn svg { width: 17px; height: 17px; display: block; }
+    .pdf-btn svg { width: 19px; height: 19px; display: block; }
     .pdf-btn:active { color: var(--sub); }
 
     /* 카운트 · 싱크 바 */
     .req-count-bar {
       display: flex;
       align-items: center;
-      padding: 0 18px 11px;
-      gap: 5px;
+      padding: 0 20px 13px;
+      gap: 6px;
     }
     .req-count-num {
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent);
       font-variant-numeric: tabular-nums;
       letter-spacing: 0;
     }
     .req-count-label {
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 400;
       color: var(--sub);
     }
@@ -179,7 +179,7 @@
       flex-shrink: 0;
     }
     .sync-time {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 400;
       color: var(--sub2);
       font-variant-numeric: tabular-nums;
@@ -188,15 +188,15 @@
     /* ══════════════════════════════
        LIST
     ══════════════════════════════ */
-    .req-main { padding: 0 18px; }
+    .req-main { padding: 0 20px; }
     .req-list  { display: flex; flex-direction: column; }
 
     /* ── 아이템 ── */
     .req-item {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 18px 0;
+      gap: 12px;
+      padding: 22px 0;
       border-bottom: 1px solid var(--border);
     }
     .req-item:last-child { border-bottom: none; }
@@ -208,23 +208,23 @@
       gap: 8px;
     }
     .req-idx {
-      font-size: 16px;
+      font-size: 19px;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       line-height: 1;
       letter-spacing: -0.01em;
       color: rgba(255,255,255,0.14);
-      min-width: 26px;
+      min-width: 28px;
     }
     .req-item.waiting .req-idx { color: var(--accent); }
 
     .req-status {
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       line-height: 1;
-      padding: 3px 8px;
+      padding: 4px 9px;
       border-radius: 4px;
     }
     .req-item.waiting .req-status {
@@ -237,7 +237,7 @@
     }
 
     .req-top-time {
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 400;
       color: var(--sub);
       font-variant-numeric: tabular-nums;
@@ -249,13 +249,13 @@
     .req-main-row {
       display: flex;
       align-items: stretch;
-      gap: 13px;
+      gap: 14px;
     }
     .req-cover {
       flex-shrink: 0;
-      width: 64px;
-      height: 64px;
-      border-radius: 7px;
+      width: 76px;
+      height: 76px;
+      border-radius: 8px;
       object-fit: cover;
       display: block;
       background: var(--surface);
@@ -268,10 +268,10 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 5px;
+      gap: 6px;
     }
     .req-track {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--text);
       line-height: 1.3;
@@ -281,7 +281,7 @@
       letter-spacing: -0.01em;
     }
     .req-artist {
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 400;
       color: var(--sub);
       overflow: hidden;
@@ -291,7 +291,7 @@
       letter-spacing: 0;
     }
     .req-user {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--accent);
       white-space: nowrap;
@@ -301,7 +301,7 @@
       opacity: 0.85;
     }
     .req-memo {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 400;
       color: var(--sub2);
       font-style: italic;
@@ -356,7 +356,7 @@
       gap: 16px;
     }
     .footer-desc {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 300;
       color: var(--sub2);
       line-height: 2;
@@ -371,7 +371,7 @@
       gap: 6px;
       text-decoration: none;
       color: var(--sub);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       letter-spacing: 0.04em;
       line-height: 1;
@@ -405,7 +405,7 @@
       border: 1px solid rgba(255,255,255,0.1);
       box-shadow: 0 8px 28px rgba(0,0,0,0.5);
       font-family: var(--font);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.01em;
       text-decoration: none;
