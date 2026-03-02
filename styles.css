@@ -84,7 +84,7 @@ body {
   flex-shrink: 0;
   background: none;
   border: none;
-  color: var(--sub);
+  color: #ffffff ;
   cursor: pointer;
   border-radius: 50%;
   transition: color 0.15s;
