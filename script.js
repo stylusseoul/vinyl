@@ -8,6 +8,7 @@ const state = {
   activeGenre: 'all',
   query: '',
   limit: 40,
+  isRequestEnabled: true, // 스프레드시트에서 ON/OFF 상태를 받아올 변수
 };
 
 let selectedTrackData = null;
@@ -81,11 +82,9 @@ function proxify(url, { w, h, fit = 'cover' } = {}) {
   
   const core = s.replace(/^https?:\/\//, '');
   let q = `https://images.weserv.nl/?url=${encodeURIComponent(core)}`;
-  
   if (w) q += `&w=${w}`;
   if (h) q += `&h=${h}`;
   q += `&fit=${fit}`;
-  
   return q;
 }
 
@@ -94,10 +93,8 @@ const large = url => proxify(url, { w: 900, h: 900, fit: 'contain' });
 
 function esc(s) {
   return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ── Fetch ──────────────────────────────────────────────────── */
@@ -132,6 +129,7 @@ function mapGvizRow(row) {
     cover: String(g('cover') || g('Cover') || ''),
     discogs: String(g('Discogs URL') || g('Discogs') || ''),
     tracks: toTracks(g('Tracks')),
+    status: String(g('신청상태') || g('Status') || ''), // ★ 추가됨: 시트에서 ON/OFF 여부 가져오기
   };
 }
 
@@ -150,14 +148,11 @@ function applyFilters() {
   const filtered = state.data.filter(it => {
     const genreOk = state.activeGenre === 'all' || it.genre.trim() === state.activeGenre;
     if (!genreOk) return false;
-    
     if (!q) return true;
-    
     return [it.album, it.artist, it.genre, ...it.tracks].join(' ').toLowerCase().includes(q);
   });
   
   state.filtered = (state.activeGenre === 'all' && !q) ? sortRandom(filtered) : sortByArtist(filtered);
-  
   window.scrollTo(0, 0);
   resetGrid();
 }
@@ -174,7 +169,6 @@ function buildGenreChips() {
     btn.className = 'genre-chip';
     btn.dataset.genre = g;
     btn.textContent = g;
-    
     btn.addEventListener('click', () => selectGenre(g));
     genreChips.appendChild(btn);
   });
@@ -184,11 +178,9 @@ function buildGenreChips() {
 
 function selectGenre(genre) {
   state.activeGenre = genre;
-  
   document.querySelectorAll('.genre-chip').forEach(c =>
     c.classList.toggle('active', c.dataset.genre === genre)
   );
-  
   applyFilters();
 }
 
@@ -259,11 +251,9 @@ function appendCards() {
   
   if (renderedCount < shown) {
     const frag = document.createDocumentFragment();
-    
     state.filtered.slice(renderedCount, shown).forEach(item => {
       frag.appendChild(createCard(item));
     });
-    
     grid.appendChild(frag);
     renderedCount = shown;
   }
@@ -287,7 +277,6 @@ function observeSentinel() {
   
   observer = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
-    
     observer.disconnect();
     state.limit += 40;
     appendCards();
@@ -299,15 +288,12 @@ function observeSentinel() {
 /* ── Detail & Track Selection ───────────────────────────────── */
 function openDetail(item) {
   dCover.src = item.cover ? large(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
-  
   dCover.srcset = item.cover ? [
     proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
     proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
     proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
   ].join(', ') : '';
-  
   dCover.sizes = '100vw';
-  
   dCover.onerror = () => {
     dCover.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
     dCover.removeAttribute('srcset');
@@ -328,52 +314,54 @@ function openDetail(item) {
   dTrackCount.textContent = `${tracks.length}곡`;
   dTracks.innerHTML = '';
   
-  // 상태 초기화
   selectedTrackData = null;
   reqSheet.classList.add('hidden');
   
+  // 상세 진입 시 플로팅 버튼 숨김 처리
   if (floatingBtn) {
     floatingBtn.classList.add('hidden');
   }
   
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
-    li.className = 'track-item selectable';
     
-    li.innerHTML = `
-      <span class="track-num">${i + 1}</span>
-      <span class="track-name">${esc(t)}</span>
-      <div class="track-check-circle"></div> 
-    `;
-    
-    li.addEventListener('click', () => {
-      // 이미 선택된 곡을 누르면 해제 (토글 기능)
-      if (li.classList.contains('selected')) {
-        li.classList.remove('selected');
-        selectedTrackData = null;
-        reqSheet.classList.add('hidden');
-      } else {
-        // 기존 선택 해제 후 새로운 곡 선택
-        document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
-        li.classList.add('selected');
-        
-        selectedTrackData = {
-          album: item.album || '',
-          artist: item.artist || '',
-          track: t
-        };
-        
-        reqTrackName.textContent = t;
-        reqSheet.classList.remove('hidden');
-        
-        // 폼 상태 초기화
-        reqName.classList.remove('input-error');
-        btnSubmitRequest.disabled = false;
-        btnSubmitRequest.textContent = '신청하기';
-        btnSubmitRequest.style.background = 'var(--accent)';
-        reqSubmitSuccess = false;
-      }
-    });
+    // ★ 변경됨: ON일 때만 selectable 디자인 적용
+    if (state.isRequestEnabled) {
+      li.className = 'track-item selectable';
+      li.innerHTML = `
+        <span class="track-num">${i + 1}</span>
+        <span class="track-name">${esc(t)}</span>
+        <div class="track-check-circle"></div> 
+      `;
+      
+      li.addEventListener('click', () => {
+        if (li.classList.contains('selected')) {
+          li.classList.remove('selected');
+          selectedTrackData = null;
+          reqSheet.classList.add('hidden');
+        } else {
+          document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
+          li.classList.add('selected');
+          
+          selectedTrackData = { album: item.album || '', artist: item.artist || '', track: t };
+          reqTrackName.textContent = t;
+          reqSheet.classList.remove('hidden');
+          
+          reqName.classList.remove('input-error');
+          btnSubmitRequest.disabled = false;
+          btnSubmitRequest.textContent = '신청하기';
+          btnSubmitRequest.style.background = 'var(--accent)';
+          reqSubmitSuccess = false;
+        }
+      });
+    } else {
+      // ★ 변경됨: OFF일 때는 선택 불가능한 기본 리스트로 표시
+      li.className = 'track-item';
+      li.innerHTML = `
+        <span class="track-num">${i + 1}</span>
+        <span class="track-name">${esc(t)}</span>
+      `;
+    }
     
     dTracks.appendChild(li);
   });
@@ -389,7 +377,8 @@ function closeDetail() {
   listView.classList.remove('hidden');
   reqSheet.classList.add('hidden');
   
-  if (floatingBtn) {
+  // ★ 변경됨: 뒤로가기 시 ON 상태일 때만 플로팅 버튼 복구
+  if (state.isRequestEnabled && floatingBtn) {
     floatingBtn.classList.remove('hidden');
   }
 }
@@ -400,21 +389,15 @@ btnSubmitRequest.addEventListener('click', async () => {
 
   const userName = reqName.value.trim();
   
-  // 필수값 체크 (흔들림 애니메이션)
   if (!userName) {
     reqName.classList.add('input-error');
     reqName.focus();
-    
-    setTimeout(() => {
-      reqName.classList.remove('input-error');
-    }, 400);
-    
+    setTimeout(() => reqName.classList.remove('input-error'), 400);
     return;
   }
 
   const userNote = reqNote.value.trim();
 
-  // 제출 중 상태 변경
   btnSubmitRequest.disabled = true;
   btnSubmitRequest.textContent = '신청 중...';
 
@@ -434,12 +417,10 @@ btnSubmitRequest.addEventListener('click', async () => {
       });
     }
 
-    // 성공 시 버튼 텍스트와 색상 변경
     reqSubmitSuccess = true;
     btnSubmitRequest.textContent = '✔ 신청이 완료되었습니다';
     btnSubmitRequest.style.background = '#1DB954'; 
 
-    // 1.5초 뒤 자동 닫힘 및 체크 초기화
     setTimeout(() => {
       reqSheet.classList.add('hidden');
       document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
@@ -472,11 +453,7 @@ function closeSearch() {
 }
 
 btnToggleSearch.addEventListener('click', () => {
-  if (searchWrap.classList.contains('open')) {
-    closeSearch();
-  } else {
-    openSearch();
-  }
+  searchWrap.classList.contains('open') ? closeSearch() : openSearch();
 });
 
 /* ── Events ─────────────────────────────────────────────────── */
@@ -493,9 +470,7 @@ searchInput.addEventListener('keydown', e => {
     e.preventDefault();
     searchInput.blur();
   }
-  if (e.key === 'Escape') {
-    closeSearch();
-  }
+  if (e.key === 'Escape') closeSearch();
 });
 
 btnClear.addEventListener('click', () => {
@@ -506,14 +481,10 @@ btnClear.addEventListener('click', () => {
   searchInput.focus();
 });
 
-btnBack.addEventListener('click', () => {
-  history.back();
-});
+btnBack.addEventListener('click', () => history.back());
 
 window.addEventListener('popstate', () => {
-  if (location.hash !== '#detail') {
-    closeDetail();
-  }
+  if (location.hash !== '#detail') closeDetail();
 });
 
 /* ── Init ───────────────────────────────────────────────────── */
@@ -522,6 +493,20 @@ async function init() {
     const data = await fetchData();
     state.data = data;
     state.filtered = sortRandom(data);
+    
+    // ★ 추가됨: 시트의 첫 번째 행에서 '신청상태' 값을 확인하여 ON/OFF 결정
+    if (data.length > 0) {
+      const globalStatus = data[0].status.toUpperCase();
+      if (globalStatus === 'OFF') {
+        state.isRequestEnabled = false;
+      }
+    }
+    
+    // OFF 상태라면 메인 화면 진입 시점부터 플로팅 버튼 숨김
+    if (!state.isRequestEnabled && floatingBtn) {
+      floatingBtn.style.display = 'none';
+    }
+    
     buildGenreChips();
     resetGrid();
   } catch (e) {
