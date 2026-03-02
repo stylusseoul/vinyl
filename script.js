@@ -10,7 +10,6 @@ const state = {
   limit: 40,
 };
 
-// 곡 신청을 위한 현재 선택된 데이터 보관
 let selectedTrackData = null;
 let reqSubmitSuccess = false;
 
@@ -35,12 +34,10 @@ const dMeta = document.getElementById('dMeta');
 const dTracks = document.getElementById('dTracks');
 const dTrackCount = document.getElementById('dTrackCount');
 
-// 새로 추가된 DOM (바텀시트 및 폼 관련)
 const reqSheet = document.getElementById('requestFormArea');
 const reqTrackName = document.getElementById('selectedTrackName');
 const reqName = document.getElementById('reqName');
 const reqNote = document.getElementById('reqNote');
-const reqStatus = document.getElementById('reqStatus');
 const btnSubmitRequest = document.getElementById('btnSubmitRequest');
 const floatingBtn = document.querySelector('.floating-requests-btn');
 
@@ -84,9 +81,11 @@ function proxify(url, { w, h, fit = 'cover' } = {}) {
   
   const core = s.replace(/^https?:\/\//, '');
   let q = `https://images.weserv.nl/?url=${encodeURIComponent(core)}`;
+  
   if (w) q += `&w=${w}`;
   if (h) q += `&h=${h}`;
   q += `&fit=${fit}`;
+  
   return q;
 }
 
@@ -95,14 +94,17 @@ const large = url => proxify(url, { w: 900, h: 900, fit: 'contain' });
 
 function esc(s) {
   return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 
 /* ── Fetch ──────────────────────────────────────────────────── */
 function parseGviz(text) {
   const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
   const cols = json.table.cols.map(c => c.label || c.id);
+  
   return json.table.rows
     .filter(r => r && r.c)
     .map(r => {
@@ -116,10 +118,12 @@ function parseGviz(text) {
 
 function mapGvizRow(row) {
   const g = k => {
-    for (const key of Object.keys(row))
+    for (const key of Object.keys(row)) {
       if (key.toLowerCase() === k.toLowerCase()) return row[key] ?? '';
+    }
     return '';
   };
+  
   return {
     artist: String(g('Artist') || ''),
     album: String(g('Album') || ''),
@@ -134,6 +138,7 @@ function mapGvizRow(row) {
 async function fetchData() {
   const res = await fetch(SHEET_GVIZ_URL);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  
   const rows = parseGviz(await res.text());
   return rows.map(mapGvizRow).filter(isValid);
 }
@@ -141,13 +146,18 @@ async function fetchData() {
 /* ── Filters ────────────────────────────────────────────────── */
 function applyFilters() {
   const q = state.query.toLowerCase();
+  
   const filtered = state.data.filter(it => {
     const genreOk = state.activeGenre === 'all' || it.genre.trim() === state.activeGenre;
     if (!genreOk) return false;
+    
     if (!q) return true;
+    
     return [it.album, it.artist, it.genre, ...it.tracks].join(' ').toLowerCase().includes(q);
   });
+  
   state.filtered = (state.activeGenre === 'all' && !q) ? sortRandom(filtered) : sortByArtist(filtered);
+  
   window.scrollTo(0, 0);
   resetGrid();
 }
@@ -158,22 +168,27 @@ function buildGenreChips() {
     .sort((a, b) => a.localeCompare(b, 'ko', { sensitivity: 'base' }));
   
   genreChips.innerHTML = '';
+  
   genres.forEach(g => {
     const btn = document.createElement('button');
     btn.className = 'genre-chip';
     btn.dataset.genre = g;
     btn.textContent = g;
+    
     btn.addEventListener('click', () => selectGenre(g));
     genreChips.appendChild(btn);
   });
+  
   document.getElementById('chipAll').addEventListener('click', () => selectGenre('all'));
 }
 
 function selectGenre(genre) {
   state.activeGenre = genre;
+  
   document.querySelectorAll('.genre-chip').forEach(c =>
     c.classList.toggle('active', c.dataset.genre === genre)
   );
+  
   applyFilters();
 }
 
@@ -206,6 +221,7 @@ function createCard(item) {
   
   card.appendChild(wrap);
   card.appendChild(info);
+  
   return card;
 }
 
@@ -218,6 +234,7 @@ function resetGrid() {
     observer.disconnect();
     observer = null;
   }
+  
   grid.innerHTML = '';
   moreWrap.innerHTML = '';
   renderedCount = 0;
@@ -231,6 +248,7 @@ function resetGrid() {
     emptyEl.classList.remove('hidden');
     return;
   }
+  
   emptyEl.classList.add('hidden');
   appendCards();
 }
@@ -238,16 +256,20 @@ function resetGrid() {
 function appendCards() {
   const total = state.filtered.length;
   const shown = Math.min(state.limit, total);
+  
   if (renderedCount < shown) {
     const frag = document.createDocumentFragment();
+    
     state.filtered.slice(renderedCount, shown).forEach(item => {
       frag.appendChild(createCard(item));
     });
+    
     grid.appendChild(frag);
     renderedCount = shown;
   }
   
   moreWrap.innerHTML = '';
+  
   if (renderedCount < total) {
     const sentinel = document.createElement('div');
     sentinel.id = 'sentinel';
@@ -259,11 +281,13 @@ function appendCards() {
 /* ── Infinite scroll ────────────────────────────────────────── */
 function observeSentinel() {
   if (observer) observer.disconnect();
+  
   const sentinel = document.getElementById('sentinel');
   if (!sentinel) return;
   
   observer = new IntersectionObserver(entries => {
     if (!entries[0].isIntersecting) return;
+    
     observer.disconnect();
     state.limit += 40;
     appendCards();
@@ -275,11 +299,13 @@ function observeSentinel() {
 /* ── Detail & Track Selection ───────────────────────────────── */
 function openDetail(item) {
   dCover.src = item.cover ? large(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
+  
   dCover.srcset = item.cover ? [
     proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
     proxify(item.cover, { w: 750, h: 750, fit: 'cover' }) + ' 750w',
     proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
   ].join(', ') : '';
+  
   dCover.sizes = '100vw';
   
   dCover.onerror = () => {
@@ -305,40 +331,48 @@ function openDetail(item) {
   // 상태 초기화
   selectedTrackData = null;
   reqSheet.classList.add('hidden');
-  if (floatingBtn) floatingBtn.classList.add('hidden'); // 상세 진입 시 메인용 플로팅버튼 숨김
+  
+  if (floatingBtn) {
+    floatingBtn.classList.add('hidden');
+  }
   
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
-    li.className = 'track-item selectable'; // 선택 가능 UI
+    li.className = 'track-item selectable';
+    
     li.innerHTML = `
       <span class="track-num">${i + 1}</span>
       <span class="track-name">${esc(t)}</span>
       <div class="track-check-circle"></div> 
     `;
     
-    // 트랙 터치 시 곡 선택 로직
     li.addEventListener('click', () => {
-      // 1. 기존 선택된 곡 클래스 제거
-      document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
-      // 2. 터치한 곡에 클래스 추가
-      li.classList.add('selected');
-      
-      // 3. 신청 데이터 저장
-      selectedTrackData = {
-        album: item.album || '',
-        artist: item.artist || '',
-        track: t
-      };
-      
-      // 4. 바텀 시트 정보 업데이트 및 노출
-      reqTrackName.textContent = t;
-      reqSheet.classList.remove('hidden');
-      
-      // 5. 폼 상태 초기화 (다른 곡 선택 시 다시 신청 가능하게)
-      reqStatus.style.display = 'none';
-      btnSubmitRequest.disabled = false;
-      btnSubmitRequest.textContent = '신청하기';
-      reqSubmitSuccess = false;
+      // 이미 선택된 곡을 누르면 해제 (토글 기능)
+      if (li.classList.contains('selected')) {
+        li.classList.remove('selected');
+        selectedTrackData = null;
+        reqSheet.classList.add('hidden');
+      } else {
+        // 기존 선택 해제 후 새로운 곡 선택
+        document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
+        li.classList.add('selected');
+        
+        selectedTrackData = {
+          album: item.album || '',
+          artist: item.artist || '',
+          track: t
+        };
+        
+        reqTrackName.textContent = t;
+        reqSheet.classList.remove('hidden');
+        
+        // 폼 상태 초기화
+        reqName.classList.remove('input-error');
+        btnSubmitRequest.disabled = false;
+        btnSubmitRequest.textContent = '신청하기';
+        btnSubmitRequest.style.background = 'var(--accent)';
+        reqSubmitSuccess = false;
+      }
     });
     
     dTracks.appendChild(li);
@@ -353,24 +387,38 @@ function openDetail(item) {
 function closeDetail() {
   detailView.classList.add('hidden');
   listView.classList.remove('hidden');
-  reqSheet.classList.add('hidden'); // 뒤로가기 시 바텀시트 숨김
-  if (floatingBtn) floatingBtn.classList.remove('hidden'); // 메인화면 플로팅버튼 복구
+  reqSheet.classList.add('hidden');
+  
+  if (floatingBtn) {
+    floatingBtn.classList.remove('hidden');
+  }
 }
 
 /* ── 곡 신청 폼 제출 로직 (Bottom Sheet) ────────────────────── */
 btnSubmitRequest.addEventListener('click', async () => {
   if (!selectedTrackData || reqSubmitSuccess) return;
 
-  const userName = reqName.value.trim() || '익명';
-  const userNote = reqNote.value.trim() || '';
+  const userName = reqName.value.trim();
+  
+  // 필수값 체크 (흔들림 애니메이션)
+  if (!userName) {
+    reqName.classList.add('input-error');
+    reqName.focus();
+    
+    setTimeout(() => {
+      reqName.classList.remove('input-error');
+    }, 400);
+    
+    return;
+  }
 
-  // UI 상태를 로딩 중으로 변경
+  const userNote = reqNote.value.trim();
+
+  // 제출 중 상태 변경
   btnSubmitRequest.disabled = true;
   btnSubmitRequest.textContent = '신청 중...';
-  reqStatus.style.display = 'none';
 
   try {
-    // config.js에 구글 폼 변수가 선언되어 있다고 가정
     if (typeof GOOGLE_FORM_URL !== 'undefined') {
       const formData = new FormData();
       formData.append(ENTRY_ALBUM, selectedTrackData.album);
@@ -386,24 +434,24 @@ btnSubmitRequest.addEventListener('click', async () => {
       });
     }
 
-    // 성공 처리 UI
+    // 성공 시 버튼 텍스트와 색상 변경
     reqSubmitSuccess = true;
-    btnSubmitRequest.textContent = '신청 완료!';
-    reqStatus.textContent = '✅ 성공적으로 신청되었습니다.';
-    reqStatus.style.display = 'block';
-    reqStatus.style.color = 'var(--accent)';
+    btnSubmitRequest.textContent = '✔ 신청이 완료되었습니다';
+    btnSubmitRequest.style.background = '#1DB954'; 
 
-    // 신청 후 입력칸 비우기
-    reqName.value = '';
-    reqNote.value = '';
+    // 1.5초 뒤 자동 닫힘 및 체크 초기화
+    setTimeout(() => {
+      reqSheet.classList.add('hidden');
+      document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
+      selectedTrackData = null;
+      reqName.value = '';
+      reqNote.value = '';
+    }, 1500);
     
   } catch (error) {
     console.error('Submit Error:', error);
     btnSubmitRequest.disabled = false;
-    btnSubmitRequest.textContent = '신청하기';
-    reqStatus.textContent = '❌ 통신 오류가 발생했습니다.';
-    reqStatus.style.display = 'block';
-    reqStatus.style.color = '#ff4d4d';
+    btnSubmitRequest.textContent = '❌ 통신 오류 (다시 시도)';
   }
 });
 
@@ -424,7 +472,11 @@ function closeSearch() {
 }
 
 btnToggleSearch.addEventListener('click', () => {
-  searchWrap.classList.contains('open') ? closeSearch() : openSearch();
+  if (searchWrap.classList.contains('open')) {
+    closeSearch();
+  } else {
+    openSearch();
+  }
 });
 
 /* ── Events ─────────────────────────────────────────────────── */
@@ -435,12 +487,15 @@ const handleSearch = debounce(() => {
 }, 300);
 
 searchInput.addEventListener('input', handleSearch);
+
 searchInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
     searchInput.blur();
   }
-  if (e.key === 'Escape') closeSearch();
+  if (e.key === 'Escape') {
+    closeSearch();
+  }
 });
 
 btnClear.addEventListener('click', () => {
@@ -451,9 +506,14 @@ btnClear.addEventListener('click', () => {
   searchInput.focus();
 });
 
-btnBack.addEventListener('click', () => history.back());
+btnBack.addEventListener('click', () => {
+  history.back();
+});
+
 window.addEventListener('popstate', () => {
-  if (location.hash !== '#detail') closeDetail();
+  if (location.hash !== '#detail') {
+    closeDetail();
+  }
 });
 
 /* ── Init ───────────────────────────────────────────────────── */
