@@ -1,5 +1,5 @@
 /* ============================================================
-   STYLUS VINYL — script.js (최종 안정화 버전)
+   STYLUS VINYL — script.js (특수문자 방어 최종본)
 ============================================================ */
 
 const state = {
@@ -135,7 +135,6 @@ function mapGvizRow(row) {
 
 async function fetchData() {
   const cacheBuster = `&_=${new Date().getTime()}`;
-  // 메인 바이닐 목록 가져오기 (gid=0)
   const res = await fetch(SHEET_GVIZ_URL + cacheBuster);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
@@ -307,7 +306,6 @@ function openDetail(item) {
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
     
-    // ON 상태일 때만 selectable (선택 가능한 라디오 버튼 스타일)
     if (state.isRequestEnabled) {
       li.className = 'track-item selectable';
       li.innerHTML = `
@@ -337,7 +335,6 @@ function openDetail(item) {
         }
       });
     } else {
-      // OFF 상태면 그냥 터치 안되는 리스트
       li.className = 'track-item';
       li.innerHTML = `
         <span class="track-num">${i + 1}</span>
@@ -388,15 +385,18 @@ btnSubmitRequest.addEventListener('click', async () => {
         memo: userNote
       };
 
-      // ★ [중요] 구글 Apps Script 연동 시 CORS 에러를 피하면서 JSON을 안전하게 보내는 방법
-      // mode: 'no-cors' 와 content-type: 'text/plain' 의 조합이 핵심입니다!
+      // ★ [중요] 한자/일본어 깨짐 완벽 방지를 위한 Base64 변환 로직
+      // encodeURIComponent로 변환 후 btoa를 태워야 일본어/한자 에러가 안 납니다!
+      const jsonString = JSON.stringify(payload);
+      const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+
       await fetch(REQUEST_API_URL, {
         method: 'POST',
         mode: 'no-cors', 
         headers: {
           'Content-Type': 'text/plain;charset=utf-8' 
         },
-        body: JSON.stringify(payload)
+        body: encodedData
       });
     }
 
@@ -440,15 +440,12 @@ window.addEventListener('popstate', () => { if (location.hash !== '#detail') clo
 /* ── Init ───────────────────────────────────────────────────── */
 async function init() {
   try {
-    // 1. 구글 Apps Script의 doGet()을 호출하여 현재 스위치 상태를 가져옵니다.
-    // 무한 로딩을 방지하기 위해 이 부분에서 에러가 나면 무조건 ON으로 간주하고 넘어갑니다.
     if (typeof REQUEST_API_URL !== 'undefined') {
       try {
         const cacheBuster = `?_=${new Date().getTime()}`;
         const statusRes = await fetch(REQUEST_API_URL + cacheBuster);
         if (statusRes.ok) {
           const statusJson = await statusRes.json();
-          // GAS의 doGet에서 응답하는 { enabled: true/false } 구조를 읽습니다.
           if (statusJson && statusJson.enabled === false) {
             state.isRequestEnabled = false;
           }
@@ -458,13 +455,11 @@ async function init() {
       }
     }
 
-    // OFF 상태일 때 플로팅 버튼 제거
     if (!state.isRequestEnabled && floatingBtn) {
       floatingBtn.style.display = 'none';
       floatingBtn.classList.add('hidden');
     }
 
-    // 2. 바이닐 목록 가져오기
     const data = await fetchData();
     state.data = data;
     state.filtered = sortRandom(data);
