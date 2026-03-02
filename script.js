@@ -1,5 +1,5 @@
 /* ============================================================
-   STYLUS VINYL — script.js
+   STYLUS VINYL — script.js (최종 안정화 버전)
 ============================================================ */
 
 const state = {
@@ -8,7 +8,7 @@ const state = {
   activeGenre: 'all',
   query: '',
   limit: 40,
-  isRequestEnabled: true, // 스프레드시트에서 ON/OFF 상태를 받아올 변수
+  isRequestEnabled: true, // 기본값 ON
 };
 
 let selectedTrackData = null;
@@ -115,7 +115,6 @@ function parseGviz(text) {
 
 function mapGvizRow(row) {
   const g = k => {
-    // 띄어쓰기 등 오타 방지용 검사
     const searchKey = k.replace(/\s+/g, '').toLowerCase();
     for (const key of Object.keys(row)) {
       if (key.replace(/\s+/g, '').toLowerCase() === searchKey) return row[key] ?? '';
@@ -130,16 +129,14 @@ function mapGvizRow(row) {
     genre: String(g('Genre') || ''),
     cover: String(g('cover') || g('Cover') || ''),
     discogs: String(g('Discogs URL') || g('Discogs') || ''),
-    tracks: toTracks(g('Tracks')),
-    status: String(g('신청상태') || g('Status') || ''), // 시트에서 상태값 가져오기
+    tracks: toTracks(g('Tracks'))
   };
 }
 
 async function fetchData() {
-  // ★ 구글 시트의 5분 캐시를 무시하고 즉각 반영되도록 타임스탬프 추가
   const cacheBuster = `&_=${new Date().getTime()}`;
+  // 메인 바이닐 목록 가져오기 (gid=0)
   const res = await fetch(SHEET_GVIZ_URL + cacheBuster);
-  
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
   const rows = parseGviz(await res.text());
@@ -218,7 +215,6 @@ function createCard(item) {
   
   card.appendChild(wrap);
   card.appendChild(info);
-  
   return card;
 }
 
@@ -227,25 +223,15 @@ let renderedCount = 0;
 let observer = null;
 
 function resetGrid() {
-  if (observer) {
-    observer.disconnect();
-    observer = null;
-  }
-  
-  grid.innerHTML = '';
-  moreWrap.innerHTML = '';
-  renderedCount = 0;
-  state.limit = 40;
+  if (observer) { observer.disconnect(); observer = null; }
+  grid.innerHTML = ''; moreWrap.innerHTML = '';
+  renderedCount = 0; state.limit = 40;
   
   const total = state.filtered.length;
   loadingEl.classList.add('hidden');
   countLabel.textContent = `${total} records`;
   
-  if (total === 0) {
-    emptyEl.classList.remove('hidden');
-    return;
-  }
-  
+  if (total === 0) { emptyEl.classList.remove('hidden'); return; }
   emptyEl.classList.add('hidden');
   appendCards();
 }
@@ -253,7 +239,6 @@ function resetGrid() {
 function appendCards() {
   const total = state.filtered.length;
   const shown = Math.min(state.limit, total);
-  
   if (renderedCount < shown) {
     const frag = document.createDocumentFragment();
     state.filtered.slice(renderedCount, shown).forEach(item => {
@@ -264,7 +249,6 @@ function appendCards() {
   }
   
   moreWrap.innerHTML = '';
-  
   if (renderedCount < total) {
     const sentinel = document.createElement('div');
     sentinel.id = 'sentinel';
@@ -276,7 +260,6 @@ function appendCards() {
 /* ── Infinite scroll ────────────────────────────────────────── */
 function observeSentinel() {
   if (observer) observer.disconnect();
-  
   const sentinel = document.getElementById('sentinel');
   if (!sentinel) return;
   
@@ -299,10 +282,7 @@ function openDetail(item) {
     proxify(item.cover, { w: 900, h: 900, fit: 'cover' }) + ' 900w',
   ].join(', ') : '';
   dCover.sizes = '100vw';
-  dCover.onerror = () => {
-    dCover.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
-    dCover.removeAttribute('srcset');
-  };
+  dCover.onerror = () => { dCover.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg'; dCover.removeAttribute('srcset'); };
   
   dAlbum.textContent = item.album || '';
   dArtist.textContent = item.artist || '';
@@ -322,14 +302,12 @@ function openDetail(item) {
   selectedTrackData = null;
   reqSheet.classList.add('hidden');
   
-  if (floatingBtn) {
-    floatingBtn.classList.add('hidden');
-  }
+  if (floatingBtn) floatingBtn.classList.add('hidden');
   
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
     
-    // ON 상태일 때만 신청 UI(selectable) 생성
+    // ON 상태일 때만 selectable (선택 가능한 라디오 버튼 스타일)
     if (state.isRequestEnabled) {
       li.className = 'track-item selectable';
       li.innerHTML = `
@@ -359,7 +337,7 @@ function openDetail(item) {
         }
       });
     } else {
-      // OFF 상태일 때는 터치 불가능한 기본 텍스트 리스트
+      // OFF 상태면 그냥 터치 안되는 리스트
       li.className = 'track-item';
       li.innerHTML = `
         <span class="track-num">${i + 1}</span>
@@ -380,11 +358,7 @@ function closeDetail() {
   detailView.classList.add('hidden');
   listView.classList.remove('hidden');
   reqSheet.classList.add('hidden');
-  
-  // 뒤로가기 시 ON 상태일 때만 플로팅 버튼 복구
-  if (state.isRequestEnabled && floatingBtn) {
-    floatingBtn.classList.remove('hidden');
-  }
+  if (state.isRequestEnabled && floatingBtn) floatingBtn.classList.remove('hidden');
 }
 
 /* ── 곡 신청 폼 제출 로직 (Bottom Sheet) ────────────────────── */
@@ -392,15 +366,6 @@ btnSubmitRequest.addEventListener('click', async () => {
   if (!selectedTrackData || reqSubmitSuccess) return;
 
   const userName = reqName.value.trim();
-  
-  if (!userName) {
-    reqName.classList.add('input-error');
-    reqName.focus();/* ── 곡 신청 폼 제출 로직 (Bottom Sheet) ────────────────────── */
-btnSubmitRequest.addEventListener('click', async () => {
-  if (!selectedTrackData || reqSubmitSuccess) return;
-
-  const userName = reqName.value.trim();
-  
   if (!userName) {
     reqName.classList.add('input-error');
     reqName.focus();
@@ -415,21 +380,21 @@ btnSubmitRequest.addEventListener('click', async () => {
 
   try {
     if (typeof REQUEST_API_URL !== 'undefined') {
-      // ★ 사장님의 Apps Script에 정확히 맞춘 JSON 페이로드
       const payload = {
         artist: selectedTrackData.artist,
         album: selectedTrackData.album,
         track: selectedTrackData.track,
-        requester: userName,  // GAS 코드의 data.requester 에 매칭
-        memo: userNote        // GAS 코드의 data.memo 에 매칭
+        requester: userName,
+        memo: userNote
       };
 
-      // POST 전송 (JSON 포맷)
+      // ★ [중요] 구글 Apps Script 연동 시 CORS 에러를 피하면서 JSON을 안전하게 보내는 방법
+      // mode: 'no-cors' 와 content-type: 'text/plain' 의 조합이 핵심입니다!
       await fetch(REQUEST_API_URL, {
         method: 'POST',
-        mode: 'no-cors', // Github Pages -> Google Script CORS 회피
+        mode: 'no-cors', 
         headers: {
-          'Content-Type': 'application/json' // GAS가 JSON으로 인식하도록 명시
+          'Content-Type': 'text/plain;charset=utf-8' 
         },
         body: JSON.stringify(payload)
       });
@@ -455,24 +420,9 @@ btnSubmitRequest.addEventListener('click', async () => {
 });
 
 /* ── Search toggle ──────────────────────────────────────────── */
-function openSearch() {
-  searchWrap.classList.add('open');
-  btnToggleSearch.classList.add('active');
-  requestAnimationFrame(() => searchInput.focus());
-}
-
-function closeSearch() {
-  searchWrap.classList.remove('open');
-  btnToggleSearch.classList.remove('active');
-  searchInput.value = '';
-  state.query = '';
-  btnClear.classList.remove('visible');
-  applyFilters();
-}
-
-btnToggleSearch.addEventListener('click', () => {
-  searchWrap.classList.contains('open') ? closeSearch() : openSearch();
-});
+function openSearch() { searchWrap.classList.add('open'); btnToggleSearch.classList.add('active'); requestAnimationFrame(() => searchInput.focus()); }
+function closeSearch() { searchWrap.classList.remove('open'); btnToggleSearch.classList.remove('active'); searchInput.value = ''; state.query = ''; btnClear.classList.remove('visible'); applyFilters(); }
+btnToggleSearch.addEventListener('click', () => { searchWrap.classList.contains('open') ? closeSearch() : openSearch(); });
 
 /* ── Events ─────────────────────────────────────────────────── */
 const handleSearch = debounce(() => {
@@ -482,62 +432,39 @@ const handleSearch = debounce(() => {
 }, 300);
 
 searchInput.addEventListener('input', handleSearch);
-
-searchInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    searchInput.blur();
-  }
-  if (e.key === 'Escape') closeSearch();
-});
-
-btnClear.addEventListener('click', () => {
-  searchInput.value = '';
-  state.query = '';
-  btnClear.classList.remove('visible');
-  applyFilters();
-  searchInput.focus();
-});
-
+searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); searchInput.blur(); } if (e.key === 'Escape') closeSearch(); });
+btnClear.addEventListener('click', () => { searchInput.value = ''; state.query = ''; btnClear.classList.remove('visible'); applyFilters(); searchInput.focus(); });
 btnBack.addEventListener('click', () => history.back());
-
-window.addEventListener('popstate', () => {
-  if (location.hash !== '#detail') closeDetail();
-});
+window.addEventListener('popstate', () => { if (location.hash !== '#detail') closeDetail(); });
 
 /* ── Init ───────────────────────────────────────────────────── */
 async function init() {
   try {
-    // 1. [스위치 확인] 바이닐 탭(gid=166200406)의 B1 셀 값을 가져오기 (5분 캐시 방지)
-    const cacheBuster = `&_=${new Date().getTime()}`;
-    // ★ gid=0 을 gid=166200406 으로 정확히 수정했습니다!
-    const statusUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=166200406&range=B1:B1${cacheBuster}`;
-    
-    try {
-      const statusRes = await fetch(statusUrl);
-      if (statusRes.ok) {
-        const rawStatus = await statusRes.text();
-        const jsonStatus = JSON.parse(rawStatus.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
-        
-        // B1 셀의 값이 'OFF'인지 확인 (대소문자 무시)
-        if (jsonStatus.table.rows.length > 0 && jsonStatus.table.rows[0].c[0]) {
-          const switchValue = String(jsonStatus.table.rows[0].c[0].v).trim().toUpperCase();
-          if (switchValue === 'OFF') {
+    // 1. 구글 Apps Script의 doGet()을 호출하여 현재 스위치 상태를 가져옵니다.
+    // 무한 로딩을 방지하기 위해 이 부분에서 에러가 나면 무조건 ON으로 간주하고 넘어갑니다.
+    if (typeof REQUEST_API_URL !== 'undefined') {
+      try {
+        const cacheBuster = `?_=${new Date().getTime()}`;
+        const statusRes = await fetch(REQUEST_API_URL + cacheBuster);
+        if (statusRes.ok) {
+          const statusJson = await statusRes.json();
+          // GAS의 doGet에서 응답하는 { enabled: true/false } 구조를 읽습니다.
+          if (statusJson && statusJson.enabled === false) {
             state.isRequestEnabled = false;
           }
         }
+      } catch (err) {
+        console.warn("스위치 상태를 불러오지 못했습니다. 기본값(ON)으로 설정합니다.");
       }
-    } catch (err) {
-      console.warn('상태 스위치를 읽어오지 못했습니다. 기본값(ON)으로 진행합니다.', err);
     }
 
-    // OFF 상태라면 메인 화면 진입 시점부터 플로팅 버튼 완전히 숨김
+    // OFF 상태일 때 플로팅 버튼 제거
     if (!state.isRequestEnabled && floatingBtn) {
       floatingBtn.style.display = 'none';
       floatingBtn.classList.add('hidden');
     }
 
-    // 2. [본 데이터 로드] 기존 방식대로 전체 바이닐 데이터 가져오기
+    // 2. 바이닐 목록 가져오기
     const data = await fetchData();
     state.data = data;
     state.filtered = sortRandom(data);
