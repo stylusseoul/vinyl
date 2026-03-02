@@ -5,17 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>STYLUS LIVE QUEUE</title>
   <script src="config.js"></script>
+  <!-- 프리미엄 폰트: Pretendard & JetBrains Mono(숫자/시계용) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #050505;
-      --bg-card: #111111;
-      --border-color: #262626;
+      --bg-base: #000000;
+      --bg-card: #0a0a0a;
+      --border-color: #222222;
       --text-main: #ffffff;
-      --text-muted: #888888;
+      --text-sub: #777777;
       --accent: #1DB954;
-      --accent-dim: rgba(29, 185, 84, 0.15);
-      --played-opacity: 0.35;
+      --alert: #ff3b30;
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,169 +24,270 @@
     body {
       background-color: var(--bg-base);
       color: var(--text-main);
-      font-family: 'Pretendard', -apple-system, sans-serif;
+      font-family: 'Pretendard', sans-serif;
       -webkit-font-smoothing: antialiased;
-      padding-bottom: 60px;
+      padding-bottom: 80px;
     }
 
-    .topbar {
+    /* ─── 헤더 (로고 & 직관적 정보) ─── */
+    .header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(5, 5, 5, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-color);
-      padding: 20px 32px;
+      padding: 24px 40px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
+      align-items: center;
     }
 
-    .topbar-left h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+    .header-left {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 12px;
     }
 
+    /* 로고 이미지 (경로 수정 필요시 변경) */
+    .logo {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #ccc;
+    }
+
     .live-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #ff3b30;
+      width: 8px;
+      height: 8px;
+      background-color: var(--alert);
       border-radius: 50%;
-      box-shadow: 0 0 10px #ff3b30;
-      animation: pulse-red 1.5s infinite;
-    }
-    @keyframes pulse-red {
-      0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
-      70% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+      box-shadow: 0 0 12px var(--alert);
+      animation: blink 1.5s ease-in-out infinite;
     }
 
-    .topbar-left p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      font-weight: 500;
+    @keyframes blink {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
-    .topbar-right {
+    .header-right {
       text-align: right;
-      color: var(--text-muted);
-      font-family: monospace;
-      font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .queue-wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 32px;
+    .clock {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .sync-time {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    /* ─── 큐 리스트 ─── */
+    .queue-container {
+      max-width: 1400px;
+      margin: 40px auto 0;
+      padding: 0 40px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    .track-card {
+    /* ─── 카드 디자인 (미니멀 하이엔드) ─── */
+    .card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 8px;
+      padding: 24px 32px;
       display: grid;
-      grid-template-columns: 80px 1fr auto;
-      gap: 24px;
+      grid-template-columns: 120px 1fr auto;
+      gap: 32px;
       align-items: center;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-      animation: slideIn 0.4s ease forwards;
+      transition: all 0.3s ease;
     }
     
-    .track-card:hover { border-color: #444; transform: translateY(-2px); }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .card:hover {
+      border-color: #444;
+      background-color: #111;
     }
 
-    .time-col {
-      text-align: center;
-      font-family: monospace;
-      color: var(--text-muted);
+    /* 1. 시간 영역 */
+    .card-time {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       border-right: 1px solid var(--border-color);
-      padding-right: 24px;
+      padding-right: 32px;
     }
-    .time-time { font-size: 1.1rem; font-weight: 600; color: #ccc; }
-    .time-date { font-size: 0.75rem; margin-top: 4px; letter-spacing: -0.5px; }
-
-    .info-col { display: flex; flex-direction: column; justify-content: center; }
-    .track-title { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; letter-spacing: -0.3px; }
-    .track-artist { font-size: 1.05rem; font-weight: 500; color: var(--text-muted); margin-bottom: 16px; }
-
-    .meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .req-name { display: inline-flex; align-items: center; gap: 6px; background: #222; color: #ddd; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-    .req-memo { display: inline-block; background: var(--accent-dim); color: var(--accent); padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; }
-
-    .status-col { text-align: right; }
-    .status-badge {
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 0.85rem;
+    
+    .card-time .hhmm {
+      font-size: 1.4rem;
       font-weight: 700;
-      text-transform: uppercase;
+      color: #eee;
+    }
+    .card-time .yymmdd {
+      font-size: 0.75rem;
       letter-spacing: 0.5px;
     }
 
-    /* 상태별 컬러 디자인 */
-    /* 대기중 (N) - 초록색으로 활성화된 느낌 */
-    .status-pending { 
-      background: rgba(29, 185, 84, 0.1); 
-      color: var(--accent); 
-      border: 1px solid rgba(29, 185, 84, 0.3); 
+    /* 2. 곡 정보 영역 */
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
-    /* 재생완료 (Y) - 회색으로 죽인 느낌 */
-    .status-played { 
-      background: transparent; 
-      color: #555; 
-      border: 1px solid #333; 
-    }
-    .status-custom { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid #555; }
 
-    /* 재생 완료(Played) 카드 전체 디자인 - 확 어둡게 죽임 */
-    .track-card.played {
-      opacity: var(--played-opacity);
+    .track-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .artist-name {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+    }
+
+    .meta-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* 유저명 & 메모 디자인 (세련된 태그 형태) */
+    .tag-user {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      background: #1a1a1a;
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 1px solid #333;
+    }
+
+    .tag-memo {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #aaa;
+      font-style: italic;
+      border-left: 2px solid var(--text-sub);
+      padding-left: 12px;
+    }
+
+    /* 3. 상태 뱃지 영역 */
+    .card-status {
+      text-align: right;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* 대기중 (강렬한 라인형 버튼) */
+    .badge-waiting {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 10px rgba(29, 185, 84, 0.1);
+    }
+
+    /* 재생완료 (죽은 느낌의 솔리드 버튼) */
+    .badge-played {
+      background: #1a1a1a;
+      color: #555;
+      border: 1px solid #222;
+    }
+
+    /* ─── 재생 완료 상태 시 카드 전체 딤처리 ─── */
+    .card.played {
+      opacity: 0.3;
+      filter: grayscale(100%);
       background-color: transparent;
-      border-color: transparent;
-      box-shadow: none;
+      border-color: #111;
     }
-    .track-card.played:hover { transform: none; border-color: transparent; }
-    .track-card.played .track-title { text-decoration: line-through; color: #666; }
+    .card.played:hover { background-color: transparent; border-color: #111; }
+    .card.played .track-name { text-decoration: line-through; }
 
-    @media (max-width: 768px) {
-      .track-card { grid-template-columns: 1fr; gap: 16px; }
-      .time-col { border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 12px; text-align: left; display: flex; gap: 12px; align-items: baseline; }
-      .status-col { text-align: left; margin-top: 8px; }
-      .topbar { padding: 16px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+    /* ─── 반응형 (태블릿/모바일) ─── */
+    @media (max-width: 900px) {
+      .header { padding: 20px; }
+      .queue-container { padding: 0 20px; }
+      .card { 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+        padding: 24px;
+      }
+      .card-time { 
+        border-right: none; 
+        border-bottom: 1px solid var(--border-color); 
+        padding-right: 0; 
+        padding-bottom: 16px; 
+        flex-direction: row; 
+        align-items: baseline; 
+        gap: 12px;
+      }
+      .card-status { text-align: left; margin-top: 12px; }
     }
   </style>
 </head>
 <body>
 
-  <header class="topbar">
-    <div class="topbar-left">
-      <h1><div class="live-dot"></div> REQUEST QUEUE</h1>
-      <p>STYLUS Vinyl & Music</p>
+  <!-- 헤더 영역 -->
+  <header class="header">
+    <div class="header-left">
+      <!-- 기존 흑백 로고 이미지 적용 (경로는 사이트 상황에 맞게 수정 가능) -->
+      <img src="images/logo.png" alt="STYLUS" class="logo" onerror="this.style.display='none';">
+      <div class="title-wrap">
+        <div class="live-dot"></div>
+        <div class="page-title">REQUEST QUEUE</div>
+      </div>
     </div>
-    <div class="topbar-right">
-      <div id="clock">00:00:00</div>
-      <div id="lastUpdate">Sync: -</div>
+    <div class="header-right">
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="sync-time" id="lastUpdate">SYNC: --:--:--</div>
     </div>
   </header>
 
-  <main class="queue-wrap" id="queue">
-    <div style="text-align:center; padding:100px 20px; color:var(--text-muted);">로딩 중...</div>
+  <!-- 큐 리스트 -->
+  <main class="queue-container" id="queue">
+    <div style="text-align:center; padding:100px 20px; color:var(--text-sub); font-family: 'JetBrains Mono', monospace;">LOADING DATA...</div>
   </main>
 
   <script>
@@ -193,11 +295,13 @@
     const updateEl = document.getElementById('lastUpdate');
     const clockEl = document.getElementById('clock');
 
+    // 상단 시계 초 단위 업데이트
     setInterval(() => {
       const d = new Date();
       clockEl.textContent = d.toLocaleTimeString('en-US', { hour12: false });
     }, 1000);
 
+    // YYYY.MM.DD HH:MM 형태를 분리
     function parseDateTime(rawText) {
       if (!rawText) return { date: '', time: '' };
       const parts = rawText.split(' ');
@@ -207,10 +311,9 @@
       return { date: '', time: rawText };
     }
 
-    // 날짜 문자열(YYYY.MM.DD HH:MM)을 비교 가능한 숫자로 변환하는 함수
+    // 시간 정렬용 변환
     function getSortableTime(timeStr) {
       if (!timeStr) return 0;
-      // "2026.03.03 12:48" -> "2026/03/03 12:48" 형태로 바꿔서 Date 객체 생성
       const parsed = new Date(timeStr.replace(/\./g, '/'));
       return isNaN(parsed.getTime()) ? 0 : parsed.getTime();
     }
@@ -238,18 +341,12 @@
           if (!track || !rawTime || track === 'Track' || track === '곡명') return;
 
           requests.push({ 
-            rawTime, 
-            artist, 
-            album, 
-            track, 
-            name, 
-            memo, 
-            status,
-            timestamp: getSortableTime(rawTime) // 정렬용 타임스탬프 추가
+            rawTime, artist, album, track, name, memo, status,
+            timestamp: getSortableTime(rawTime)
           });
         });
 
-        // ★ 정렬 로직 (다중 조건 정렬)
+        // 다중 조건 정렬: N(대기중)을 위로, 그 안에서는 시간 오름차순(옛날 것 우선)
         requests.sort((a, b) => {
           const aStatus = (a.status || '').toString().trim().toUpperCase();
           const bStatus = (b.status || '').toString().trim().toUpperCase();
@@ -257,11 +354,9 @@
           const aIsPlayed = (aStatus === 'Y');
           const bIsPlayed = (bStatus === 'Y');
 
-          // 1순위: 재생 안 된 것(N 또는 빈값)이 재생 된 것(Y)보다 무조건 위로!
           if (!aIsPlayed && bIsPlayed) return -1;
           if (aIsPlayed && !bIsPlayed) return 1;
 
-          // 2순위: 상태가 같다면, 더 옛날에 신청한 곡(시간 오름차순)이 위로!
           return a.timestamp - b.timestamp; 
         });
 
@@ -273,10 +368,10 @@
 
     function renderQueue(requests) {
       const now = new Date();
-      updateEl.textContent = `Sync: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+      updateEl.textContent = `SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
 
       if (requests.length === 0) {
-        queueEl.innerHTML = `<div style="text-align:center; padding:100px 20px; color:var(--text-muted);">현재 대기 중인 신청곡이 없습니다.</div>`;
+        queueEl.innerHTML = `<div style="text-align:center; padding:100px 20px; color:var(--text-sub); font-family: 'JetBrains Mono', monospace;">NO REQUESTS IN QUEUE</div>`;
         return;
       }
 
@@ -285,38 +380,39 @@
       requests.forEach(req => {
         const s = (req.status || '').toString().trim().toUpperCase();
         const isPlayed = (s === 'Y');
-        const isPending = (s === 'N' || s === '');
-
-        const cardClass = isPlayed ? 'track-card played' : 'track-card';
+        
+        const cardClass = isPlayed ? 'card played' : 'card';
         const { date, time } = parseDateTime(req.rawTime);
         const artistAlbumText = req.album ? `${req.artist} · ${req.album}` : req.artist;
 
+        // 뱃지 상태 (N = WAITING / Y = PLAYED)
         let statusBadge = '';
         if (isPlayed) {
-          statusBadge = `<span class="status-badge status-played">PLAYED</span>`;
-        } else if (isPending) {
-          statusBadge = `<span class="status-badge status-pending">WAITING</span>`;
+          statusBadge = `<div class="badge badge-played">PLAYED</div>`;
         } else {
-          statusBadge = `<span class="status-badge status-custom">${req.status}</span>`;
+          statusBadge = `<div class="badge badge-waiting">WAITING</div>`;
         }
 
         html += `
           <div class="${cardClass}">
-            <div class="time-col">
-              <div class="time-time">${time}</div>
-              <div class="time-date">${date}</div>
+            <!-- 1. 시간 -->
+            <div class="card-time">
+              <div class="hhmm">${time}</div>
+              <div class="yymmdd">${date}</div>
             </div>
             
-            <div class="info-col">
-              <div class="track-title">${req.track}</div>
-              <div class="track-artist">${artistAlbumText}</div>
-              <div class="meta-row">
-                <span class="req-name">👤 ${req.name}</span>
-                ${req.memo ? `<span class="req-memo">💬 ${req.memo}</span>` : ''}
+            <!-- 2. 곡 정보 -->
+            <div class="card-info">
+              <div class="track-name">${req.track}</div>
+              <div class="artist-name">${artistAlbumText}</div>
+              <div class="meta-group">
+                <span class="tag-user">👤 ${req.name}</span>
+                ${req.memo ? `<span class="tag-memo">"${req.memo}"</span>` : ''}
               </div>
             </div>
 
-            <div class="status-col">
+            <!-- 3. 상태 뱃지 -->
+            <div class="card-status">
               ${statusBadge}
             </div>
           </div>
