@@ -493,25 +493,43 @@ window.addEventListener('popstate', () => {
 /* ── Init ───────────────────────────────────────────────────── */
 async function init() {
   try {
-    const data = await fetchData();
-    state.data = data;
-    state.filtered = sortRandom(data);
+    // 1. [스위치 확인] B1 셀의 값만 콕 집어서 가져오기 (5분 캐시 방지)
+    // config.js의 SHEET_ID를 재사용하여 B1 범위만 요청합니다.
+    const cacheBuster = `&_=${new Date().getTime()}`;
+    const statusUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=0&range=B1:B1${cacheBuster}`;
     
-    // ★ 변경됨: 시트 전체에서 단 1개라도 OFF 값이 있으면 앱 전체를 OFF 처리
-    const isOff = data.some(d => d.status && d.status.trim().toUpperCase() === 'OFF');
-    
-    if (isOff) {
-      state.isRequestEnabled = false;
+    try {
+      const statusRes = await fetch(statusUrl);
+      if (statusRes.ok) {
+        const rawStatus = await statusRes.text();
+        const jsonStatus = JSON.parse(rawStatus.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+        
+        // B1 셀의 값이 'OFF'인지 확인 (대소문자 무시)
+        if (jsonStatus.table.rows.length > 0 && jsonStatus.table.rows[0].c[0]) {
+          const switchValue = String(jsonStatus.table.rows[0].c[0].v).trim().toUpperCase();
+          if (switchValue === 'OFF') {
+            state.isRequestEnabled = false;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('상태 스위치를 읽어오지 못했습니다. 기본값(ON)으로 진행합니다.', err);
     }
-    
-    // OFF 상태라면 메인 화면 플로팅 버튼 완벽하게 제거
+
+    // OFF 상태라면 메인 화면 진입 시점부터 플로팅 버튼 완전히 숨김
     if (!state.isRequestEnabled && floatingBtn) {
       floatingBtn.style.display = 'none';
       floatingBtn.classList.add('hidden');
     }
+
+    // 2. [본 데이터 로드] 기존 방식대로 전체 바이닐 데이터 가져오기
+    const data = await fetchData();
+    state.data = data;
+    state.filtered = sortRandom(data);
     
     buildGenreChips();
     resetGrid();
+    
   } catch (e) {
     loadingEl.innerHTML = `<p style="color:var(--sub);font-size:13px;text-align:center;padding:20px">불러오기 실패: ${e.message}</p>`;
   }
