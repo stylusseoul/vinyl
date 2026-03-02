@@ -1,5 +1,5 @@
 /* ============================================================
-   STYLUS VINYL — script.js (특수문자 방어 최종본)
+   STYLUS VINYL — script.js (이미지 전송 + 속도 개선 통본)
 ============================================================ */
 
 const state = {
@@ -323,7 +323,13 @@ function openDetail(item) {
           document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
           li.classList.add('selected');
           
-          selectedTrackData = { album: item.album || '', artist: item.artist || '', track: t };
+          // ★ [수정됨] 앨범 커버 URL(item.cover)을 함께 저장
+          selectedTrackData = { 
+            album: item.album || '', 
+            artist: item.artist || '', 
+            track: t,
+            cover: item.cover || '' 
+          };
           reqTrackName.textContent = t;
           reqSheet.classList.remove('hidden');
           
@@ -377,17 +383,18 @@ btnSubmitRequest.addEventListener('click', async () => {
 
   try {
     if (typeof REQUEST_API_URL !== 'undefined') {
+      // ★ [수정됨] 서버로 보낼 때 커버(cover) 값도 포함해서 묶음
       const payload = {
         artist: selectedTrackData.artist,
         album: selectedTrackData.album,
         track: selectedTrackData.track,
+        cover: selectedTrackData.cover, 
         requester: userName,
         memo: userNote
       };
 
-      // ★ [수정됨] 가장 안전한 UTF-8 -> Base64 변환 방식
+      // 안전한 UTF-8 -> Base64 변환 (깨짐/에러 방지)
       const jsonString = JSON.stringify(payload);
-      // 한글/일본어를 안전하게 바이트 배열로 변환 후 Base64로 인코딩
       const utf8Bytes = new TextEncoder().encode(jsonString);
       const encodedData = btoa(String.fromCharCode(...utf8Bytes));
 
@@ -438,30 +445,39 @@ btnClear.addEventListener('click', () => { searchInput.value = ''; state.query =
 btnBack.addEventListener('click', () => history.back());
 window.addEventListener('popstate', () => { if (location.hash !== '#detail') closeDetail(); });
 
-/* ── Init ───────────────────────────────────────────────────── */
+/* ── Init (병렬 로딩) ───────────────────────────────────────── */
 async function init() {
   try {
+    const tasks = [];
+    
+    // 1. [빠름] 바이닐 데이터 로딩 (항상 실행)
+    tasks.push(fetchData());
+
+    // 2. [느림] 스위치 상태 로딩 (옵션)
     if (typeof REQUEST_API_URL !== 'undefined') {
-      try {
-        const cacheBuster = `?_=${new Date().getTime()}`;
-        const statusRes = await fetch(REQUEST_API_URL + cacheBuster);
-        if (statusRes.ok) {
-          const statusJson = await statusRes.json();
-          if (statusJson && statusJson.enabled === false) {
-            state.isRequestEnabled = false;
-          }
-        }
-      } catch (err) {
-        console.warn("스위치 상태를 불러오지 못했습니다. 기본값(ON)으로 설정합니다.");
-      }
+      const cacheBuster = `?_=${new Date().getTime()}`;
+      const statusPromise = fetch(REQUEST_API_URL + cacheBuster)
+        .then(res => res.json())
+        .catch(() => ({ enabled: true })); // 실패하면 기본값(ON)으로 간주
+        
+      tasks.push(statusPromise);
+    } else {
+      tasks.push(Promise.resolve({ enabled: true }));
     }
 
+    const [data, statusJson] = await Promise.all(tasks);
+
+    // 스위치 상태 반영
+    if (statusJson && statusJson.enabled === false) {
+      state.isRequestEnabled = false;
+    }
+
+    // 플로팅 버튼 숨기기 (OFF일 때)
     if (!state.isRequestEnabled && floatingBtn) {
       floatingBtn.style.display = 'none';
       floatingBtn.classList.add('hidden');
     }
 
-    const data = await fetchData();
     state.data = data;
     state.filtered = sortRandom(data);
     
