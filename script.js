@@ -402,17 +402,17 @@ btnSubmitRequest.addEventListener('click', async () => {
   btnSubmitRequest.textContent = '신청 중...';
 
   try {
-    if (typeof GOOGLE_FORM_URL !== 'undefined') {
-      const formData = new FormData();
-      formData.append(ENTRY_ALBUM, selectedTrackData.album);
-      formData.append(ENTRY_ARTIST, selectedTrackData.artist);
-      formData.append(ENTRY_TRACK, selectedTrackData.track);
-      formData.append(ENTRY_NAME, userName);
-      formData.append(ENTRY_NOTE, userNote);
+    // ★ 꼬아놨던 거 원상복구: 가장 표준적인 FormData 방식으로 전송
+    const formData = new FormData();
+    formData.append('album', selectedTrackData.album);
+    formData.append('artist', selectedTrackData.artist);
+    formData.append('track', selectedTrackData.track);
+    formData.append('name', userName);
+    formData.append('note', userNote);
 
-      await fetch(GOOGLE_FORM_URL, {
+    if (typeof REQUEST_API_URL !== 'undefined') {
+      await fetch(REQUEST_API_URL, {
         method: 'POST',
-        mode: 'no-cors',
         body: formData
       });
     }
