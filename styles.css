@@ -374,7 +374,6 @@ body {
    ============================================================ */
 
 .list-footer {
-  /* 하단 플로팅 버튼을 가리지 않도록 여백 추가 */
   padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px);
   margin-top: 0;
   border-top: 1px solid var(--border);
@@ -579,9 +578,9 @@ body {
   padding: 5px 12px;
 }
 
+/* ★ 수정됨: 200px 씩 떨어지던 과도한 여백 제거 */
 .detail-tracks-section {
-  /* 바텀 시트가 올라올 때 가려지지 않도록 여백 넉넉히 확보 */
-  padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 200px);
+  padding: 0 24px 32px;
 }
 
 .tracks-header {
@@ -607,7 +606,7 @@ body {
 }
 
 /* ============================================================
-   TRACK SELECTABLE UI (라디오 버튼 스타일)
+   TRACK SELECTABLE UI
    ============================================================ */
 
 .track-list {
@@ -638,7 +637,7 @@ body {
 .track-num {
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent); /* 트랙 넘버링 주황색으로 시인성 강화 */
+  color: var(--accent); 
   min-width: 18px;
   text-align: right;
   flex-shrink: 0;
@@ -652,14 +651,12 @@ body {
   line-height: 1.4;
   flex: 1;
   min-width: 0;
-  /* 곡 제목 길면 말줄임표 처리 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 32px; /* 체크박스 가리지 않게 여백 */
+  padding-right: 32px; 
 }
 
-/* 우측 빈 동그라미 */
 .track-check-circle {
   position: absolute;
   right: 12px;
@@ -668,11 +665,10 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 1.5px solid var(--accent); /* 빈 박스 테두리도 오렌지로 강조 */
+  border: 1.5px solid var(--accent);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 선택되었을 때 애니메이션 */
 .track-item.selected {
   background: rgba(255, 255, 255, 0.08);
 }
@@ -687,7 +683,7 @@ body {
 }
 
 /* ============================================================
-   REQUEST BOTTOM SHEET (DETAIL PAGE)
+   REQUEST BOTTOM SHEET
    ============================================================ */
 
 .request-bottom-sheet {
@@ -740,7 +736,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* 입력창 투명/테두리리스 디자인 */
 .request-sheet-input {
   width: 100%;
   background: rgba(255, 255, 255, 0.06);
@@ -765,7 +760,6 @@ body {
   font-weight: 400;
 }
 
-/* 필수값 미입력 시 흔들리는 애니메이션 */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
@@ -806,8 +800,9 @@ body {
   cursor: not-allowed;
 }
 
+/* ★ 수정됨: 메인 푸터와 동일한 여백(플로팅 버튼 가리지 않게) */
 .detail-footer {
-  padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px);
   border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
