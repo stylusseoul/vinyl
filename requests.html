@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>STYLUS LIVE QUEUE</title>
   <script src="config.js"></script>
-  <!-- 프리미엄 폰트: Pretendard & JetBrains Mono(숫자/시계용) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -26,10 +25,10 @@
       color: var(--text-main);
       font-family: 'Pretendard', sans-serif;
       -webkit-font-smoothing: antialiased;
-      padding-bottom: 80px;
+      padding-bottom: 120px; /* 플로팅 버튼 여백 */
     }
 
-    /* ─── 헤더 (로고 & 직관적 정보) ─── */
+    /* ─── 헤더 (완벽한 Flex 구조) ─── */
     .header {
       position: sticky;
       top: 0;
@@ -38,36 +37,41 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-color);
-      padding: 24px 40px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
     }
 
     .header-left {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
     }
 
-    /* 로고 이미지 (경로 수정 필요시 변경) */
     .logo {
-      height: 32px;
+      height: 24px;
       width: auto;
       object-fit: contain;
+      display: block;
     }
 
     .title-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      border-left: 1px solid var(--border-color);
+      padding-left: 16px;
     }
 
     .page-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       color: #ccc;
+      white-space: nowrap;
     }
 
     .live-dot {
@@ -75,8 +79,9 @@
       height: 8px;
       background-color: var(--alert);
       border-radius: 50%;
-      box-shadow: 0 0 12px var(--alert);
+      box-shadow: 0 0 10px var(--alert);
       animation: blink 1.5s ease-in-out infinite;
+      flex-shrink: 0;
     }
 
     @keyframes blink {
@@ -88,41 +93,67 @@
     .header-right {
       text-align: right;
       font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
     }
 
     .clock {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      white-space: nowrap;
     }
 
     .sync-time {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-sub);
+      white-space: nowrap;
+    }
+
+    /* 반응형 헤더 처리 (모바일 화면) */
+    @media (max-width: 600px) {
+      .header {
+        padding: 12px 16px;
+      }
+      .title-wrap {
+        border-left: none;
+        padding-left: 0;
+      }
+      .logo {
+        display: none; /* 모바일에서는 로고 숨기고 글씨만 표시 */
+      }
+      .page-title {
+        font-size: 0.9rem;
+      }
+      .clock {
+        font-size: 1rem;
+      }
+      .sync-time {
+        font-size: 0.65rem;
+      }
     }
 
     /* ─── 큐 리스트 ─── */
     .queue-container {
       max-width: 1400px;
-      margin: 40px auto 0;
-      padding: 0 40px;
+      margin: 24px auto 0;
+      padding: 0 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    /* ─── 카드 디자인 (미니멀 하이엔드) ─── */
+    /* ─── 카드 디자인 ─── */
     .card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 24px 32px;
+      padding: 24px;
       display: grid;
-      grid-template-columns: 120px 1fr auto;
-      gap: 32px;
+      grid-template-columns: 100px 1fr auto;
+      gap: 24px;
       align-items: center;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     
     .card:hover {
@@ -130,7 +161,6 @@
       background-color: #111;
     }
 
-    /* 1. 시간 영역 */
     .card-time {
       font-family: 'JetBrains Mono', monospace;
       color: var(--text-sub);
@@ -138,132 +168,65 @@
       flex-direction: column;
       gap: 4px;
       border-right: 1px solid var(--border-color);
-      padding-right: 32px;
+      padding-right: 24px;
     }
     
-    .card-time .hhmm {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #eee;
-    }
-    .card-time .yymmdd {
-      font-size: 0.75rem;
-      letter-spacing: 0.5px;
-    }
+    .card-time .hhmm { font-size: 1.3rem; font-weight: 700; color: #eee; }
+    .card-time .yymmdd { font-size: 0.75rem; letter-spacing: 0.5px; }
 
-    /* 2. 곡 정보 영역 */
-    .card-info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+    .card-info { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .track-name { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px; letter-spacing: -0.5px; word-break: break-word; }
+    .artist-name { font-size: 1rem; font-weight: 500; color: var(--text-sub); margin-bottom: 12px; word-break: break-word; }
 
-    .track-name {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
+    .meta-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .tag-user { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: #fff; background: #1a1a1a; padding: 6px 12px; border-radius: 4px; border: 1px solid #333; }
+    .tag-memo { font-size: 0.85rem; font-weight: 400; color: #aaa; font-style: italic; border-left: 2px solid var(--text-sub); padding-left: 10px; }
 
-    .artist-name {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--text-sub);
-      margin-bottom: 16px;
-    }
+    .card-status { text-align: right; }
+    .badge { display: inline-flex; align-items: center; justify-content: center; padding: 8px 20px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; }
+    .badge-waiting { background: transparent; color: var(--accent); border: 1px solid var(--accent); box-shadow: 0 0 10px rgba(29, 185, 84, 0.1); }
+    .badge-played { background: #1a1a1a; color: #555; border: 1px solid #222; }
 
-    .meta-group {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    /* 유저명 & 메모 디자인 (세련된 태그 형태) */
-    .tag-user {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      background: #1a1a1a;
-      padding: 6px 14px;
-      border-radius: 4px;
-      border: 1px solid #333;
-    }
-
-    .tag-memo {
-      font-size: 0.9rem;
-      font-weight: 400;
-      color: #aaa;
-      font-style: italic;
-      border-left: 2px solid var(--text-sub);
-      padding-left: 12px;
-    }
-
-    /* 3. 상태 뱃지 영역 */
-    .card-status {
-      text-align: right;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 24px;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    /* 대기중 (강렬한 라인형 버튼) */
-    .badge-waiting {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      box-shadow: 0 0 10px rgba(29, 185, 84, 0.1);
-    }
-
-    /* 재생완료 (죽은 느낌의 솔리드 버튼) */
-    .badge-played {
-      background: #1a1a1a;
-      color: #555;
-      border: 1px solid #222;
-    }
-
-    /* ─── 재생 완료 상태 시 카드 전체 딤처리 ─── */
-    .card.played {
-      opacity: 0.3;
-      filter: grayscale(100%);
-      background-color: transparent;
-      border-color: #111;
-    }
+    .card.played { opacity: 0.3; filter: grayscale(100%); background-color: transparent; border-color: #111; }
     .card.played:hover { background-color: transparent; border-color: #111; }
     .card.played .track-name { text-decoration: line-through; }
 
-    /* ─── 반응형 (태블릿/모바일) ─── */
     @media (max-width: 900px) {
-      .header { padding: 20px; }
-      .queue-container { padding: 0 20px; }
-      .card { 
-        grid-template-columns: 1fr; 
-        gap: 20px; 
-        padding: 24px;
-      }
-      .card-time { 
-        border-right: none; 
-        border-bottom: 1px solid var(--border-color); 
-        padding-right: 0; 
-        padding-bottom: 16px; 
-        flex-direction: row; 
-        align-items: baseline; 
-        gap: 12px;
-      }
-      .card-status { text-align: left; margin-top: 12px; }
+      .queue-container { padding: 0 16px; }
+      .card { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
+      .card-time { border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 12px; flex-direction: row; align-items: baseline; gap: 12px; }
+      .card-status { text-align: left; margin-top: 8px; }
+    }
+
+    /* ─── 플로팅 버튼 (메인 화면 검색기와 동일한 디자인/위치) ─── */
+    .floating-back-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--accent);
+      color: #000;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+      cursor: pointer;
+      z-index: 999;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .floating-back-btn:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 6px 16px rgba(29, 185, 84, 0.6);
+    }
+
+    .floating-back-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
     }
   </style>
 </head>
@@ -272,7 +235,6 @@
   <!-- 헤더 영역 -->
   <header class="header">
     <div class="header-left">
-      <!-- 기존 흑백 로고 이미지 적용 (경로는 사이트 상황에 맞게 수정 가능) -->
       <img src="images/logo.png" alt="STYLUS" class="logo" onerror="this.style.display='none';">
       <div class="title-wrap">
         <div class="live-dot"></div>
@@ -290,18 +252,23 @@
     <div style="text-align:center; padding:100px 20px; color:var(--text-sub); font-family: 'JetBrains Mono', monospace;">LOADING DATA...</div>
   </main>
 
+  <!-- 메인 검색기로 돌아가는 플로팅 버튼 (우측 하단) -->
+  <a href="index.html" class="floating-back-btn" aria-label="음악 검색기로 돌아가기">
+    <svg viewBox="0 0 24 24">
+      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+  </a>
+
   <script>
     const queueEl = document.getElementById('queue');
     const updateEl = document.getElementById('lastUpdate');
     const clockEl = document.getElementById('clock');
 
-    // 상단 시계 초 단위 업데이트
     setInterval(() => {
       const d = new Date();
       clockEl.textContent = d.toLocaleTimeString('en-US', { hour12: false });
     }, 1000);
 
-    // YYYY.MM.DD HH:MM 형태를 분리
     function parseDateTime(rawText) {
       if (!rawText) return { date: '', time: '' };
       const parts = rawText.split(' ');
@@ -311,7 +278,6 @@
       return { date: '', time: rawText };
     }
 
-    // 시간 정렬용 변환
     function getSortableTime(timeStr) {
       if (!timeStr) return 0;
       const parsed = new Date(timeStr.replace(/\./g, '/'));
@@ -346,7 +312,7 @@
           });
         });
 
-        // 다중 조건 정렬: N(대기중)을 위로, 그 안에서는 시간 오름차순(옛날 것 우선)
+        // 정렬 (1순위: N 대기중 / 2순위: 신청 시간)
         requests.sort((a, b) => {
           const aStatus = (a.status || '').toString().trim().toUpperCase();
           const bStatus = (b.status || '').toString().trim().toUpperCase();
@@ -385,7 +351,6 @@
         const { date, time } = parseDateTime(req.rawTime);
         const artistAlbumText = req.album ? `${req.artist} · ${req.album}` : req.artist;
 
-        // 뱃지 상태 (N = WAITING / Y = PLAYED)
         let statusBadge = '';
         if (isPlayed) {
           statusBadge = `<div class="badge badge-played">PLAYED</div>`;
@@ -395,13 +360,11 @@
 
         html += `
           <div class="${cardClass}">
-            <!-- 1. 시간 -->
             <div class="card-time">
               <div class="hhmm">${time}</div>
               <div class="yymmdd">${date}</div>
             </div>
             
-            <!-- 2. 곡 정보 -->
             <div class="card-info">
               <div class="track-name">${req.track}</div>
               <div class="artist-name">${artistAlbumText}</div>
@@ -411,7 +374,6 @@
               </div>
             </div>
 
-            <!-- 3. 상태 뱃지 -->
             <div class="card-status">
               ${statusBadge}
             </div>
