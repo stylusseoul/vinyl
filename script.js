@@ -395,6 +395,14 @@ btnSubmitRequest.addEventListener('click', async () => {
   
   if (!userName) {
     reqName.classList.add('input-error');
+    reqName.focus();/* ── 곡 신청 폼 제출 로직 (Bottom Sheet) ────────────────────── */
+btnSubmitRequest.addEventListener('click', async () => {
+  if (!selectedTrackData || reqSubmitSuccess) return;
+
+  const userName = reqName.value.trim();
+  
+  if (!userName) {
+    reqName.classList.add('input-error');
     reqName.focus();
     setTimeout(() => reqName.classList.remove('input-error'), 400);
     return;
@@ -407,23 +415,23 @@ btnSubmitRequest.addEventListener('click', async () => {
 
   try {
     if (typeof REQUEST_API_URL !== 'undefined') {
-      // ★ 해결: 구글 앱스 스크립트가 100% 인식하는 URL 파라미터 방식으로 전송 데이터 변경!
-      const params = new URLSearchParams();
-      params.append('album', selectedTrackData.album);
-      params.append('artist', selectedTrackData.artist);
-      params.append('track', selectedTrackData.track);
-      params.append('name', userName);
-      params.append('note', userNote);
+      // ★ 사장님의 Apps Script에 정확히 맞춘 JSON 페이로드
+      const payload = {
+        artist: selectedTrackData.artist,
+        album: selectedTrackData.album,
+        track: selectedTrackData.track,
+        requester: userName,  // GAS 코드의 data.requester 에 매칭
+        memo: userNote        // GAS 코드의 data.memo 에 매칭
+      };
 
-      // fetch 설정: POST 통신 및 Content-Type 명시
+      // POST 전송 (JSON 포맷)
       await fetch(REQUEST_API_URL, {
         method: 'POST',
-        // no-cors 모드는 성공 여부를 반환하지 않지만 CORS 에러를 우회합니다.
-        mode: 'no-cors', 
+        mode: 'no-cors', // Github Pages -> Google Script CORS 회피
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/json' // GAS가 JSON으로 인식하도록 명시
         },
-        body: params.toString() // x=1&y=2 형태로 보냄
+        body: JSON.stringify(payload)
       });
     }
 
