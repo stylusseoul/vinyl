@@ -10,6 +10,10 @@ const state = {
   limit: 40,
 };
 
+// 곡 신청을 위한 현재 선택된 데이터 보관
+let selectedTrackData = null;
+let reqSubmitSuccess = false;
+
 /* ── DOM ────────────────────────────────────────────────────── */
 const listView = document.getElementById('listView');
 const detailView = document.getElementById('detailView');
@@ -30,6 +34,15 @@ const dArtist = document.getElementById('dArtist');
 const dMeta = document.getElementById('dMeta');
 const dTracks = document.getElementById('dTracks');
 const dTrackCount = document.getElementById('dTrackCount');
+
+// 새로 추가된 DOM (바텀시트 및 폼 관련)
+const reqSheet = document.getElementById('requestFormArea');
+const reqTrackName = document.getElementById('selectedTrackName');
+const reqName = document.getElementById('reqName');
+const reqNote = document.getElementById('reqNote');
+const reqStatus = document.getElementById('reqStatus');
+const btnSubmitRequest = document.getElementById('btnSubmitRequest');
+const floatingBtn = document.querySelector('.floating-requests-btn');
 
 /* ── Utils ──────────────────────────────────────────────────── */
 function toTracks(s) {
@@ -178,7 +191,6 @@ function createCard(item) {
   img.loading = 'lazy';
   img.decoding = 'async';
   
-  // 변경점: 커버 이미지가 없을 때 지정하신 prepare.jpg를 사용하도록 직접 입력했습니다.
   img.src = item.cover ? thumb(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
   img.onerror = () => { img.src = 'https://stylusseoul.github.io/vinyl/images/prepare.jpg'; };
   img.alt = item.album || '';
@@ -260,9 +272,8 @@ function observeSentinel() {
   observer.observe(sentinel);
 }
 
-/* ── Detail ─────────────────────────────────────────────────── */
+/* ── Detail & Track Selection ───────────────────────────────── */
 function openDetail(item) {
-  // 변경점: 상세 페이지에서도 커버가 없을 때 prepare.jpg를 띄우도록 수정했습니다.
   dCover.src = item.cover ? large(item.cover) : 'https://stylusseoul.github.io/vinyl/images/prepare.jpg';
   dCover.srcset = item.cover ? [
     proxify(item.cover, { w: 390, h: 390, fit: 'cover' }) + ' 390w',
@@ -290,10 +301,46 @@ function openDetail(item) {
   const tracks = item.tracks || [];
   dTrackCount.textContent = `${tracks.length}곡`;
   dTracks.innerHTML = '';
+  
+  // 상태 초기화
+  selectedTrackData = null;
+  reqSheet.classList.add('hidden');
+  if (floatingBtn) floatingBtn.classList.add('hidden'); // 상세 진입 시 메인용 플로팅버튼 숨김
+  
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
-    li.className = 'track-item';
-    li.innerHTML = `<span class="track-num">${i + 1}</span><span class="track-name">${esc(t)}</span>`;
+    li.className = 'track-item selectable'; // 선택 가능 UI
+    li.innerHTML = `
+      <span class="track-num">${i + 1}</span>
+      <span class="track-name">${esc(t)}</span>
+      <div class="track-check-circle"></div> 
+    `;
+    
+    // 트랙 터치 시 곡 선택 로직
+    li.addEventListener('click', () => {
+      // 1. 기존 선택된 곡 클래스 제거
+      document.querySelectorAll('.track-item.selected').forEach(el => el.classList.remove('selected'));
+      // 2. 터치한 곡에 클래스 추가
+      li.classList.add('selected');
+      
+      // 3. 신청 데이터 저장
+      selectedTrackData = {
+        album: item.album || '',
+        artist: item.artist || '',
+        track: t
+      };
+      
+      // 4. 바텀 시트 정보 업데이트 및 노출
+      reqTrackName.textContent = t;
+      reqSheet.classList.remove('hidden');
+      
+      // 5. 폼 상태 초기화 (다른 곡 선택 시 다시 신청 가능하게)
+      reqStatus.style.display = 'none';
+      btnSubmitRequest.disabled = false;
+      btnSubmitRequest.textContent = '신청하기';
+      reqSubmitSuccess = false;
+    });
+    
     dTracks.appendChild(li);
   });
   
@@ -306,7 +353,59 @@ function openDetail(item) {
 function closeDetail() {
   detailView.classList.add('hidden');
   listView.classList.remove('hidden');
+  reqSheet.classList.add('hidden'); // 뒤로가기 시 바텀시트 숨김
+  if (floatingBtn) floatingBtn.classList.remove('hidden'); // 메인화면 플로팅버튼 복구
 }
+
+/* ── 곡 신청 폼 제출 로직 (Bottom Sheet) ────────────────────── */
+btnSubmitRequest.addEventListener('click', async () => {
+  if (!selectedTrackData || reqSubmitSuccess) return;
+
+  const userName = reqName.value.trim() || '익명';
+  const userNote = reqNote.value.trim() || '';
+
+  // UI 상태를 로딩 중으로 변경
+  btnSubmitRequest.disabled = true;
+  btnSubmitRequest.textContent = '신청 중...';
+  reqStatus.style.display = 'none';
+
+  try {
+    // config.js에 구글 폼 변수가 선언되어 있다고 가정
+    if (typeof GOOGLE_FORM_URL !== 'undefined') {
+      const formData = new FormData();
+      formData.append(ENTRY_ALBUM, selectedTrackData.album);
+      formData.append(ENTRY_ARTIST, selectedTrackData.artist);
+      formData.append(ENTRY_TRACK, selectedTrackData.track);
+      formData.append(ENTRY_NAME, userName);
+      formData.append(ENTRY_NOTE, userNote);
+
+      await fetch(GOOGLE_FORM_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      });
+    }
+
+    // 성공 처리 UI
+    reqSubmitSuccess = true;
+    btnSubmitRequest.textContent = '신청 완료!';
+    reqStatus.textContent = '✅ 성공적으로 신청되었습니다.';
+    reqStatus.style.display = 'block';
+    reqStatus.style.color = 'var(--accent)';
+
+    // 신청 후 입력칸 비우기
+    reqName.value = '';
+    reqNote.value = '';
+    
+  } catch (error) {
+    console.error('Submit Error:', error);
+    btnSubmitRequest.disabled = false;
+    btnSubmitRequest.textContent = '신청하기';
+    reqStatus.textContent = '❌ 통신 오류가 발생했습니다.';
+    reqStatus.style.display = 'block';
+    reqStatus.style.color = '#ff4d4d';
+  }
+});
 
 /* ── Search toggle ──────────────────────────────────────────── */
 function openSearch() {
