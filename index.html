@@ -21,6 +21,7 @@
   <meta name="twitter:title" content="Stylus Vinyl Explorer">
   <meta name="twitter:description" content="스타일러스에 있는 바이닐을 검색합니다">
   <meta name="twitter:image" content="https://stylusseoul.github.io/vinyl/images/og.jpg">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
@@ -64,6 +65,14 @@
       <div class="genre-scroll">
         <button class="genre-chip active" data-genre="all" id="chipAll">All</button>
         <div id="genreChips"></div>
+      </div>
+
+      <!-- 추가됨: 신청곡 현황으로 가는 네비게이션 버튼 -->
+      <div style="padding: 0 20px 16px 20px;">
+        <a href="requests.html" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 8px; text-decoration: none; color: var(--text);">
+          <span style="font-size: 14px; font-weight: 500;">📋 현재 신청곡 현황 보기</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
       </div>
 
     </header>
@@ -128,6 +137,20 @@
         </div>
         <ul id="dTracks" class="track-list"></ul>
       </div>
+      
+      <!-- 추가됨: 곡 신청 폼 및 알림 영역 -->
+      <div style="padding: 24px 20px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 20px;">
+        <p style="font-size: 14px; color: var(--sub); margin-bottom: 12px;">위 트랙리스트에서 곡을 선택하여 신청할 수 있습니다.</p>
+        <input id="reqName" type="text" placeholder="신청자 닉네임 (선택사항)" style="width: 100%; padding: 12px 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 15px; outline: none; box-sizing: border-box;">
+        <input id="reqNote" type="text" placeholder="간단한 메모 (선택사항)" style="width: 100%; padding: 12px 16px; margin-bottom: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 15px; outline: none; box-sizing: border-box;">
+        
+        <p id="reqStatus" style="font-size: 14px; text-align: center; margin-bottom: 16px; display: none;"></p>
+        
+        <a href="requests.html" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 14px 0; background: rgba(255,255,255,0.1); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 15px; font-weight: 500;">
+          신청곡 현황 확인하기
+        </a>
+      </div>
+
     </main>
 
     <footer class="detail-footer">
