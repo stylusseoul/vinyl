@@ -22,7 +22,7 @@
     }
 
     body { 
-      overscroll-behavior: none;
+      overscroll-behavior: none; 
     }
 
     .admin-header-top {
@@ -63,7 +63,11 @@
       margin: 0 auto;
     }
 
-    .req-list { display: flex; flex-direction: column; gap: 10px; }
+    .req-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+    }
 
     .req-item {
       display: flex;
@@ -72,13 +76,17 @@
       background: var(--card, #111);
       border-radius: 12px;
       border: 1px solid transparent;
-      transition: opacity 0.2s ease;
       gap: 14px;
+      /* 이동 애니메이션을 위한 트랜지션 추가 */
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      order: 0; /* 기본 순서 */
     }
 
+    /* is-played 클래스가 붙으면 즉시 흐려지고 밑으로 이동(order 변경) */
     .req-item.is-played {
       opacity: 0.45;
       border-color: var(--border, #222);
+      order: 1000; /* flex 컨테이너 안에서 맨 아래로 강제 이동 */
     }
 
     .req-cover {
@@ -89,6 +97,7 @@
       background-color: #1e1e1e;
       flex-shrink: 0;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
     }
 
     .is-played .req-cover {
@@ -110,6 +119,7 @@
       line-height: 1.3;
       word-break: break-word;
       color: var(--text, #fff);
+      transition: all 0.3s ease;
     }
 
     .is-played .req-track {
@@ -136,7 +146,8 @@
     }
 
     .req-meta .dot {
-      width: 3px; height: 3px;
+      width: 3px;
+      height: 3px;
       background: var(--sub, #888);
       border-radius: 50%;
       flex-shrink: 0;
@@ -155,32 +166,56 @@
       word-break: break-word;
     }
 
+    /* 토글 스위치 */
     .switch { 
       position: relative; 
       display: inline-block; 
-      width: 52px; height: 30px; 
+      width: 52px; 
+      height: 30px; 
       flex-shrink: 0;
       margin-top: 13px;
     }
-    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch input { 
+      opacity: 0; 
+      width: 0; 
+      height: 0; 
+    }
+
     .slider { 
-      position: absolute; cursor: pointer; 
+      position: absolute; 
+      cursor: pointer; 
       top: 0; left: 0; right: 0; bottom: 0; 
       background-color: #3a3a3a; 
-      transition: .3s; border-radius: 30px; 
+      transition: .3s; 
+      border-radius: 30px; 
     }
+
     .slider:before { 
-      position: absolute; content: ""; 
-      height: 26px; width: 26px; 
-      left: 2px; bottom: 2px; 
+      position: absolute; 
+      content: ""; 
+      height: 26px; 
+      width: 26px; 
+      left: 2px; 
+      bottom: 2px; 
       background-color: #fff; 
       transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1); 
       border-radius: 50%; 
       box-shadow: 0 2px 4px rgba(0,0,0,0.25);
     }
-    input:checked + .slider { background-color: var(--played); }
-    input:checked + .slider:before { transform: translateX(22px); }
-    input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+
+    input:checked + .slider { 
+      background-color: var(--played); 
+    }
+
+    input:checked + .slider:before { 
+      transform: translateX(22px); 
+    }
+
+    input:disabled + .slider { 
+      opacity: 0.5; 
+      cursor: not-allowed; 
+    }
 
     .loading-state { 
       display: flex;
@@ -207,17 +242,7 @@
         </a>
 
         <!-- 가운데: Admin 텍스트 -->
-        <span style="
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          font-size: 13px;
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          color: var(--text, #fff);
-          text-transform: uppercase;
-          pointer-events: none;
-        ">Admin</span>
+        <span class="center-label">Admin</span>
 
         <!-- 오른쪽: 검색 버튼 대신 빈 공간으로 밸런스 유지 -->
         <div style="width: 36px; height: 36px; flex-shrink: 0;"></div>
@@ -243,6 +268,9 @@
   // config.js의 REQUEST_API_URL을 공통으로 사용
   const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : "";
   const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
+
+  // 다다닥 눌렀을 때 백그라운드에서 순차적으로 처리하기 위한 큐(Queue)
+  let updateQueue = Promise.resolve();
 
   async function loadAdminData() {
     if (typeof SHEET_ID === 'undefined') {
@@ -279,8 +307,10 @@
         const userName   = r.c[4] ? r.c[4].v : '익명';
         const memoText   = r.c[5] ? r.c[5].v : '';
         const coverUrl   = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER;
-        const currentStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim() : '';
-        const isPlayed   = currentStatus.toUpperCase() === 'Y';
+        
+        // 상태 판별 로직: 빈 칸, 'N', 기타 값은 모두 false. 대문자 'Y'만 true
+        const rawStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim().toUpperCase() : '';
+        const isPlayed  = (rawStatus === 'Y');
 
         validItems.push({ 
           orderIdx: sortOrderIndex, 
@@ -300,7 +330,7 @@
         return;
       }
 
-      // 정렬: 미재생이 위, 재생완료가 아래. 상태가 같으면 시트에 들어온 순서(orderIdx) 유지
+      // 초기 정렬: 미재생이 위, 재생완료가 아래. 상태가 같으면 먼저 신청한 순서(orderIdx) 유지
       validItems.sort((a, b) => {
         if (a.isPlayed === b.isPlayed) return a.orderIdx - b.orderIdx;
         return a.isPlayed ? 1 : -1;
@@ -308,6 +338,9 @@
 
       validItems.forEach((data) => {
         const item = document.createElement('div');
+        
+        // HTML 요소의 order 속성에 원래 순서 인덱스를 부여하여 플렉스 정렬 유지
+        item.style.order = data.orderIdx;
         item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
 
         const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
@@ -325,7 +358,6 @@
             ${memoHTML}
           </div>
           <label class="switch">
-            <!-- 행 번호 대신 고유값인 타임스탬프(data-ts)를 심어둡니다 -->
             <input type="checkbox" class="status-toggle" data-ts="${data.timestamp}" ${data.isPlayed ? 'checked' : ''}>
             <span class="slider"></span>
           </label>
@@ -334,17 +366,21 @@
         adminList.appendChild(item);
       });
 
+      // 토글 이벤트 등록
       document.querySelectorAll('.status-toggle').forEach(toggle => {
-        toggle.addEventListener('change', async function () {
-          // 행 번호 대신 타임스탬프를 가져옴
+        toggle.addEventListener('change', function () {
           const ts = this.getAttribute('data-ts');
-          const newStatus = this.checked ? 'Y' : '';
+          // 스위치를 켜면 'Y', 끄면 'N'을 보내서 구글 시트가 확실히 인식하게 함
+          const newStatus = this.checked ? 'Y' : 'N'; 
           const parentItem = this.closest('.req-item');
 
-          this.disabled = true;
+          // [핵심 1] 클릭 즉시! 화면에서 색깔을 바꾸고 CSS order로 인해 아래로 내림 (Optimistic UI)
           parentItem.classList.toggle('is-played', this.checked);
 
-          await updateSheetStatus(ts, newStatus, this, parentItem);
+          // [핵심 2] 백그라운드 큐에 넣어서 순차적으로 구글 시트에 업데이트 전송
+          updateQueue = updateQueue.then(() => 
+            backgroundUpdate(ts, newStatus, this, parentItem, this.checked)
+          );
         });
       });
 
@@ -354,47 +390,39 @@
     }
   }
 
-  // ★ 통신 에러 해결 및 Timestamp 전송으로 밀림 현상 방지 ★
-  async function updateSheetStatus(timestamp, status, toggleEl, parentItem) {
+  // 화면 멈춤 없이 백그라운드에서 구글 시트와 통신하는 함수
+  async function backgroundUpdate(timestamp, status, toggleEl, parentItem, attemptedState) {
     if (!WEBAPP_URL) {
-      alert('설정된 URL이 없습니다.');
-      resetToggle(toggleEl, parentItem, status);
+      console.error('설정된 URL이 없습니다.');
       return;
     }
 
     try {
-      // 일반 텍스트 모드로 전송하여 CORS 프리플라이트(OPTIONS) 우회
       const response = await fetch(WEBAPP_URL, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain;charset=utf-8", 
         },
-        // row 대신 timestamp 전송!
         body: JSON.stringify({ "timestamp": timestamp, "status": status })
       });
 
       const responseText = await response.text();
       
-      // 서버에서 명시적 에러를 뱉었을 경우
+      // 에러 확인
       if (responseText.includes('error') && !responseText.includes('success') && !responseText.includes('Success')) {
          throw new Error("서버 반환 에러: " + responseText);
       }
 
-      // 성공 시 토글 활성화
-      toggleEl.disabled = false;
+      // 통신 성공 시 화면 새로고침 안 함! (이미 사용자가 클릭할 때 CSS로 완벽하게 이동시켜둠)
       
     } catch (error) {
-      console.error("업데이트 에러:", error);
-      alert('통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      resetToggle(toggleEl, parentItem, status);
+      console.error("업데이트 실패. 원상복구합니다.", error);
+      alert('통신 오류가 발생했습니다. 해당 곡의 상태를 원래대로 되돌립니다.');
+      
+      // 통신 실패 시에만 원상복구 (토글 풀고 위로 올림)
+      toggleEl.checked = !attemptedState;
+      parentItem.classList.toggle('is-played', !attemptedState);
     }
-  }
-
-  function resetToggle(toggleEl, parentItem, attemptedStatus) {
-    toggleEl.disabled = false;
-    const wasOn = attemptedStatus === 'Y';
-    toggleEl.checked = !wasOn;
-    parentItem.classList.toggle('is-played', !wasOn);
   }
 
   loadAdminData();
