@@ -830,3 +830,36 @@ body {
     margin: 0 auto;
   }
 }
+
+/* ============================================================
+   ★ 트랙리스트 하단 잘림 방지 (동적 패딩)
+   ============================================================ */
+
+/* detail-main에 하단 시트 올라올 때 여백 추가 */
+.detail-main {
+  transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 요청 시트 열릴 때 트랙리스트 하단 220px 여백 확보 */
+.request-bottom-sheet:not(.hidden) ~ .detail-footer,
+.request-bottom-sheet:not(.hidden) + .detail-footer {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 300px) !important;
+}
+
+/* 플로팅 버튼과 충돌 방지 */
+#requestsBtn {
+  z-index: 90;
+}
+
+/* 기존 detail-tracks-section 여백 최적화 */
+.detail-tracks-section {
+  padding-bottom: 40px; /* 기존 32px -> 40px */
+}
+
+/* 모바일 safe-area 최적화 */
+@supports (padding: max(safe-area-inset-bottom)) {
+  .detail-main {
+    padding-bottom: max(40px, env(safe-area-inset-bottom));
+  }
+}
+
