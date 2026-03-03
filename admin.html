@@ -103,7 +103,8 @@
         const timestampVal = String(r.c[0].f || r.c[0].v).trim();
         const artistName   = r.c[1] ? r.c[1].v : 'Unknown Artist';
         const albumName    = r.c[2] ? r.c[2].v : 'Unknown Album';
-        const trackName    = r.c[3].v;
+        // 특수 문자로 인해 따옴표가 깨지는 것을 방지하기 위해 이스케이프 처리
+        const trackName    = r.c[3].v.replace(/"/g, '&quot;'); 
         const userName     = r.c[4] ? r.c[4].v : '익명';
         const memoText     = r.c[5] ? r.c[5].v : '';
         const coverUrl     = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER;
@@ -132,7 +133,7 @@
         item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
         const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
 
-        // ★ input 요소에 data-track 속성을 추가하여 곡명도 저장해둠
+        // data-track 속성에 안전하게 인코딩된 곡명 삽입
         item.innerHTML = `
           <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
           <div class="req-info">
@@ -152,48 +153,37 @@
       document.querySelectorAll('.status-toggle').forEach(toggle => {
         toggle.addEventListener('change', async function () {
           const ts = this.getAttribute('data-ts');
-          const trackName = this.getAttribute('data-track'); // ★ 곡명 가져오기
+          // HTML 인코딩된 따옴표를 다시 원상복구
+          const trackName = this.getAttribute('data-track').replace(/&quot;/g, '"'); 
           const newStatus = this.checked ? 'Y' : 'N'; 
 
-          // 무조건 화면 락
           globalLoader.style.display = 'flex';
 
           try {
+            // 특수문자 전송 시 JSON.parse 에러를 막기 위해 페이로드를 객체 형태로 만들고 직렬화
+            const payload = {
+              timestamp: ts,
+              track: trackName,
+              status: newStatus
+            };
+
             const response = await fetch(WEBAPP_URL, {
               method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              // ★ 서버로 시간, 곡명, 상태 3가지를 모두 보냄
-              body: JSON.stringify({ 
-                "timestamp": ts, 
-                "track": trackName,
-                "status": newStatus 
-              })
+              headers: { 
+                "Content-Type": "text/plain;charset=utf-8" 
+              },
+              // mode: "no-cors"를 쓰면 응답(Response)을 자바스크립트가 읽을 수 없어 항상 실패로 간주되므로 제외함. 
+              // 대신 리다이렉트 처리를 명시함.
+              redirect: "follow",
+              body: JSON.stringify(payload)
             });
 
+            // GAS는 항상 200 OK를 반환하므로 text()로 내용을 확인
             const responseText = await response.text();
             
-            if (responseText.includes('error') && !responseText.includes('success')) {
-              alert("서버에서 해당 곡을 찾지 못했습니다.");
-              this.checked = !this.checked;
-            } else {
-              // 성공 시 무조건 목록 전체 새로고침
-              await loadAdminData();
-            }
-          } catch (error) {
-            alert("통신 실패. 다시 시도해주세요.");
-            this.checked = !this.checked;
-          } finally {
-            globalLoader.style.display = 'none';
-          }
-        });
-      });
+            // 서버에서 직접 보낸 'error' 응답인지 확인
+            if
 
-    } catch (e) {
-      adminList.innerHTML = '<div class="loading-state">데이터를 불러오지 못했습니다.</div>';
-    }
-  }
-
-  loadAdminData();
 </script>
 </body>
 </html>
