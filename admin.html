@@ -98,12 +98,11 @@
       padding-top: 2px;
     }
 
-    /* 말줄임표(...) 속성 모두 제거하여 전체 텍스트 노출 */
     .req-track { 
       font-size: 15px; 
       font-weight: 600;
       line-height: 1.3;
-      word-break: break-word; /* 긴 단어 줄바꿈 */
+      word-break: break-word; 
     }
 
     .is-played .req-track {
@@ -123,7 +122,7 @@
       color: var(--sub);
       display: flex;
       align-items: flex-start;
-      flex-wrap: wrap; /* 메타 정보도 길면 다음 줄로 넘어감 */
+      flex-wrap: wrap; 
       gap: 6px;
       line-height: 1.4;
       margin-top: 2px;
@@ -134,7 +133,7 @@
       background: var(--sub);
       border-radius: 50%;
       flex-shrink: 0;
-      margin-top: 6px; /* 줄바꿈 시 중앙 정렬을 위한 마진 */
+      margin-top: 6px;
     }
 
     .req-memo {
@@ -195,7 +194,9 @@
   
   <script>
     const adminList = document.getElementById('adminList');
-    const WEBAPP_URL = typeof ADMIN_WEB_APP_URL !== 'undefined' ? ADMIN_WEB_APP_URL : ""; 
+    
+    // config.js에 있는 REQUEST_API_URL을 그대로 가져다 씁니다!
+    const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : ""; 
     const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
 
     async function loadAdminData() {
@@ -204,6 +205,7 @@
         return;
       }
 
+      // 캐시 무효화 파라미터 추가하여 항상 최신 시트 데이터 가져오기
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
       
       try {
@@ -214,14 +216,13 @@
         
         adminList.innerHTML = '';
         
+        let validItems = [];
         let actualRowNumber = 1; 
-        let validItemCount = 0;
 
         rows.forEach((r) => {
           actualRowNumber++; 
           if (!r || !r.c || !r.c[3] || r.c[3].v === 'Track') return; 
           
-          validItemCount++;
           const artistName = r.c[1] ? r.c[1].v : 'Unknown Artist';  
           const albumName = r.c[2] ? r.c[2].v : 'Unknown Album';    
           const trackName = r.c[3].v;                               
@@ -232,35 +233,56 @@
           const currentStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim() : ''; 
           const isPlayed = currentStatus.toUpperCase() === 'Y';
 
+          validItems.push({
+            rowNum: actualRowNumber,
+            artist: artistName,
+            album: albumName,
+            track: trackName,
+            user: userName,
+            memo: memoText,
+            cover: coverUrl,
+            isPlayed: isPlayed
+          });
+        });
+
+        if (validItems.length === 0) {
+          adminList.innerHTML = '<div class="loading-state">신청곡이 없습니다.</div>';
+          return;
+        }
+
+        validItems.sort((a, b) => {
+          if (a.isPlayed === b.isPlayed) {
+            return a.rowNum - b.rowNum; 
+          }
+          return a.isPlayed ? 1 : -1; 
+        });
+
+        validItems.forEach((data) => {
           const item = document.createElement('div');
-          item.className = `req-item ${isPlayed ? 'is-played' : ''}`; 
+          item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`; 
           
-          const memoHTML = memoText ? `<div class="req-memo">💬 ${memoText}</div>` : '';
+          const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
 
           item.innerHTML = `
-            <img src="${coverUrl}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
+            <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
             <div class="req-info">
-              <span class="req-track">${trackName}</span>
-              <span class="req-album">${albumName}</span>
+              <span class="req-track">${data.track}</span>
+              <span class="req-album">${data.album}</span>
               <div class="req-meta">
-                <span>${artistName}</span>
+                <span>${data.artist}</span>
                 <span class="dot"></span>
-                <span>👤 ${userName}</span>
+                <span>👤 ${data.user}</span>
               </div>
               ${memoHTML}
             </div>
             <label class="switch">
-              <input type="checkbox" class="status-toggle" data-row="${actualRowNumber}" ${isPlayed ? 'checked' : ''}>
+              <input type="checkbox" class="status-toggle" data-row="${data.rowNum}" ${data.isPlayed ? 'checked' : ''}>
               <span class="slider"></span>
             </label>
           `;
           
           adminList.appendChild(item);
         });
-
-        if (validItemCount === 0) {
-          adminList.innerHTML = '<div class="loading-state">신청곡이 없습니다.</div>';
-        }
 
         document.querySelectorAll('.status-toggle').forEach(toggle => {
           toggle.addEventListener('change', async function() {
@@ -287,7 +309,7 @@
 
     async function updateSheetStatus(row, status, toggleEl, parentItem) {
       if (!WEBAPP_URL) {
-        alert('웹앱 URL이 설정되지 않았습니다.');
+        alert('config.js에서 REQUEST_API_URL을 찾을 수 없습니다.');
         resetToggle(toggleEl, parentItem, status);
         return;
       }
@@ -300,7 +322,7 @@
         
         const result = await response.json();
         if(result.result !== 'success') {
-          alert('업데이트 실패: ' + result.message);
+          alert('업데이트 실패: ' + (result.message || '알 수 없는 오류'));
           resetToggle(toggleEl, parentItem, status); 
         } else {
           toggleEl.disabled = false; 
