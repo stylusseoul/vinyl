@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Stylus Admin</title>
+  <style>
+    body { background: #080808; color: #fff; font-family: -apple-system, sans-serif; padding: 20px; }
+    h1 { color: #EF7C1C; font-size: 24px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .req-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #222; }
+    .req-info { display: flex; flex-direction: column; gap: 4px; }
+    .req-track { font-size: 16px; font-weight: bold; }
+    .req-meta { font-size: 12px; color: #aaa; }
+    
+    /* 토글 스위치 디자인 */
+    .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .3s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #1DB954; }
+    input:checked + .slider:before { transform: translateX(22px); }
+    input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <h1>Requests Admin</h1>
+  <div id="adminList">로딩중...</div>
+
+  <!-- config.js 에서 SHEET_ID와 통신 URL을 가져옵니다 -->
+  <script src="config.js"></script> 
+  
+  <script>
+    const adminList = document.getElementById('adminList');
+    
+    // config.js에 ADMIN_WEB_APP_URL이 있다면 그걸 쓰고, 없다면 여기에 문자열로 하드코딩 하시면 됩니다.
+    const WEBAPP_URL = typeof ADMIN_WEB_APP_URL !== 'undefined' ? ADMIN_WEB_APP_URL : "여기에_새로배포한_웹앱_URL을_붙여넣으세요"; 
+
+    async function loadAdminData() {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+        const rows = json.table.rows || [];
+        
+        adminList.innerHTML = '';
+
+        rows.forEach((r) => {
+          // A열(시간), D열(트랙)이 없거나 헤더행이면 스킵
+          if (!r || !r.c || !r.c[0] || !r.c[3] || r.c[3].v === 'Track') return; 
+          
+          // 고유 키로 사용할 타임스탬프 (A열: 0번째 인덱스) - f(포맷된 텍스트) 우선, 없으면 v(원본 값) 사용
+          const timestamp = String(r.c[0].f || r.c[0].v).trim();
+          
+          const trackName = r.c[3].v;
+          const artistName = r.c[1] ? r.c[1].v : '';
+          const userName = r.c[4] ? r.c[4].v : '';
+          
+          // H열(상태: 7번째 인덱스) 데이터 추출
+          const currentStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim() : '';
+          const isPlayed = currentStatus.toUpperCase() === 'Y';
+
+          const item = document.createElement('div');
+          item.className = 'req-item';
+          
+          item.innerHTML = `
+            <div class="req-info">
+              <span class="req-track">${trackName}</span>
+              <span class="req-meta">${artistName} | 👤 ${userName}</span>
+              <!-- 확인용 시간 표시 (나중에 지워도 무방) -->
+              <span class="req-meta" style="font-size:10px; color:#666;">${timestamp}</span> 
+            </div>
+            <label class="switch">
+              <!-- data-row 대신 data-timestamp를 사용해 절대 꼬이지 않게 함 -->
+              <input type="checkbox" class="status-toggle" data-timestamp="${timestamp}" ${isPlayed ? 'checked' : ''}>
+              <span class="slider"></span>
+            </label>
+          `;
+          
+          adminList.appendChild(item);
+        });
+
+        // 토글 버튼 이벤트 리스너 등록
+        document.querySelectorAll('.status-toggle').forEach(toggle => {
+          toggle.addEventListener('change', async function() {
+            const timestamp = this.getAttribute('data-timestamp');
+            const newStatus = this.checked ? 'Y' : '';
+            
+            // 시트 업데이트 통신 중 토글 비활성화
+            this.disabled = true; 
+            const slider = this.nextElementSibling;
+            slider.style.backgroundColor = '#888'; // 로딩 표시용 색상
+            
+            await updateSheetStatus(timestamp, newStatus);
+            
+            // 통신 완료 후 토글 활성화
+            this.disabled = false;
+            slider.style.backgroundColor = ''; // 원래 색상으로 복구
+          });
+        });
+
+      } catch (e) {
+        adminList.innerHTML = '데이터를 불러오지 못했습니다.';
+        console.error(e);
+      }
+    }
+
+    // Google Web App을 호출하여 시트 데이터 수정
+    async function updateSheetStatus(timestamp, status) {
+      try {
+        const response = await fetch(WEBAPP_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            "timestamp": timestamp, // row 대신 timestamp 전달
+            "status": status
+          })
+        });
+        
+        const result = await response.json();
+        if(result.result !== 'success') {
+          alert('상태 업데이트 실패: ' + result.message);
+        }
+      } catch (error) {
+        console.error("업데이트 에러:", error);
+        alert('네트워크 오류로 상태를 변경하지 못했습니다.');
+      }
+    }
+
+    loadAdminData();
+  </script>
+</body>
+</html>
