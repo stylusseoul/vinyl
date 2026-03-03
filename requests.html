@@ -261,4 +261,294 @@
         </div>
       </div>
       <div class="header-right">
-        <button
+        <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 저장">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12m0 0-4-4m4 4 4-4"/>
+            <path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="req-count-bar">
+      <span class="req-count-num" id="reqCountNum">—</span><span class="req-count-label">requests</span>
+      <div class="sync-dot"></div><span class="sync-time" id="lastSync">—</span>
+    </div>
+  </header>
+
+  <!-- 웹 화면 MAIN -->
+  <main class="req-main">
+    <div id="reqLoading" class="req-loading"><div class="spinner"></div></div>
+    <p id="reqEmpty" class="req-empty hidden">신청곡이 없어요</p>
+    <div id="reqList" class="req-list"></div>
+  </main>
+
+  <!-- 웹 화면 FOOTER -->
+  <footer class="req-footer">
+    <p class="footer-desc">A small room designed for listening,<br>where sound is free to breathe and time is never in a hurry.</p>
+    <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>stylus.seoul</span>
+    </a>
+  </footer>
+
+  <!-- FLOATING BTN -->
+  <a href="index.html" class="float-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>Search</span>
+  </a>
+
+  <!-- 📸 이미지 캡처 전용 숨김 도화지 -->
+  <div id="captureContainer" class="capture-container">
+    <div class="cap-gradient"></div>
+    
+    <!-- 📱 페이크 상단 상태바 -->
+    <div class="cap-status-bar">
+      <div id="capStatusTime">00:00</div>
+      <div class="cap-status-right">
+        <svg class="cap-status-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+        <svg class="cap-status-icon" viewBox="0 0 24 24"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
+        <svg class="cap-status-icon" viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+      </div>
+    </div>
+
+    <!-- 📱 페이크 앱 네비게이션 헤더 -->
+    <div class="cap-nav-bar">
+      <svg class="cap-nav-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      <svg class="cap-nav-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </div>
+
+    <div class="cap-content">
+      <div class="cap-header">
+        <div id="captureGrid" class="cap-grid"></div>
+        <div class="cap-title-area">
+          <h1 id="captureTitle" class="cap-title"></h1>
+          <div class="cap-profile">
+            <div class="cap-profile-img-wrap">
+              <img src="images/logo.png" alt="Stylus" class="cap-profile-img" onerror="this.style.display='none'">
+            </div>
+            <span class="cap-profile-name">Stylus</span>
+            <span class="cap-dot">·</span>
+            <span id="captureCount" class="cap-req-count"></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 🟢 스포티파이 핵심 아이콘 영역 -->
+      <div class="cap-actions">
+        <svg class="cap-action-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
+        <svg class="cap-action-icon cap-action-icon.fill" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="19" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="2" fill="currentColor" stroke="none"></circle></svg>
+      </div>
+
+      <!-- 리스트 -->
+      <div id="captureList" class="req-list cap-list"></div>
+      
+      <!-- 푸터 -->
+      <div class="cap-footer">
+        <div class="cap-insta">@stylus.seoul</div>
+        <div id="captureTime" class="cap-time"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    'use strict';
+
+    let allRequests = [];
+    const clockEl     = document.getElementById('clock');
+    const reqCountNum = document.getElementById('reqCountNum');
+    const reqLoading  = document.getElementById('reqLoading');
+    const reqEmpty    = document.getElementById('reqEmpty');
+    const reqList     = document.getElementById('reqList');
+    const lastSync    = document.getElementById('lastSync');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    function updateClock() {
+      const d = new Date();
+      clockEl.textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+    updateClock();
+    setInterval(updateClock, 5000);
+
+    function parseTime(raw) {
+      if (!raw) return { display: '', ts: 0 };
+      const str = String(raw);
+      const m   = str.match(/(\d{1,2}:\d{2})/);
+      const disp = m ? m[1] : str.substring(0, 5);
+      const ts   = new Date(str.replace(/\./g, '/')).getTime();
+      return { display: disp, ts: isNaN(ts) ? 0 : ts };
+    }
+
+    /* ── CORS 우회 프록시 ── */
+    function thumb(url) {
+      const u = String(url || '').trim().replace(/&amp;/g, '&').replace(/^\/\//, 'https://').replace(/^http:/, 'https:');
+      const core = u.replace(/^https:\/\//, '');
+      return 'https://images.weserv.nl/?url=' + encodeURIComponent(core) + '&w=240&h=240&fit=cover&q=80&t=anonymous';
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function updateSync() {
+      const n = new Date();
+      lastSync.textContent = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0') + ':' + String(n.getSeconds()).padStart(2, '0');
+    }
+
+    function renderRequests() {
+      reqCountNum.textContent = allRequests.length;
+      if (allRequests.length === 0) {
+        reqEmpty.classList.remove('hidden');
+        reqList.innerHTML = '';
+        return;
+      }
+      reqEmpty.classList.add('hidden');
+      let totalIdx = 0;
+      const frag = document.createDocumentFragment();
+
+      allRequests.forEach(function(req) {
+        const isPlayed = req.status.toUpperCase() === 'Y';
+        totalIdx++;
+        const idxStr   = String(totalIdx).padStart(2, '0');
+        const timeDisp = parseTime(req.rawTime).display;
+        const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
+        const statusText = isPlayed ? 'Played' : 'Waiting';
+        
+        const item = document.createElement('div');
+        item.className = 'req-item ' + (isPlayed ? 'played' : 'waiting');
+
+        const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
+        
+        const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
+
+        let artistHtml = artistTxt ? '<div class="req-artist">' + esc(artistTxt) + '</div>' : '';
+        let metaHtml = '';
+        if (req.name) metaHtml += '<div class="req-user">' + esc(req.name) + '</div>';
+        if (req.memo) metaHtml += '<div class="req-memo">\u201c' + esc(req.memo) + '\u201d</div>';
+
+        const bodyHtml = '<div class="req-body"><span class="req-track">' + esc(req.track) + '</span>' + artistHtml + metaHtml + '</div>';
+        const mainRowHtml = '<div class="req-main-row">' + coverHtml + bodyHtml + '</div>';
+
+        item.innerHTML = topRowHtml + mainRowHtml;
+        frag.appendChild(item);
+      });
+      reqList.innerHTML = '';
+      reqList.appendChild(frag);
+    }
+
+    function sortRequests(arr) {
+      return arr.slice().sort(function(a, b) {
+        const aP = a.status.toUpperCase() === 'Y';
+        const bP = b.status.toUpperCase() === 'Y';
+        if (!aP && bP) return -1;
+        if (aP && !bP) return  1;
+        return a.ts - b.ts;
+      });
+    }
+
+    async function fetchRequests() {
+      const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Requests&_=' + Date.now();
+      try {
+        const res  = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+        const rows = (json.table && json.table.rows) ? json.table.rows : [];
+        const parsed = rows.map(function(r) {
+          if (!r || !r.c) return null;
+          function get(i) { const cell = r.c[i]; return cell ? String(cell.f || cell.v || '') : ''; }
+          return {
+            rawTime: get(0), artist: get(1), album: get(2), track: get(3),
+            name: get(4), memo: get(5), cover: get(6), status: get(7), ts: parseTime(get(0)).ts,
+          };
+        }).filter(function(r) {
+          return r && r.track && r.track !== 'Track' && r.track !== '곡명' && r.artist !== 'SWITCH' && r.artist !== 'Artist';
+        });
+
+        if (parsed.length === 0) return;
+        allRequests = sortRequests(parsed);
+        reqLoading.classList.add('hidden');
+        updateSync();
+        renderRequests();
+      } catch (e) {
+        console.warn('fetch failed:', e);
+        reqLoading.classList.add('hidden');
+        reqEmpty.classList.remove('hidden');
+      }
+    }
+
+    fetchRequests();
+    setInterval(fetchRequests, 10000);
+
+    /* ── 이미지 다운로드 로직 ── */
+    downloadBtn.addEventListener('click', async function() {
+      if (allRequests.length === 0) {
+        alert('저장할 신청곡이 없습니다.');
+        return;
+      }
+
+      const originalIcon = downloadBtn.innerHTML;
+      downloadBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:1.5px;border-top-color:#fff;"></div>';
+      downloadBtn.disabled = true;
+
+      const now = new Date();
+      
+      const hoursCurrent = String(now.getHours()).padStart(2, '0');
+      const minsCurrent = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('capStatusTime').textContent = `${hoursCurrent}:${minsCurrent}`;
+
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      
+      document.getElementById('captureTitle').textContent = `Music On Vinyl(${yyyy}.${mm}.${dd})`;
+      document.getElementById('captureCount').textContent = allRequests.length + '곡';
+
+      const covers = allRequests.map(r => r.cover).filter(Boolean);
+      const gridHtml = [];
+      for (let i = 0; i < 4; i++) {
+        const imgSrc = covers[i % covers.length] || ''; 
+        gridHtml.push('<img src="' + thumb(imgSrc) + '" crossorigin="anonymous">');
+      }
+      document.getElementById('captureGrid').innerHTML = gridHtml.join('');
+
+      document.getElementById('captureList').innerHTML = reqList.innerHTML;
+
+      // 🚨 타임스탬프 띄어쓰기 완벽 수정 (HH:MM:SS 사이에 공백 없음)
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('captureTime').textContent = `${yyyy}.${mm}.${dd} ${hoursCurrent}:${minsCurrent}:${seconds}`;
+
+      const container = document.getElementById('captureContainer');
+      container.style.left = '0';
+      container.style.zIndex = '100'; 
+
+      try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const canvas = await html2canvas(container, {
+          useCORS: true,       
+          allowTaint: true,    
+          backgroundColor: '#121212', 
+          scale: 2             
+        });
+
+        const link = document.createElement('a');
+        link.download = `Stylus_Playlist_${yyyy}${mm}${dd}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (error) {
+        console.error('이미지 저장 실패:', error);
+        alert('이미지 저장 중 오류가 발생했습니다.');
+      } finally {
+        container.style.left = '-9999px';
+        container.style.zIndex = '-1';
+        downloadBtn.innerHTML = originalIcon;
+        downloadBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
