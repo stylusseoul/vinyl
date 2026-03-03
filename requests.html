@@ -31,47 +31,18 @@
       -webkit-text-size-adjust: 100%;
       overscroll-behavior: none;
       padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
-      overflow-x: hidden; /* 캡처 컨테이너 숨김 처리용 */
+      overflow-x: hidden; 
     }
     .hidden { display: none !important; }
 
     /* ══════════════════════════════
        HEADER
     ══════════════════════════════ */
-    .req-header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(8,8,8,0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding-top: env(safe-area-inset-top, 0);
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .req-header-inner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 56px;           
-      padding: 12px 16px 10px; 
-    }
-
+    .req-header { position: sticky; top: 0; z-index: 50; background: rgba(8,8,8,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding-top: env(safe-area-inset-top, 0); border-bottom: 1px solid var(--border); }
+    .req-header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 12px 16px 10px; }
     .header-left { display: flex; align-items: center; flex: 1; }
     .logo-img { height: 28px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.95; display: block; flex-shrink: 0; }
-
-    .header-center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      pointer-events: none;
-      white-space: nowrap;
-    }
+    .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: none; white-space: nowrap; }
     .header-page-name { font-size: 14px; font-weight: 700; letter-spacing: 0.04em; color: var(--text); text-transform: uppercase; line-height: 1; }
     .header-live-row { display: flex; align-items: center; gap: 5px; }
     .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
@@ -79,14 +50,9 @@
     .live-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; line-height: 1; }
     .hd-sep { width: 1px; height: 9px; background: rgba(255,255,255,0.14); }
     .req-clock { font-size: 10px; font-weight: 400; letter-spacing: 0.04em; color: var(--sub); font-variant-numeric: tabular-nums; line-height: 1; }
-
     .header-right { display: flex; align-items: center; justify-content: flex-end; flex: 1; }
 
-    .pdf-btn {
-      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      background: none; border: none; color: #ffffff; cursor: pointer; border-radius: 50%; transition: color 0.15s;
-      -webkit-tap-highlight-color: transparent; padding: 0;
-    }
+    .pdf-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: none; border: none; color: #ffffff; cursor: pointer; border-radius: 50%; transition: color 0.15s; -webkit-tap-highlight-color: transparent; padding: 0; }
     .pdf-btn svg { width: 20px; height: 20px; display: block; }
     .pdf-btn:active { color: var(--accent); }
 
@@ -107,7 +73,6 @@
     .req-top-row { display: flex; align-items: center; gap: 8px; }
     .req-idx { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.01em; color: rgba(255,255,255,0.14); min-width: 26px; }
     .req-item.waiting .req-idx { color: var(--accent); }
-
     .req-status { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; padding: 3px 8px; border-radius: 4px; }
     .req-item.waiting .req-status { color: var(--accent); background: rgba(239,124,28,0.1); }
     .req-item.played .req-status { color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.05); }
@@ -134,84 +99,82 @@
     .req-empty { text-align: center; padding: 80px 20px; color: var(--sub); font-size: 13px; line-height: 1.6; }
 
     /* ══════════════════════════════
-       FOOTER
+       FOOTER & BTN
     ══════════════════════════════ */
     .req-footer { padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 24px); border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 2; text-align: center; font-style: italic; }
     .footer-insta { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
     .footer-insta svg { width: 14px; height: 14px; }
-
-    /* ══════════════════════════════
-       FLOATING BUTTON
-    ══════════════════════════════ */
     .float-btn { position: fixed; bottom: calc(max(24px, env(safe-area-inset-bottom, 0px) + 16px)); left: 50%; transform: translateX(-50%); z-index: 1000; display: inline-flex; align-items: center; gap: 7px; background: rgba(20,20,20,0.92); backdrop-filter: blur(16px); color: var(--text); padding: 11px 20px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 28px rgba(0,0,0,0.5); font-size: 13px; font-weight: 600; text-decoration: none; }
 
-    @media (min-width: 600px) {
-      .req-header-inner, .req-count-bar, .req-main, .req-footer { max-width: 600px; margin-left: auto; margin-right: auto; }
-    }
+    @media (min-width: 600px) { .req-header-inner, .req-count-bar, .req-main, .req-footer { max-width: 600px; margin-left: auto; margin-right: auto; } }
 
     /* ══════════════════════════════
-       📸 이미지 캡처용 숨김 컨테이너 (Spotify Playlist Style)
+       📸 캡처 전용 컨테이너 (Spotify Playlist 감성)
     ══════════════════════════════ */
     .capture-container {
-      position: absolute;
-      top: 0;
-      left: -9999px; /* 평소에는 화면 밖으로 숨김 */
-      width: 520px;  /* 이미지 비율을 위해 고정 너비 사용 */
-      background: var(--bg);
-      padding: 60px 40px;
+      position: absolute; top: 0; left: -9999px; /* 평소 숨김 */
+      width: 540px; 
+      background-color: #121212; /* 스포티파이 기본 다크 배경 */
       z-index: -1;
     }
-    .capture-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 40px;
+    
+    /* 상단 그라데이션 효과 */
+    .cap-gradient {
+      position: absolute; top: 0; left: 0; right: 0; height: 600px;
+      background: linear-gradient(to bottom, rgba(80, 80, 80, 0.4) 0%, #121212 100%);
+      z-index: 0; pointer-events: none;
     }
-    .capture-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      width: 240px;
-      height: 240px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-      margin-bottom: 28px;
-      background: var(--surface);
+
+    .cap-content { position: relative; z-index: 1; padding: 60px 40px 30px; }
+
+    /* 헤더 영역 */
+    .cap-header { margin-bottom: 30px; }
+    
+    .cap-grid {
+      width: 260px; height: 260px;
+      margin: 0 auto 40px; /* 가운데 정렬 및 하단 여백 */
+      display: grid; grid-template-columns: 1fr 1fr;
+      box-shadow: 0 24px 50px rgba(0,0,0,0.6); /* 강력한 그림자 */
+      background: #222;
     }
-    .capture-grid img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
+
+    .cap-title-area { text-align: left; }
+    .cap-subtitle { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.1em; margin-bottom: 10px; }
+    .cap-title { font-size: 42px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.1; }
+
+    /* 프로필 영역 */
+    .cap-profile { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #ffffff; }
+    .cap-profile-img-wrap {
+      width: 28px; height: 28px; border-radius: 50%; background: #000;
+      display: flex; align-items: center; justify-content: center;
     }
-    .capture-title {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.02em;
-      text-align: center;
+    .cap-profile-img { width: 14px; height: 14px; object-fit: contain; filter: brightness(0) invert(1); }
+    .cap-dot { color: rgba(255,255,255,0.4); margin: 0 2px; }
+    .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
+
+    /* 리스트 캡처용 CSS 덮어쓰기 (상태 숨김, 플레이 효과 제거) */
+    .cap-list .req-status { display: none !important; }
+    .cap-list .req-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .cap-list .req-item.played { opacity: 1 !important; }
+    .cap-list .req-item.played .req-track { text-decoration: none !important; }
+    .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 15px; }
+
+    /* 푸터 영역 */
+    .cap-footer {
+      margin-top: 40px; 
+      padding-top: 30px; 
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
     }
-    .capture-footer {
-      margin-top: 50px;
-      text-align: center;
-      border-top: 1px solid var(--border);
-      padding-top: 30px;
-    }
-    .cap-insta {
-      font-size: 15px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.8);
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
-    }
-    .cap-time {
-      font-size: 12px;
-      color: rgba(255,255,255,0.3);
-      font-variant-numeric: tabular-nums;
-    }
+    .cap-insta { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; }
+    .cap-time { font-size: 12px; color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- 웹 화면 HEADER -->
   <header class="req-header">
     <div class="req-header-inner">
       <div class="header-left">
@@ -241,14 +204,14 @@
     </div>
   </header>
 
-  <!-- MAIN -->
+  <!-- 웹 화면 MAIN -->
   <main class="req-main">
     <div id="reqLoading" class="req-loading"><div class="spinner"></div></div>
     <p id="reqEmpty" class="req-empty hidden">신청곡이 없어요</p>
     <div id="reqList" class="req-list"></div>
   </main>
 
-  <!-- FOOTER -->
+  <!-- 웹 화면 FOOTER -->
   <footer class="req-footer">
     <p class="footer-desc">A small room designed for listening,<br>where sound is free to breathe and time is never in a hurry.</p>
     <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
@@ -265,20 +228,35 @@
     <span>Search</span>
   </a>
 
-  <!-- 📸 이미지 캡처 전용 숨김 도화지 (사용자 화면엔 안 보임) -->
+  <!-- 📸 이미지 캡처 전용 숨김 도화지 -->
   <div id="captureContainer" class="capture-container">
-    <div class="capture-header">
-      <div id="captureGrid" class="capture-grid"></div>
-      <h1 id="captureTitle" class="capture-title"></h1>
-    </div>
-    <div id="captureList" class="req-list"></div>
-    <div class="capture-footer">
-      <div class="cap-insta">@stylus.seoul</div>
-      <div id="captureTime" class="cap-time"></div>
+    <div class="cap-gradient"></div>
+    <div class="cap-content">
+      <div class="cap-header">
+        <div id="captureGrid" class="cap-grid"></div>
+        <div class="cap-title-area">
+          <div class="cap-subtitle">STYLUS PLAYLIST</div>
+          <h1 id="captureTitle" class="cap-title"></h1>
+          <div class="cap-profile">
+            <div class="cap-profile-img-wrap">
+              <img src="images/logo.png" alt="Stylus" class="cap-profile-img" onerror="this.style.display='none'">
+            </div>
+            <span class="cap-profile-name">Stylus</span>
+            <span class="cap-dot">·</span>
+            <span id="captureCount" class="cap-req-count"></span>
+          </div>
+        </div>
+      </div>
+      <!-- 기존 리스트의 HTML이 복사되며, CSS로 상태 표시만 가려짐 -->
+      <div id="captureList" class="req-list cap-list"></div>
+      
+      <div class="cap-footer">
+        <div class="cap-insta">@stylus.seoul</div>
+        <div id="captureTime" class="cap-time"></div>
+      </div>
     </div>
   </div>
 
-  <!-- 라이브러리 및 설정 로드 -->
   <script src="config.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -310,7 +288,7 @@
       return { display: disp, ts: isNaN(ts) ? 0 : ts };
     }
 
-    /* ── 이미지 프록시 (CORS 우회를 위해 &t=anonymous 추가) ── */
+    /* ── CORS 우회 프록시 ── */
     function thumb(url) {
       const u = String(url || '').trim().replace(/&amp;/g, '&').replace(/^\/\//, 'https://').replace(/^http:/, 'https:');
       const core = u.replace(/^https:\/\//, '');
@@ -344,12 +322,13 @@
         const timeDisp = parseTime(req.rawTime).display;
         const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
         const statusText = isPlayed ? 'Played' : 'Waiting';
+        
         const item = document.createElement('div');
         item.className = 'req-item ' + (isPlayed ? 'played' : 'waiting');
 
+        // 상태값(req-status) 태그는 존재하지만 캡처본에서는 CSS로 안 보이게 처리됨
         const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
         
-        /* 외부 이미지 로드를 위해 crossorigin="anonymous" 속성 추가 필수 */
         const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
 
         let artistHtml = artistTxt ? '<div class="req-artist">' + esc(artistTxt) + '</div>' : '';
@@ -378,7 +357,6 @@
     }
 
     async function fetchRequests() {
-      // 기존 코드에 SHEET_ID가 config.js에서 선언되었다고 가정
       const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Requests&_=' + Date.now();
       try {
         const res  = await fetch(url);
@@ -411,26 +389,26 @@
     fetchRequests();
     setInterval(fetchRequests, 10000);
 
-    /* ── 플레이리스트 이미지 다운로드 로직 ── */
+    /* ── 이미지 다운로드 로직 ── */
     downloadBtn.addEventListener('click', async function() {
       if (allRequests.length === 0) {
         alert('저장할 신청곡이 없습니다.');
         return;
       }
 
-      // 버튼 상태 변경 (클릭 방지)
       const originalIcon = downloadBtn.innerHTML;
       downloadBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:1.5px;border-top-color:#fff;"></div>';
       downloadBtn.disabled = true;
 
-      // 1. 날짜 타이틀 셋팅 (YYYY.MM.DD Playlist)
+      // 1. 날짜 타이틀 & 곡 수 셋팅
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
-      document.getElementById('captureTitle').textContent = yyyy + '.' + mm + '.' + dd + ' Playlist';
+      document.getElementById('captureTitle').textContent = yyyy + '.' + mm + '.' + dd;
+      document.getElementById('captureCount').textContent = allRequests.length + '곡';
 
-      // 2. 썸네일 4구역 셋팅 (신청곡 커버들 중 최대 4개로 모자이크 구성)
+      // 2. 상단 썸네일 그리드 셋팅
       const covers = allRequests.map(r => r.cover).filter(Boolean);
       const gridHtml = [];
       for (let i = 0; i < 4; i++) {
@@ -439,32 +417,27 @@
       }
       document.getElementById('captureGrid').innerHTML = gridHtml.join('');
 
-      // 3. 리스트 복사 (화면에 렌더링된 내용을 그대로 캡처용 도화지로 복사)
-      document.getElementById('captureList').innerHTML = document.getElementById('reqList').innerHTML;
+      // 3. 리스트 복사 (상태 숨김 등은 위쪽의 .cap-list CSS가 자동으로 처리해줌)
+      document.getElementById('captureList').innerHTML = reqList.innerHTML;
 
-      // 4. 푸터 셋팅 (저장한 시간 워터마크)
+      // 4. 하단 워터마크 시간 셋팅
       const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('captureTime').textContent = 'Generated at ' + yyyy + '.' + mm + '.' + dd + ' ' + timeStr;
+      document.getElementById('captureTime').textContent = 'Generated at ' + timeStr;
 
-      // 5. 이미지 렌더링
       const container = document.getElementById('captureContainer');
-      
-      // 모바일 사파리 등의 버그 방지를 위해 캡처 순간에만 화면 영역 안으로 끌어옴
       container.style.left = '0';
       container.style.zIndex = '100'; 
 
       try {
-        // 이미지 로딩 시간을 약간 기다려줌 (깜빡임 방지)
         await new Promise(resolve => setTimeout(resolve, 500));
 
         const canvas = await html2canvas(container, {
           useCORS: true,       
           allowTaint: true,    
-          backgroundColor: '#080808', 
+          backgroundColor: '#121212', // 스포티파이 감성 다크
           scale: 2             
         });
 
-        // 6. 다운로드 실행
         const link = document.createElement('a');
         link.download = `Stylus_Playlist_${yyyy}${mm}${dd}.png`;
         link.href = canvas.toDataURL('image/png');
@@ -473,7 +446,6 @@
         console.error('이미지 저장 실패:', error);
         alert('이미지 저장 중 오류가 발생했습니다.');
       } finally {
-        // 캡처가 끝나면 다시 화면 밖으로 원상복구 및 버튼 초기화
         container.style.left = '-9999px';
         container.style.zIndex = '-1';
         downloadBtn.innerHTML = originalIcon;
