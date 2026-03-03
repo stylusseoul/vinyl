@@ -14,7 +14,7 @@
       --surface:#111111;
       --border: rgba(255,255,255,0.07);
       --text:   #ffffff;
-      --sub:    rgba(255,255,255,0.42); /* 가독성 좋은 서브 텍스트 */
+      --sub:    rgba(255,255,255,0.42); 
       --sub2:   rgba(255,255,255,0.18);
       --accent: #EF7C1C;
       --font:   'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -31,430 +31,74 @@
       -webkit-text-size-adjust: 100%;
       overscroll-behavior: none;
       padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+      overflow-x: hidden;
     }
     .hidden { display: none !important; }
 
-    /* ══════════════════════════════
-       HEADER
-    ══════════════════════════════ */
-    .req-header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(8,8,8,0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding-top: env(safe-area-inset-top, 0);
-      border-bottom: 1px solid var(--border); 
-    }
-
-    .req-header-inner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 56px;           
-      padding: 12px 16px 10px; 
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      flex: 1; 
-    }
-
-    .logo-img {
-      height: 28px; 
-      object-fit: contain;
-      filter: brightness(0) invert(1);
-      opacity: 0.95; 
-      display: block;
-      flex-shrink: 0;
-    }
-
-    .header-center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    .header-page-name {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      text-transform: uppercase;
-      line-height: 1;
-    }
-
-    .header-live-row {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .live-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 6px var(--accent);
-      animation: pulse 2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-    .live-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      text-transform: uppercase;
-      line-height: 1;
-    }
-    .hd-sep {
-      width: 1px;
-      height: 9px;
-      background: rgba(255,255,255,0.14);
-    }
-    .req-clock {
-      font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      color: var(--sub);
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex: 1;
-    }
-
-    .pdf-btn {
-      width: 32px;  
-      height: 32px; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      background: none;
-      border: none;
-      color: #ffffff; 
-      cursor: pointer;
-      border-radius: 50%; 
-      transition: color 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      padding: 0;
-    }
-    .pdf-btn svg { 
-      width: 20px;  
-      height: 20px; 
-      display: block; 
-    }
-    .pdf-btn:active { 
-      color: var(--accent); 
-    }
-
-    .req-count-bar {
-      display: flex;
-      align-items: center;
-      padding: 0 16px 11px; 
-      gap: 5px;
-    }
-    .req-count-num {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0;
-    }
-    .req-count-label {
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--sub);
-    }
-    .sync-dot {
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      background: var(--sub2);
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-    .sync-time {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--sub2);
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* ══════════════════════════════
-       LIST
-    ══════════════════════════════ */
-    /* 1. 상단 여백 추가 (헤더 라인과의 간격 밸런스 조정) */
+    /* 기존 CSS 내용 유지 (Header, List, Loading, Footer, Float-btn 등) */
+    .req-header { position: sticky; top: 0; z-index: 50; background: rgba(8,8,8,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding-top: env(safe-area-inset-top, 0); border-bottom: 1px solid var(--border); }
+    .req-header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 12px 16px 10px; }
+    .header-left { display: flex; align-items: center; flex: 1; }
+    .logo-img { height: 28px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.95; display: block; flex-shrink: 0; }
+    .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: none; white-space: nowrap; }
+    .header-page-name { font-size: 14px; font-weight: 700; letter-spacing: 0.04em; color: var(--text); text-transform: uppercase; line-height: 1; }
+    .header-live-row { display: flex; align-items: center; gap: 5px; }
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .live-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; line-height: 1; }
+    .hd-sep { width: 1px; height: 9px; background: rgba(255,255,255,0.14); }
+    .req-clock { font-size: 10px; font-weight: 400; letter-spacing: 0.04em; color: var(--sub); font-variant-numeric: tabular-nums; line-height: 1; }
+    .header-right { display: flex; align-items: center; justify-content: flex-end; flex: 1; }
+    .pdf-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: none; border: none; color: #ffffff; cursor: pointer; border-radius: 50%; transition: color 0.15s; -webkit-tap-highlight-color: transparent; padding: 0; }
+    .pdf-btn svg { width: 20px; height: 20px; display: block; }
+    .pdf-btn:active { color: var(--accent); }
+    .req-count-bar { display: flex; align-items: center; padding: 0 16px 11px; gap: 5px; }
+    .req-count-num { font-size: 12px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .req-count-label { font-size: 12px; font-weight: 400; color: var(--sub); }
+    .sync-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--sub2); margin-left: auto; flex-shrink: 0; }
+    .sync-time { font-size: 11px; font-weight: 400; color: var(--sub2); font-variant-numeric: tabular-nums; }
     .req-main { padding: 10px 16px 0; } 
-    .req-list  { display: flex; flex-direction: column; }
-
-    .req-item {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 18px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    
-    /* 2. 마지막 항목 하단 여백 추가 (푸터 라인과의 간격 밸런스 조정) */
-    .req-item:last-child { 
-      border-bottom: none; 
-      padding-bottom: 24px; 
-    }
-
-    .req-top-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .req-idx {
-      font-size: 16px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      letter-spacing: -0.01em;
-      color: rgba(255,255,255,0.14);
-      min-width: 26px;
-    }
+    .req-list { display: flex; flex-direction: column; }
+    .req-item { display: flex; flex-direction: column; gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--border); }
+    .req-item:last-child { border-bottom: none; padding-bottom: 24px; }
+    .req-top-row { display: flex; align-items: center; gap: 8px; }
+    .req-idx { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.01em; color: rgba(255,255,255,0.14); min-width: 26px; }
     .req-item.waiting .req-idx { color: var(--accent); }
-
-    .req-status {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      line-height: 1;
-      padding: 3px 8px;
-      border-radius: 4px;
-    }
-    .req-item.waiting .req-status {
-      color: var(--accent);
-      background: rgba(239,124,28,0.1);
-    }
-    .req-item.played .req-status {
-      color: rgba(255,255,255,0.22);
-      background: rgba(255,255,255,0.05);
-    }
-
-    .req-top-time {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--sub);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.02em;
-      margin-left: auto;
-    }
-
-    .req-main-row {
-      display: flex;
-      align-items: stretch;
-      gap: 13px;
-    }
-    .req-cover {
-      flex-shrink: 0;
-      width: 64px;
-      height: 64px;
-      border-radius: 7px;
-      object-fit: cover;
-      display: block;
-      background: var(--surface);
-    }
-
-    .req-body {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-    }
-    .req-track {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      letter-spacing: -0.01em;
-    }
-    .req-artist {
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--sub);
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      line-height: 1.3;
-      letter-spacing: 0;
-    }
-    .req-user {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--accent);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.3;
-      opacity: 0.85;
-    }
-
-    /* 3. 메모 폰트 컬러 개선 (--sub2 -> --sub) */
-    .req-memo {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--sub); /* 밝기 상향 조정 */
-      font-style: italic;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      line-height: 1.3;
-    }
-
+    .req-status { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; padding: 3px 8px; border-radius: 4px; }
+    .req-item.waiting .req-status { color: var(--accent); background: rgba(239,124,28,0.1); }
+    .req-item.played .req-status { color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.05); }
+    .req-top-time { font-size: 11px; font-weight: 400; color: var(--sub); font-variant-numeric: tabular-nums; margin-left: auto; }
+    .req-main-row { display: flex; align-items: stretch; gap: 13px; }
+    .req-cover { flex-shrink: 0; width: 64px; height: 64px; border-radius: 7px; object-fit: cover; display: block; background: var(--surface); }
+    .req-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+    .req-track { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .req-artist { font-size: 12px; font-weight: 400; color: var(--sub); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 1.3; }
+    .req-user { font-size: 11px; font-weight: 500; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.85; }
+    .req-memo { font-size: 11px; font-weight: 400; color: var(--sub); font-style: italic; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .req-item.played { opacity: 0.48; }
-    .req-item.played .req-track {
-      text-decoration: line-through;
-      text-decoration-color: rgba(255,255,255,0.2);
-    }
-
-    /* ══════════════════════════════
-       LOADING / EMPTY
-    ══════════════════════════════ */
-    .req-loading {
-      display: flex;
-      justify-content: center;
-      padding: 80px 0;
-    }
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 1.5px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.65s linear infinite;
-    }
+    .req-item.played .req-track { text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.2); }
+    .req-loading { display: flex; justify-content: center; padding: 80px 0; }
+    .spinner { width: 20px; height: 20px; border: 1.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.65s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .req-empty {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--sub);
-      font-size: 13px;
-      line-height: 1.6;
-    }
+    .req-empty { text-align: center; padding: 80px 20px; color: var(--sub); font-size: 13px; line-height: 1.6; }
+    .req-footer { padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 24px); border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 2; text-align: center; font-style: italic; }
+    .footer-insta { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
+    .footer-insta svg { width: 14px; height: 14px; }
+    .float-btn { position: fixed; bottom: calc(max(24px, env(safe-area-inset-bottom, 0px) + 16px)); left: 50%; transform: translateX(-50%); z-index: 1000; display: inline-flex; align-items: center; gap: 7px; background: rgba(20,20,20,0.92); backdrop-filter: blur(16px); color: var(--text); padding: 11px 20px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 28px rgba(0,0,0,0.5); font-size: 13px; font-weight: 600; text-decoration: none; }
+    @media (min-width: 600px) { .req-header-inner, .req-count-bar, .req-main, .req-footer { max-width: 600px; margin-left: auto; margin-right: auto; } }
 
     /* ══════════════════════════════
-       FOOTER
+       이미지 캡처용 숨김 컨테이너 
     ══════════════════════════════ */
-    .req-footer {
-      margin-top: 0; /* 컨텐츠 하단 여백과 충돌 방지를 위해 margin-top 제거 */
-      padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-    .footer-desc {
-      font-size: 12px;
-      font-weight: 300;
-      color: var(--sub); /* 푸터 설명글도 가독성을 위해 상향 */
-      line-height: 2;
-      text-align: center;
-      font-style: italic;
-      letter-spacing: 0.01em;
-    }
-    .footer-insta {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-decoration: none;
-      color: var(--sub);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      line-height: 1;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 14px;
-      transition: color 0.15s;
-    }
-    .footer-insta svg { width: 14px; height: 14px; flex-shrink: 0; display: block; }
-    .footer-insta span { display: block; line-height: 1; }
-    .footer-insta:active { color: var(--text); }
-
-    /* ══════════════════════════════
-       FLOATING BUTTON
-    ══════════════════════════════ */
-    .float-btn {
-      position: fixed;
-      bottom: calc(max(24px, env(safe-area-inset-bottom, 0px) + 16px));
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(20,20,20,0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      color: var(--text);
-      padding: 11px 20px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.5);
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      text-decoration: none;
-      white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform 0.18s cubic-bezier(0.2,0.8,0.2,1),
-                  box-shadow 0.18s ease;
-    }
-    .float-btn svg {
-      width: 15px;
-      height: 15px;
-      display: block;
-      flex-shrink: 0;
-      opacity: 0.7;
-    }
-    .float-btn:active {
-      transform: translateX(-50%) scale(0.95);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-    }
-
-    /* ══════════════════════════════
-       RESPONSIVE
-    ══════════════════════════════ */
-    @media (min-width: 600px) {
-      .req-header-inner,
-      .req-count-bar,
-      .req-main,
-      .req-footer {
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-    }
+    .capture-container { position: absolute; top: 0; left: -9999px; width: 520px; background: var(--bg); padding: 60px 40px; z-index: -1; }
+    .capture-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 40px; }
+    .capture-grid { display: grid; grid-template-columns: 1fr 1fr; width: 240px; height: 240px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); margin-bottom: 28px; background: var(--surface); }
+    .capture-grid img { width: 100%; height: 100%; object-fit: cover; }
+    .capture-title { font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; text-align: center; }
+    .capture-footer { margin-top: 50px; text-align: center; border-top: 1px solid var(--border); padding-top: 30px; }
+    .cap-insta { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.04em; margin-bottom: 6px; }
+    .cap-time { font-size: 12px; color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body>
@@ -467,19 +111,15 @@
           <img src="images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'">
         </a>
       </div>
-      
       <div class="header-center">
         <span class="header-page-name">Requests</span>
         <div class="header-live-row">
-          <div class="live-dot"></div>
-          <span class="live-label">Live</span>
-          <div class="hd-sep"></div>
-          <span class="req-clock" id="clock">00:00</span>
+          <div class="live-dot"></div><span class="live-label">Live</span><div class="hd-sep"></div><span class="req-clock" id="clock">00:00</span>
         </div>
       </div>
-      
       <div class="header-right">
-        <button class="pdf-btn" aria-label="PDF 저장">
+        <!-- 다운로드 버튼 (id="downloadBtn" 추가됨) -->
+        <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 저장">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12m0 0-4-4m4 4 4-4"/>
             <path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/>
@@ -487,258 +127,54 @@
         </button>
       </div>
     </div>
-    
     <div class="req-count-bar">
-      <span class="req-count-num" id="reqCountNum">—</span>
-      <span class="req-count-label">requests</span>
-      <div class="sync-dot"></div>
-      <span class="sync-time" id="lastSync">—</span>
+      <span class="req-count-num" id="reqCountNum">—</span><span class="req-count-label">requests</span>
+      <div class="sync-dot"></div><span class="sync-time" id="lastSync">—</span>
     </div>
   </header>
 
   <!-- MAIN -->
   <main class="req-main">
-    <div id="reqLoading" class="req-loading">
-      <div class="spinner"></div>
-    </div>
+    <div id="reqLoading" class="req-loading"><div class="spinner"></div></div>
     <p id="reqEmpty" class="req-empty hidden">신청곡이 없어요</p>
     <div id="reqList" class="req-list"></div>
   </main>
 
   <!-- FOOTER -->
   <footer class="req-footer">
-    <p class="footer-desc">
-      A small room designed for listening,<br>
-      where sound is free to breathe and time is never in a hurry.
-    </p>
-    <a class="footer-insta"
-       href="https://www.instagram.com/stylus.seoul"
-       target="_blank" rel="noopener noreferrer">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-        <circle cx="12" cy="12" r="4.5"/>
-        <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+    <p class="footer-desc">A small room designed for listening,<br>where sound is free to breathe and time is never in a hurry.</p>
+    <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
       </svg>
       <span>stylus.seoul</span>
     </a>
   </footer>
 
   <!-- FLOATING BTN -->
-  <a href="index.html" class="float-btn" aria-label="바이닐 검색기로">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
+  <a href="index.html" class="float-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <span>Search</span>
   </a>
 
+  <!-- 📸 이미지 캡처 전용 숨김 도화지 -->
+  <div id="captureContainer" class="capture-container">
+    <div class="capture-header">
+      <div id="captureGrid" class="capture-grid"></div>
+      <h1 id="captureTitle" class="capture-title"></h1>
+    </div>
+    <div id="captureList" class="req-list"></div>
+    <div class="capture-footer">
+      <div class="cap-insta">@stylus.seoul</div>
+      <div id="captureTime" class="cap-time"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- 분리된 자바스크립트 파일 연결 -->
+  <script src="script.js"></script>
 
-  <script>
-    'use strict';
-
-    /* ── 상태 ── */
-    let allRequests = [];
-
-    /* ── DOM ── */
-    const clockEl     = document.getElementById('clock');
-    const reqCountNum = document.getElementById('reqCountNum');
-    const reqLoading  = document.getElementById('reqLoading');
-    const reqEmpty    = document.getElementById('reqEmpty');
-    const reqList     = document.getElementById('reqList');
-    const lastSync    = document.getElementById('lastSync');
-
-    /* ── 시계 ── */
-    function updateClock() {
-      const d = new Date();
-      clockEl.textContent =
-        String(d.getHours()).padStart(2, '0') + ':' +
-        String(d.getMinutes()).padStart(2, '0');
-    }
-    updateClock();
-    setInterval(updateClock, 5000);
-
-    /* ── 시간 파싱 ── */
-    function parseTime(raw) {
-      if (!raw) return { display: '', ts: 0 };
-      const str = String(raw);
-      const m   = str.match(/(\d{1,2}:\d{2})/);
-      const disp = m ? m[1] : str.substring(0, 5);
-      const ts   = new Date(str.replace(/\./g, '/')).getTime();
-      return { display: disp, ts: isNaN(ts) ? 0 : ts };
-    }
-
-    /* ── 이미지 프록시 ── */
-    function thumb(url) {
-      const u = String(url || '').trim()
-        .replace(/&amp;/g, '&')
-        .replace(/^\/\//, 'https://')
-        .replace(/^http:/, 'https:');
-      const core = u.replace(/^https:\/\//, '');
-      return 'https://images.weserv.nl/?url=' +
-        encodeURIComponent(core) + '&w=144&h=144&fit=cover&q=80';
-    }
-
-    /* ── HTML 이스케이프 ── */
-    function esc(s) {
-      return String(s || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    /* ── 싱크 시각 ── */
-    function updateSync() {
-      const n = new Date();
-      lastSync.textContent =
-        String(n.getHours()).padStart(2, '0') + ':' +
-        String(n.getMinutes()).padStart(2, '0') + ':' +
-        String(n.getSeconds()).padStart(2, '0');
-    }
-
-    /* ── 렌더 ── */
-    function renderRequests() {
-      reqCountNum.textContent = allRequests.length;
-
-      if (allRequests.length === 0) {
-        reqEmpty.classList.remove('hidden');
-        reqList.innerHTML = '';
-        return;
-      }
-      reqEmpty.classList.add('hidden');
-
-      let totalIdx = 0;
-
-      const frag = document.createDocumentFragment();
-
-      allRequests.forEach(function(req) {
-        const isPlayed = req.status.toUpperCase() === 'Y';
-        totalIdx++;
-
-        const idxStr   = String(totalIdx).padStart(2, '0');
-        const timeDisp = parseTime(req.rawTime).display;
-        const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
-
-        /* 1행: 순번 · 상태 · 시간 */
-        const statusText = isPlayed ? 'Played' : 'Waiting';
-        const item = document.createElement('div');
-        item.className = 'req-item ' + (isPlayed ? 'played' : 'waiting');
-
-        const topRowHtml =
-          '<div class="req-top-row">' +
-            '<span class="req-idx">' + idxStr + '</span>' +
-            '<span class="req-status">' + statusText + '</span>' +
-            (timeDisp
-              ? '<span class="req-top-time">' + esc(timeDisp) + '</span>'
-              : '') +
-          '</div>';
-
-        /* 2행: 커버 이미지 */
-        const coverHtml =
-          '<img class="req-cover" src="' + thumb(req.cover) + '" ' +
-               'alt="" width="64" loading="lazy">';
-
-        let artistHtml = '';
-        if (artistTxt) {
-          artistHtml = '<div class="req-artist">' + esc(artistTxt) + '</div>';
-        }
-
-        /* 신청자 / 메모 */
-        let metaHtml = '';
-        if (req.name) {
-          metaHtml += '<div class="req-user">' + esc(req.name) + '</div>';
-        }
-        if (req.memo) {
-          metaHtml += '<div class="req-memo">\u201c' + esc(req.memo) + '\u201d</div>';
-        }
-
-        const bodyHtml =
-          '<div class="req-body">' +
-            '<span class="req-track">' + esc(req.track) + '</span>' +
-            artistHtml +
-            metaHtml +
-          '</div>';
-
-        const mainRowHtml =
-          '<div class="req-main-row">' + coverHtml + bodyHtml + '</div>';
-
-        item.innerHTML = topRowHtml + mainRowHtml;
-        frag.appendChild(item);
-      });
-
-      reqList.innerHTML = '';
-      reqList.appendChild(frag);
-    }
-
-    /* ── 정렬 ── */
-    function sortRequests(arr) {
-      return arr.slice().sort(function(a, b) {
-        const aP = a.status.toUpperCase() === 'Y';
-        const bP = b.status.toUpperCase() === 'Y';
-        if (!aP && bP) return -1;
-        if (aP && !bP) return  1;
-        return a.ts - b.ts;
-      });
-    }
-
-    /* ── Fetch ── */
-    async function fetchRequests() {
-      const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-        '/gviz/tq?tqx=out:json&sheet=Requests&_=' + Date.now();
-      try {
-        const res  = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(
-          text.replace(/^[^{]*/, '').replace(/\);\s*$/, '')
-        );
-        const rows = (json.table && json.table.rows) ? json.table.rows : [];
-
-        const parsed = rows.map(function(r) {
-          if (!r || !r.c) return null;
-          function get(i) {
-            const cell = r.c[i];
-            return cell ? String(cell.f || cell.v || '') : '';
-          }
-          return {
-            rawTime: get(0),
-            artist:  get(1),
-            album:   get(2),
-            track:   get(3),
-            name:    get(4),
-            memo:    get(5),
-            cover:   get(6),
-            status:  get(7),
-            ts:      parseTime(get(0)).ts,
-          };
-        }).filter(function(r) {
-          return r &&
-            r.track &&
-            r.track !== 'Track' &&
-            r.track !== '곡명' &&
-            r.artist !== 'SWITCH' &&
-            r.artist !== 'Artist';
-        });
-
-        if (parsed.length === 0) return;
-
-        allRequests = sortRequests(parsed);
-        reqLoading.classList.add('hidden');
-        updateSync();
-        renderRequests();
-      } catch (e) {
-        console.warn('fetch failed:', e);
-        reqLoading.classList.add('hidden');
-        reqEmpty.classList.remove('hidden');
-      }
-    }
-
-    /* ── 초기화 ── */
-    fetchRequests();
-    setInterval(fetchRequests, 10000);
-  </script>
 </body>
 </html>
