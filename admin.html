@@ -2,77 +2,84 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
   <title>Stylus Admin</title>
-  <meta name="theme-color" content="#000000">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard-dynamic-subset.css" />
-  
+  <meta name="theme-color" content="#0a0a0a">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://stylusseoul.github.io/vinyl/images/favicon.png">
+
+  <!-- index.html과 동일한 styles.css 공유 -->
+  <link rel="stylesheet" href="styles.css">
+
   <style>
     :root {
-      --bg: #000000;
-      --surface: #121212;
-      --text: #FFFFFF;
-      --sub: #A0A0A0;
       --accent: #EF7C1C; 
       --played: #1DB954; 
-      --border: #2A2A2A;
       --memo-bg: rgba(239, 124, 28, 0.1); 
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body { 
-      background: var(--bg); 
-      color: var(--text); 
-      font-family: 'Inter', 'Pretendard', sans-serif;
-      -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
     }
 
-    .header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 60px;
-      padding-top: env(safe-area-inset-top);
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
+    /* index.html 헤더 구조를 그대로 가져오되, 3단 레이아웃으로 Admin 가운데 정렬 */
+    .admin-header-top {
       display: flex;
       align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid var(--border);
-      z-index: 100;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 56px;
     }
 
-    .header-title {
-      font-size: 16px;
+    .admin-header-top .logo-side {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .admin-header-top .center-label {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.08em;
+      color: var(--text, #fff);
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .admin-header-top .right-side {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .main-content {
-      padding: calc(60px + env(safe-area-inset-top) + 20px) 20px calc(40px + env(safe-area-inset-bottom));
+      padding: calc(56px + env(safe-area-inset-top) + 16px) 16px calc(40px + env(safe-area-inset-bottom));
       max-width: 600px;
       margin: 0 auto;
     }
 
-    .req-list { display: flex; flex-direction: column; gap: 12px; }
+    .req-list { display: flex; flex-direction: column; gap: 10px; }
 
     .req-item {
       display: flex;
       align-items: flex-start;
-      padding: 16px;
-      background: var(--surface);
+      padding: 14px;
+      background: var(--card, #111);
       border-radius: 12px;
       border: 1px solid transparent;
-      transition: all 0.2s ease;
+      transition: opacity 0.2s ease;
       gap: 14px;
     }
 
     .req-item.is-played {
-      opacity: 0.5;
-      border-color: var(--border);
+      opacity: 0.45;
+      border-color: var(--border, #222);
     }
 
     .req-cover {
@@ -80,20 +87,20 @@
       height: 56px;
       border-radius: 6px;
       object-fit: cover;
-      background-color: #222;
+      background-color: #1e1e1e;
       flex-shrink: 0;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
     .is-played .req-cover {
-      filter: grayscale(100%) opacity(0.7);
+      filter: grayscale(100%) opacity(0.6);
     }
 
     .req-info {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       min-width: 0; 
       padding-top: 2px;
     }
@@ -102,49 +109,50 @@
       font-size: 15px; 
       font-weight: 600;
       line-height: 1.3;
-      word-break: break-word; 
+      word-break: break-word;
+      color: var(--text, #fff);
     }
 
     .is-played .req-track {
       text-decoration: line-through;
-      color: var(--sub);
+      color: var(--sub, #888);
     }
 
     .req-album {
       font-size: 13px;
-      color: var(--text);
+      color: var(--text, #fff);
       line-height: 1.3;
       word-break: break-word;
     }
 
     .req-meta { 
       font-size: 12px; 
-      color: var(--sub);
+      color: var(--sub, #888);
       display: flex;
       align-items: flex-start;
       flex-wrap: wrap; 
-      gap: 6px;
+      gap: 5px;
       line-height: 1.4;
       margin-top: 2px;
     }
 
     .req-meta .dot {
       width: 3px; height: 3px;
-      background: var(--sub);
+      background: var(--sub, #888);
       border-radius: 50%;
       flex-shrink: 0;
       margin-top: 6px;
     }
 
     .req-memo {
-      margin-top: 6px;
-      padding: 8px 10px;
+      margin-top: 7px;
+      padding: 7px 10px;
       background: var(--memo-bg);
       border-left: 2px solid var(--accent);
       border-radius: 0 4px 4px 0;
       font-size: 12px;
-      color: #E0E0E0;
-      line-height: 1.4;
+      color: #ddd;
+      line-height: 1.5;
       word-break: break-word;
     }
 
@@ -159,193 +167,214 @@
     .slider { 
       position: absolute; cursor: pointer; 
       top: 0; left: 0; right: 0; bottom: 0; 
-      background-color: #3E3E3E; 
+      background-color: #3a3a3a; 
       transition: .3s; border-radius: 30px; 
     }
     .slider:before { 
       position: absolute; content: ""; 
       height: 26px; width: 26px; 
       left: 2px; bottom: 2px; 
-      background-color: #FFFFFF; 
+      background-color: #fff; 
       transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1); 
       border-radius: 50%; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
     }
     input:checked + .slider { background-color: var(--played); }
     input:checked + .slider:before { transform: translateX(22px); }
-    input:disabled + .slider { opacity: 0.5; }
+    input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
 
-    .loading-state { text-align: center; padding: 40px 0; color: var(--sub); font-size: 14px; }
+    .loading-state { 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 0;
+      color: var(--sub, #888); 
+      font-size: 14px; 
+    }
   </style>
 </head>
 <body>
 
-  <header class="header">
-    <div class="header-title">STYLUS ADMIN</div>
-  </header>
+<div id="app">
+  <div class="view">
 
-  <main class="main-content">
-    <div id="adminList" class="req-list">
-      <div class="loading-state">데이터를 불러오는 중...</div>
-    </div>
-  </main>
+    <!-- index.html 헤더 구조 그대로, 검색 버튼 제거 + Admin 가운데 -->
+    <header class="list-header">
+      <div class="header-top" style="position: relative;">
 
-  <script src="config.js"></script> 
-  
-  <script>
-    const adminList = document.getElementById('adminList');
-    
-    // config.js에 있는 REQUEST_API_URL을 그대로 가져다 씁니다!
-    const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : ""; 
-    const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
+        <!-- 왼쪽: 로고 -->
+        <a href="https://stylusseoul.github.io/vinyl/" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+          <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+          <span class="logo-text" style="display:none">STYLUS</span>
+        </a>
 
-    async function loadAdminData() {
-      if (typeof SHEET_ID === 'undefined') {
-        adminList.innerHTML = '<div class="loading-state">config.js를 로드하지 못했습니다.</div>';
+        <!-- 가운데: Admin 텍스트 (절대 위치로 완벽하게 가운데 고정) -->
+        <span style="
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          color: var(--text, #fff);
+          text-transform: uppercase;
+          pointer-events: none;
+        ">Admin</span>
+
+        <!-- 오른쪽: 검색 버튼 대신 빈 공간으로 밸런스 유지 -->
+        <div style="width: 36px; height: 36px; flex-shrink: 0;"></div>
+
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div id="adminList" class="req-list">
+        <div class="loading-state">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script src="config.js"></script>
+
+<script>
+  const adminList = document.getElementById('adminList');
+
+  // config.js의 REQUEST_API_URL을 공통으로 사용
+  const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : "";
+  const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
+
+  async function loadAdminData() {
+    if (typeof SHEET_ID === 'undefined') {
+      adminList.innerHTML = '<div class="loading-state">config.js를 로드하지 못했습니다.</div>';
+      return;
+    }
+
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
+
+    try {
+      const res = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+      const rows = json.table.rows || [];
+
+      adminList.innerHTML = '';
+
+      let validItems = [];
+      let actualRowNumber = 1;
+
+      rows.forEach((r) => {
+        actualRowNumber++;
+        if (!r || !r.c || !r.c[3] || r.c[3].v === 'Track') return;
+
+        const artistName = r.c[1] ? r.c[1].v : 'Unknown Artist';
+        const albumName  = r.c[2] ? r.c[2].v : 'Unknown Album';
+        const trackName  = r.c[3].v;
+        const userName   = r.c[4] ? r.c[4].v : '익명';
+        const memoText   = r.c[5] ? r.c[5].v : '';
+        const coverUrl   = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER;
+        const currentStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim() : '';
+        const isPlayed   = currentStatus.toUpperCase() === 'Y';
+
+        validItems.push({ rowNum: actualRowNumber, artist: artistName, album: albumName, track: trackName, user: userName, memo: memoText, cover: coverUrl, isPlayed });
+      });
+
+      if (validItems.length === 0) {
+        adminList.innerHTML = '<div class="loading-state">신청곡이 없습니다.</div>';
         return;
       }
 
-      // 캐시 무효화 파라미터 추가하여 항상 최신 시트 데이터 가져오기
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
-      
-      try {
-        const res = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
-        const rows = json.table.rows || [];
-        
-        adminList.innerHTML = '';
-        
-        let validItems = [];
-        let actualRowNumber = 1; 
+      // 미재생이 위, 재생완료가 아래 / 동일 상태면 rowNum 순서 유지
+      validItems.sort((a, b) => {
+        if (a.isPlayed === b.isPlayed) return a.rowNum - b.rowNum;
+        return a.isPlayed ? 1 : -1;
+      });
 
-        rows.forEach((r) => {
-          actualRowNumber++; 
-          if (!r || !r.c || !r.c[3] || r.c[3].v === 'Track') return; 
-          
-          const artistName = r.c[1] ? r.c[1].v : 'Unknown Artist';  
-          const albumName = r.c[2] ? r.c[2].v : 'Unknown Album';    
-          const trackName = r.c[3].v;                               
-          const userName = r.c[4] ? r.c[4].v : '익명';              
-          const memoText = r.c[5] ? r.c[5].v : '';                  
-          const coverUrl = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER; 
-          
-          const currentStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim() : ''; 
-          const isPlayed = currentStatus.toUpperCase() === 'Y';
+      validItems.forEach((data) => {
+        const item = document.createElement('div');
+        item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
 
-          validItems.push({
-            rowNum: actualRowNumber,
-            artist: artistName,
-            album: albumName,
-            track: trackName,
-            user: userName,
-            memo: memoText,
-            cover: coverUrl,
-            isPlayed: isPlayed
-          });
-        });
+        const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
 
-        if (validItems.length === 0) {
-          adminList.innerHTML = '<div class="loading-state">신청곡이 없습니다.</div>';
-          return;
-        }
-
-        validItems.sort((a, b) => {
-          if (a.isPlayed === b.isPlayed) {
-            return a.rowNum - b.rowNum; 
-          }
-          return a.isPlayed ? 1 : -1; 
-        });
-
-        validItems.forEach((data) => {
-          const item = document.createElement('div');
-          item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`; 
-          
-          const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
-
-          item.innerHTML = `
-            <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
-            <div class="req-info">
-              <span class="req-track">${data.track}</span>
-              <span class="req-album">${data.album}</span>
-              <div class="req-meta">
-                <span>${data.artist}</span>
-                <span class="dot"></span>
-                <span>👤 ${data.user}</span>
-              </div>
-              ${memoHTML}
+        item.innerHTML = `
+          <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
+          <div class="req-info">
+            <span class="req-track">${data.track}</span>
+            <span class="req-album">${data.album}</span>
+            <div class="req-meta">
+              <span>${data.artist}</span>
+              <span class="dot"></span>
+              <span>👤 ${data.user}</span>
             </div>
-            <label class="switch">
-              <input type="checkbox" class="status-toggle" data-row="${data.rowNum}" ${data.isPlayed ? 'checked' : ''}>
-              <span class="slider"></span>
-            </label>
-          `;
-          
-          adminList.appendChild(item);
-        });
+            ${memoHTML}
+          </div>
+          <label class="switch">
+            <input type="checkbox" class="status-toggle" data-row="${data.rowNum}" ${data.isPlayed ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        `;
 
-        document.querySelectorAll('.status-toggle').forEach(toggle => {
-          toggle.addEventListener('change', async function() {
-            const rowNum = this.getAttribute('data-row');
-            const newStatus = this.checked ? 'Y' : '';
-            const parentItem = this.closest('.req-item');
-            
-            this.disabled = true; 
-            if (this.checked) {
-              parentItem.classList.add('is-played');
-            } else {
-              parentItem.classList.remove('is-played');
-            }
-            
-            await updateSheetStatus(rowNum, newStatus, this, parentItem);
-          });
-        });
+        adminList.appendChild(item);
+      });
 
-      } catch (e) {
-        adminList.innerHTML = '<div class="loading-state">데이터를 불러오지 못했습니다.</div>';
-        console.error(e);
-      }
+      document.querySelectorAll('.status-toggle').forEach(toggle => {
+        toggle.addEventListener('change', async function () {
+          const rowNum = this.getAttribute('data-row');
+          const newStatus = this.checked ? 'Y' : '';
+          const parentItem = this.closest('.req-item');
+
+          this.disabled = true;
+          parentItem.classList.toggle('is-played', this.checked);
+
+          await updateSheetStatus(rowNum, newStatus, this, parentItem);
+        });
+      });
+
+    } catch (e) {
+      adminList.innerHTML = '<div class="loading-state">데이터를 불러오지 못했습니다.</div>';
+      console.error(e);
+    }
+  }
+
+  async function updateSheetStatus(row, status, toggleEl, parentItem) {
+    if (!WEBAPP_URL) {
+      alert('config.js에서 REQUEST_API_URL을 찾을 수 없습니다.');
+      resetToggle(toggleEl, parentItem, status);
+      return;
     }
 
-    async function updateSheetStatus(row, status, toggleEl, parentItem) {
-      if (!WEBAPP_URL) {
-        alert('config.js에서 REQUEST_API_URL을 찾을 수 없습니다.');
+    try {
+      const response = await fetch(WEBAPP_URL, {
+        method: "POST",
+        body: JSON.stringify({ "row": row, "status": status })
+      });
+
+      const result = await response.json();
+      if (result.result !== 'success') {
+        alert('업데이트 실패: ' + (result.message || '알 수 없는 오류'));
         resetToggle(toggleEl, parentItem, status);
-        return;
-      }
-
-      try {
-        const response = await fetch(WEBAPP_URL, {
-          method: "POST",
-          body: JSON.stringify({ "row": row, "status": status })
-        });
-        
-        const result = await response.json();
-        if(result.result !== 'success') {
-          alert('업데이트 실패: ' + (result.message || '알 수 없는 오류'));
-          resetToggle(toggleEl, parentItem, status); 
-        } else {
-          toggleEl.disabled = false; 
-        }
-      } catch (error) {
-        console.error("업데이트 에러:", error);
-        alert('통신 오류가 발생했습니다.');
-        resetToggle(toggleEl, parentItem, status); 
-      }
-    }
-
-    function resetToggle(toggleEl, parentItem, attemptedStatus) {
-      toggleEl.disabled = false;
-      if (attemptedStatus === 'Y') {
-        toggleEl.checked = false;
-        parentItem.classList.remove('is-played');
       } else {
-        toggleEl.checked = true;
-        parentItem.classList.add('is-played');
+        toggleEl.disabled = false;
       }
+    } catch (error) {
+      console.error("업데이트 에러:", error);
+      alert('통신 오류가 발생했습니다.');
+      resetToggle(toggleEl, parentItem, status);
     }
+  }
 
-    loadAdminData();
-  </script>
+  function resetToggle(toggleEl, parentItem, attemptedStatus) {
+    toggleEl.disabled = false;
+    const wasOn = attemptedStatus === 'Y';
+    toggleEl.checked = !wasOn;
+    parentItem.classList.toggle('is-played', !wasOn);
+  }
+
+  loadAdminData();
+</script>
 </body>
 </html>
