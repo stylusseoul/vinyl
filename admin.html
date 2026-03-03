@@ -36,7 +36,6 @@
     input:checked + .slider:before { transform: translateX(22px); }
     .loading-state { display: flex; justify-content: center; align-items: center; padding: 60px 0; color: var(--sub, #888); font-size: 14px; }
     
-    /* 화면을 잠그는 반투명 로딩 오버레이 */
     #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; color: white; font-size: 14px; }
     #global-loader .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -46,7 +45,7 @@
 
 <div id="global-loader">
   <div class="spinner"></div>
-  <div>처리 중입니다...</div>
+  <div id="loader-text">서버에 저장 중...</div>
 </div>
 
 <div id="app">
@@ -75,9 +74,11 @@
 <script>
   const adminList = document.getElementById('adminList');
   const globalLoader = document.getElementById('global-loader');
+  const loaderText = document.getElementById('loader-text');
   const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : "";
   const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
 
+  // 시트에서 데이터를 불러와 목록을 다시 그리는 함수
   async function loadAdminData() {
     if (typeof SHEET_ID === 'undefined') {
       adminList.innerHTML = '<div class="loading-state">config.js를 찾을 수 없습니다.</div>';
@@ -103,7 +104,6 @@
         const timestampVal = String(r.c[0].f || r.c[0].v).trim();
         const artistName   = r.c[1] ? r.c[1].v : 'Unknown Artist';
         const albumName    = r.c[2] ? r.c[2].v : 'Unknown Album';
-        // 특수 문자로 인해 따옴표가 깨지는 것을 방지하기 위해 이스케이프 처리
         const trackName    = r.c[3].v.replace(/"/g, '&quot;'); 
         const userName     = r.c[4] ? r.c[4].v : '익명';
         const memoText     = r.c[5] ? r.c[5].v : '';
@@ -133,7 +133,6 @@
         item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
         const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
 
-        // data-track 속성에 안전하게 인코딩된 곡명 삽입
         item.innerHTML = `
           <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
           <div class="req-info">
@@ -150,40 +149,75 @@
         adminList.appendChild(item);
       });
 
-      document.querySelectorAll('.status-toggle').forEach(toggle => {
-        toggle.addEventListener('change', async function () {
-          const ts = this.getAttribute('data-ts');
-          // HTML 인코딩된 따옴표를 다시 원상복구
-          const trackName = this.getAttribute('data-track').replace(/&quot;/g, '"'); 
-          const newStatus = this.checked ? 'Y' : 'N'; 
+      // 스위치 클릭 이벤트 바인딩
+      attachToggleEvents();
 
-          globalLoader.style.display = 'flex';
+    } catch (e) {
+      adminList.innerHTML = '<div class="loading-state">데이터를 불러오지 못했습니다.</div>';
+    }
+  }
 
-          try {
-            // 특수문자 전송 시 JSON.parse 에러를 막기 위해 페이로드를 객체 형태로 만들고 직렬화
-            const payload = {
-              timestamp: ts,
-              track: trackName,
-              status: newStatus
-            };
+  // ★ 재시도(Retry) 기능이 포함된 서버 통신 함수
+  async function sendUpdateWithRetry(payload, maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        loaderText.innerText = attempt > 1 ? `재시도 중... (${attempt}/${maxRetries})` : "서버에 저장 중...";
+        
+        // redirect: "follow"를 통해 구글 GAS의 리다이렉트 응답을 안전하게 따라감
+        const response = await fetch(WEBAPP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          redirect: "follow",
+          body: JSON.stringify(payload)
+        });
+        
+        const responseText = await response.text();
+        
+        // 서버에서 정상적으로 응답했고, 에러가 아니면 무조건 성공 처리
+        if (!responseText.includes('error')) {
+          return true; // 성공
+        }
+      } catch (error) {
+        console.error(`Attempt ${attempt} failed:`, error);
+        // 통신 자체가 찢어졌을 경우 1초 대기 후 다음 루프(재시도) 실행
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+    return false; // 모든 재시도 실패
+  }
 
-            const response = await fetch(WEBAPP_URL, {
-              method: "POST",
-              headers: { 
-                "Content-Type": "text/plain;charset=utf-8" 
-              },
-              // mode: "no-cors"를 쓰면 응답(Response)을 자바스크립트가 읽을 수 없어 항상 실패로 간주되므로 제외함. 
-              // 대신 리다이렉트 처리를 명시함.
-              redirect: "follow",
-              body: JSON.stringify(payload)
-            });
+  function attachToggleEvents() {
+    document.querySelectorAll('.status-toggle').forEach(toggle => {
+      toggle.addEventListener('change', async function () {
+        const ts = this.getAttribute('data-ts');
+        const trackName = this.getAttribute('data-track').replace(/&quot;/g, '"'); 
+        const newStatus = this.checked ? 'Y' : 'N'; 
 
-            // GAS는 항상 200 OK를 반환하므로 text()로 내용을 확인
-            const responseText = await response.text();
-            
-            // 서버에서 직접 보낸 'error' 응답인지 확인
-            if
+        // 1. 클릭 즉시 화면을 락으로 잠금 (다른 클릭 방지)
+        globalLoader.style.display = 'flex';
+        
+        const payload = { timestamp: ts, track: trackName, status: newStatus };
 
+        // 2. 서버 통신 시작 (실패 시 최대 3번까지 알아서 다시 찌름)
+        const isSuccess = await sendUpdateWithRetry(payload, 3);
+
+        if (isSuccess) {
+          // 3. 성공하면 시트 데이터를 다시 읽어와 목록을 재정렬
+          await loadAdminData();
+        } else {
+          // 4. 끝까지 실패하면 스위치를 원래 상태로 돌리고 경고창
+          alert("서버 연결이 불안정합니다. 잠시 후 다시 시도해주세요.");
+          this.checked = !this.checked; 
+        }
+        
+        // 5. 무조건 로딩 화면 제거 (뺑뺑이 방지)
+        globalLoader.style.display = 'none';
+      });
+    });
+  }
+
+  // 최초 로드 실행
+  loadAdminData();
 </script>
 </body>
 </html>
