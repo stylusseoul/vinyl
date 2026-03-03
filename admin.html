@@ -10,8 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://stylusseoul.github.io/vinyl/images/favicon.png">
-
-  <!-- index.html과 동일한 styles.css 공유 -->
   <link rel="stylesheet" href="styles.css">
 
   <style>
@@ -23,38 +21,6 @@
 
     body { 
       overscroll-behavior: none; 
-    }
-
-    .admin-header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      height: 56px;
-    }
-
-    .admin-header-top .logo-side {
-      display: flex;
-      align-items: center;
-      flex: 1;
-    }
-
-    .admin-header-top .center-label {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: var(--text, #fff);
-      text-transform: uppercase;
-      pointer-events: none;
-    }
-
-    .admin-header-top .right-side {
-      flex: 1;
-      display: flex;
-      justify-content: flex-end;
     }
 
     .main-content {
@@ -77,16 +43,12 @@
       border-radius: 12px;
       border: 1px solid transparent;
       gap: 14px;
-      /* 이동 애니메이션을 위한 트랜지션 추가 */
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      order: 0; /* 기본 순서 */
+      transition: opacity 0.25s ease;
     }
 
-    /* is-played 클래스가 붙으면 즉시 흐려지고 밑으로 이동(order 변경) */
     .req-item.is-played {
       opacity: 0.45;
       border-color: var(--border, #222);
-      order: 1000; /* flex 컨테이너 안에서 맨 아래로 강제 이동 */
     }
 
     .req-cover {
@@ -97,7 +59,6 @@
       background-color: #1e1e1e;
       flex-shrink: 0;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
     }
 
     .is-played .req-cover {
@@ -119,7 +80,6 @@
       line-height: 1.3;
       word-break: break-word;
       color: var(--text, #fff);
-      transition: all 0.3s ease;
     }
 
     .is-played .req-track {
@@ -166,7 +126,6 @@
       word-break: break-word;
     }
 
-    /* 토글 스위치 */
     .switch { 
       position: relative; 
       display: inline-block; 
@@ -242,7 +201,17 @@
         </a>
 
         <!-- 가운데: Admin 텍스트 -->
-        <span class="center-label">Admin</span>
+        <span style="
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          color: var(--text, #fff);
+          text-transform: uppercase;
+          pointer-events: none;
+        ">Admin</span>
 
         <!-- 오른쪽: 검색 버튼 대신 빈 공간으로 밸런스 유지 -->
         <div style="width: 36px; height: 36px; flex-shrink: 0;"></div>
@@ -264,12 +233,10 @@
 
 <script>
   const adminList = document.getElementById('adminList');
-
-  // config.js의 REQUEST_API_URL을 공통으로 사용
   const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : "";
   const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
 
-  // 다다닥 눌렀을 때 백그라운드에서 순차적으로 처리하기 위한 큐(Queue)
+  // 연달아 눌렀을 때 순차 처리를 위한 큐
   let updateQueue = Promise.resolve();
 
   async function loadAdminData() {
@@ -278,7 +245,6 @@
       return;
     }
 
-    // 캐시 무효화를 위해 Date.now() 파라미터 추가
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
 
     try {
@@ -290,25 +256,21 @@
       adminList.innerHTML = '';
 
       let validItems = [];
-      let sortOrderIndex = 0; // 정렬 시 순서 유지를 위한 가상 인덱스
+      let sortOrderIndex = 0;
 
       rows.forEach((r) => {
-        // A열(0) 타임스탬프와 D열(3) 트랙이 없으면 스킵
         if (!r || !r.c || !r.c[0] || !r.c[3] || r.c[3].v === 'Track') return;
 
         sortOrderIndex++;
-        
-        // 고유 식별자인 타임스탬프 추출 (A열)
+
         const timestampVal = String(r.c[0].f || r.c[0].v).trim();
-        
-        const artistName = r.c[1] ? r.c[1].v : 'Unknown Artist';
-        const albumName  = r.c[2] ? r.c[2].v : 'Unknown Album';
-        const trackName  = r.c[3].v;
-        const userName   = r.c[4] ? r.c[4].v : '익명';
-        const memoText   = r.c[5] ? r.c[5].v : '';
-        const coverUrl   = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER;
-        
-        // 상태 판별 로직: 빈 칸, 'N', 기타 값은 모두 false. 대문자 'Y'만 true
+        const artistName   = r.c[1] ? r.c[1].v : 'Unknown Artist';
+        const albumName    = r.c[2] ? r.c[2].v : 'Unknown Album';
+        const trackName    = r.c[3].v;
+        const userName     = r.c[4] ? r.c[4].v : '익명';
+        const memoText     = r.c[5] ? r.c[5].v : '';
+        const coverUrl     = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER;
+
         const rawStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim().toUpperCase() : '';
         const isPlayed  = (rawStatus === 'Y');
 
@@ -330,7 +292,7 @@
         return;
       }
 
-      // 초기 정렬: 미재생이 위, 재생완료가 아래. 상태가 같으면 먼저 신청한 순서(orderIdx) 유지
+      // 초기 로딩 시 정렬: 미재생 위, 재생 완료 아래
       validItems.sort((a, b) => {
         if (a.isPlayed === b.isPlayed) return a.orderIdx - b.orderIdx;
         return a.isPlayed ? 1 : -1;
@@ -338,10 +300,9 @@
 
       validItems.forEach((data) => {
         const item = document.createElement('div');
-        
-        // HTML 요소의 order 속성에 원래 순서 인덱스를 부여하여 플렉스 정렬 유지
-        item.style.order = data.orderIdx;
         item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
+        // 원래 시트 순서를 data 속성으로 보관 (DOM 이동 후 위치 복원용)
+        item.dataset.orderIdx = data.orderIdx;
 
         const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
 
@@ -369,15 +330,34 @@
       // 토글 이벤트 등록
       document.querySelectorAll('.status-toggle').forEach(toggle => {
         toggle.addEventListener('change', function () {
-          const ts = this.getAttribute('data-ts');
-          // 스위치를 켜면 'Y', 끄면 'N'을 보내서 구글 시트가 확실히 인식하게 함
+          const ts        = this.getAttribute('data-ts');
           const newStatus = this.checked ? 'Y' : 'N'; 
           const parentItem = this.closest('.req-item');
 
-          // [핵심 1] 클릭 즉시! 화면에서 색깔을 바꾸고 CSS order로 인해 아래로 내림 (Optimistic UI)
+          // ★ 클릭 즉시 UI 반영 (Optimistic UI)
           parentItem.classList.toggle('is-played', this.checked);
 
-          // [핵심 2] 백그라운드 큐에 넣어서 순차적으로 구글 시트에 업데이트 전송
+          if (this.checked) {
+            // 재생 완료: DOM 맨 아래로 물리적으로 이동
+            adminList.appendChild(parentItem);
+          } else {
+            // 미재생 복귀: 원래 orderIdx 기준으로 제자리 삽입
+            const myIdx = parseInt(parentItem.dataset.orderIdx, 10);
+            const allItems = [...adminList.querySelectorAll('.req-item')];
+            
+            // 나보다 orderIdx가 큰 아이템 중 첫 번째 앞에 삽입
+            const insertBefore = allItems.find(el => 
+              parseInt(el.dataset.orderIdx, 10) > myIdx
+            );
+
+            if (insertBefore) {
+              adminList.insertBefore(parentItem, insertBefore);
+            } else {
+              adminList.appendChild(parentItem);
+            }
+          }
+
+          // ★ 백그라운드에서 구글 시트 업데이트 (큐로 순차 처리)
           updateQueue = updateQueue.then(() => 
             backgroundUpdate(ts, newStatus, this, parentItem, this.checked)
           );
@@ -390,38 +370,44 @@
     }
   }
 
-  // 화면 멈춤 없이 백그라운드에서 구글 시트와 통신하는 함수
+  // 백그라운드 통신 함수 (화면을 멈추지 않음)
   async function backgroundUpdate(timestamp, status, toggleEl, parentItem, attemptedState) {
-    if (!WEBAPP_URL) {
-      console.error('설정된 URL이 없습니다.');
-      return;
-    }
+    if (!WEBAPP_URL) return;
 
     try {
       const response = await fetch(WEBAPP_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8", 
-        },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ "timestamp": timestamp, "status": status })
       });
 
       const responseText = await response.text();
-      
-      // 에러 확인
+
       if (responseText.includes('error') && !responseText.includes('success') && !responseText.includes('Success')) {
-         throw new Error("서버 반환 에러: " + responseText);
+        throw new Error("서버 반환 에러");
       }
 
-      // 통신 성공 시 화면 새로고침 안 함! (이미 사용자가 클릭할 때 CSS로 완벽하게 이동시켜둠)
-      
+      // 성공 시 아무것도 안 해도 됨. 이미 화면이 올바르게 보임.
+
     } catch (error) {
-      console.error("업데이트 실패. 원상복구합니다.", error);
-      alert('통신 오류가 발생했습니다. 해당 곡의 상태를 원래대로 되돌립니다.');
-      
-      // 통신 실패 시에만 원상복구 (토글 풀고 위로 올림)
+      console.error("업데이트 실패, 원상복구:", error);
+      // 통신 실패 시에만 UI 원상복구
       toggleEl.checked = !attemptedState;
       parentItem.classList.toggle('is-played', !attemptedState);
+
+      // 원상복구 시 DOM 위치도 되돌리기
+      if (!attemptedState) {
+        adminList.appendChild(parentItem);
+      } else {
+        const myIdx = parseInt(parentItem.dataset.orderIdx, 10);
+        const allItems = [...adminList.querySelectorAll('.req-item')];
+        const insertBefore = allItems.find(el => parseInt(el.dataset.orderIdx, 10) > myIdx);
+        if (insertBefore) {
+          adminList.insertBefore(parentItem, insertBefore);
+        } else {
+          adminList.appendChild(parentItem);
+        }
+      }
     }
   }
 
