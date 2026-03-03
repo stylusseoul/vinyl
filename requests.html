@@ -118,30 +118,31 @@
     
     .cap-gradient {
       position: absolute; top: 0; left: 0; right: 0; height: 600px;
-      /* 상단에 은은한 챠콜/블랙 그라데이션 */
       background: linear-gradient(to bottom, rgba(80, 80, 80, 0.5) 0%, #121212 400px);
       z-index: 0; pointer-events: none;
     }
 
-    /* 📱 페이크 상단 상태바 (시간, 배터리 등) */
+    /* 📱 페이크 상단 상태바: 크기 대폭 상향 */
     .cap-status-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 28px; color: #fff; font-size: 14px; font-weight: 600;
-      letter-spacing: 0.02em;
+      padding: 16px 32px; /* 여백 확대 */
+      color: #fff; font-size: 16px; /* 폰트 확대 */
+      font-weight: 600; letter-spacing: 0.02em;
     }
-    .cap-status-right { display: flex; gap: 7px; align-items: center; }
-    .cap-status-icon { width: 17px; height: 17px; fill: currentColor; }
+    .cap-status-right { display: flex; gap: 8px; align-items: center; }
+    .cap-status-icon { width: 20px; height: 20px; fill: currentColor; } /* 아이콘 확대 */
 
-    /* 📱 페이크 네비게이션 헤더 */
+    /* 📱 페이크 네비게이션 헤더: 크기 상향 */
     .cap-nav-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 0 24px; height: 56px; color: #fff;
+      padding: 0 32px; height: 64px; /* 높이 및 여백 확대 */
+      color: #fff;
     }
-    .cap-nav-icon { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .cap-nav-icon { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     
-    .cap-content { position: relative; z-index: 1; padding: 10px 24px 30px; }
+    .cap-content { position: relative; z-index: 1; padding: 10px 32px 30px; }
 
     /* 플리 타이틀 및 그리드 영역 */
     .cap-header { margin-bottom: 20px; }
@@ -157,7 +158,6 @@
     .cap-title-area { text-align: left; }
     .cap-title { font-size: 40px; font-weight: 800; color: #ffffff; letter-spacing: -0.03em; margin-bottom: 12px; line-height: 1.1; }
 
-    /* 프로필 영역 (원형 제거, 살짝 둥근 사각형으로 로고 찌그러짐 원천 차단) */
     .cap-profile { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #ffffff; }
     .cap-profile-img-wrap {
       width: 26px; height: 26px; border-radius: 4px; background: rgba(255,255,255,0.05);
@@ -167,30 +167,46 @@
     .cap-dot { color: rgba(255,255,255,0.4); margin: 0 2px; }
     .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
 
-    /* 액션 버튼 영역 (하트, 더보기, ★대형 플레이 버튼★) */
+    /* 액션 버튼 영역 (정렬 및 크기 완벽 수정) */
     .cap-actions {
       display: flex; justify-content: space-between; align-items: center;
-      margin-top: 20px; margin-bottom: 24px;
+      margin-top: 24px; margin-bottom: 32px;
     }
-    .cap-actions-left { display: flex; gap: 24px; align-items: center; color: rgba(255,255,255,0.7); }
-    .cap-action-icon { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .cap-actions-left { 
+      display: flex; gap: 28px; align-items: center; 
+      color: rgba(255,255,255,0.7); 
+    }
+    /* 아이콘 수직 중앙 정렬을 위해 display: block 강제 */
+    .cap-action-icon { 
+      width: 32px; height: 32px; 
+      display: block; 
+      stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
+    }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
+    
+    /* 대형 초록색 재생버튼 */
     .cap-play-btn {
-      width: 56px; height: 56px; border-radius: 50%; background: #1DB954;
+      width: 64px; height: 64px; /* 크기 확대 */
+      border-radius: 50%; background: #1DB954;
       display: flex; align-items: center; justify-content: center; color: #000;
     }
-    .cap-play-icon { width: 24px; height: 24px; fill: currentColor; margin-left: 4px; }
+    /* 스포티파이 오리지널 재생 아이콘 사용 및 삐뚤어짐 완벽 해결 */
+    .cap-play-icon { 
+      width: 26px; height: 26px; 
+      display: block; fill: currentColor; 
+      margin-left: 2px; /* 오른쪽으로 치우쳐보이던 값을 줄여 시각적 정중앙 맞춤 */
+    }
 
-    /* 리스트 캡처용 CSS 덮어쓰기 (스포티파이처럼 깔끔하게) */
+    /* 리스트 캡처용 CSS 덮어쓰기 */
     .cap-list .req-status { display: none !important; }
-    .cap-list .req-top-time { display: none !important; } /* 우측 상단 시간 숨김 */
-    .cap-list .req-item { padding: 12px 0; border-bottom: none !important; } /* 구분선 제거 */
+    .cap-list .req-top-time { display: none !important; } 
+    .cap-list .req-item { padding: 12px 0; border-bottom: none !important; } 
     .cap-list .req-item.played { opacity: 1 !important; }
     .cap-list .req-item.played .req-track { text-decoration: none !important; }
     .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 15px; min-width: 20px; }
-    .cap-list .req-user, .cap-list .req-memo { font-size: 12px; } /* 메모 폰트 살짝 조정 */
+    .cap-list .req-user, .cap-list .req-memo { font-size: 12px; }
 
-    /* 푸터 영역 (워터마크) */
+    /* 푸터 영역 */
     .cap-footer {
       margin-top: 20px; padding-top: 40px; 
       display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -258,7 +274,7 @@
   <div id="captureContainer" class="capture-container">
     <div class="cap-gradient"></div>
     
-    <!-- 📱 페이크 상단 상태바 -->
+    <!-- 📱 페이크 상단 상태바 (사이즈업) -->
     <div class="cap-status-bar">
       <div id="capStatusTime">00:00</div>
       <div class="cap-status-right">
@@ -268,7 +284,7 @@
       </div>
     </div>
 
-    <!-- 📱 페이크 앱 네비게이션 헤더 -->
+    <!-- 📱 페이크 앱 네비게이션 헤더 (사이즈업) -->
     <div class="cap-nav-bar">
       <svg class="cap-nav-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
       <svg class="cap-nav-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -280,7 +296,6 @@
         <div class="cap-title-area">
           <h1 id="captureTitle" class="cap-title"></h1>
           <div class="cap-profile">
-            <!-- 로고 영역: 둥근 사각형으로 찌그러짐 원천 차단 -->
             <div class="cap-profile-img-wrap">
               <img src="images/logo.png" alt="Stylus" class="cap-profile-img" onerror="this.style.display='none'">
             </div>
@@ -291,17 +306,17 @@
         </div>
       </div>
       
-      <!-- 🟢 스포티파이 핵심 아이콘 영역 (하트, 더보기, 재생버튼) -->
+      <!-- 🟢 스포티파이 핵심 아이콘 영역 (정렬 완벽 교정) -->
       <div class="cap-actions">
         <div class="cap-actions-left">
-          <!-- 다운로드 아이콘 -->
           <svg class="cap-action-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
-          <!-- 3점 더보기 아이콘 -->
           <svg class="cap-action-icon cap-action-icon.fill" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="19" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="2" fill="currentColor" stroke="none"></circle></svg>
         </div>
-        <!-- 대형 초록색 재생버튼 -->
         <div class="cap-play-btn">
-          <svg class="cap-play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <!-- 스포티파이 오리지널 재생 아이콘 경로 적용 -->
+          <svg class="cap-play-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"/>
+          </svg>
         </div>
       </div>
 
@@ -484,7 +499,7 @@
       // 4. 리스트 복사 
       document.getElementById('captureList').innerHTML = reqList.innerHTML;
 
-      // 5. 하단 워터마크 시간 셋팅 (YYYY.MM.DD HH:MM:SS)
+      // 5. 하단 워터마크 시간 셋팅
       const seconds = String(now.getSeconds()).padStart(2, '0');
       document.getElementById('captureTime').textContent = `${yyyy}.${mm}.${dd} ${hoursCurrent}:${minsCurrent}:${seconds}`;
 
