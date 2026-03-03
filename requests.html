@@ -106,7 +106,7 @@
     @media (min-width: 600px) { .req-header-inner, .req-count-bar, .req-main, .req-footer { max-width: 600px; margin-left: auto; margin-right: auto; } }
 
     /* ══════════════════════════════
-       📸 캡처 전용 컨테이너 (Ultimate Spotify Vibe - Scaled Up)
+       📸 캡처 전용 컨테이너 (Ultimate Spotify Vibe)
     ══════════════════════════════ */
     .capture-container {
       position: absolute; top: 0; left: -9999px; 
@@ -155,23 +155,27 @@
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
+    /* 타이틀 영역: 사이즈 축소 및 1줄 고정 */
     .cap-title-area { text-align: left; }
-    .cap-title { font-size: 42px; font-weight: 800; color: #ffffff; letter-spacing: -0.03em; margin-bottom: 12px; line-height: 1.1; }
+    .cap-title { 
+      font-size: 34px !important; /* 텍스트가 길어져서 사이즈 최적화 */
+      font-weight: 800; color: #ffffff; letter-spacing: -0.02em; 
+      margin-bottom: 12px; line-height: 1.1; 
+      white-space: nowrap; 
+    }
 
-    /* 🚨 로고 찌그러짐 원천 차단 🚨 */
+    /* 🚨 로고 찌그러짐 원천 차단 (Flexbox 제거, Absolute 적용) 🚨 */
     .cap-profile { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #ffffff; }
     .cap-profile-img-wrap {
       width: 28px; height: 28px; border-radius: 4px; background: rgba(255,255,255,0.05);
-      display: flex; align-items: center; justify-content: center;
+      position: relative; /* 플렉스 대신 포지션 릴레이티브 사용 */
     }
-    /* width/height 100%를 제거하고, auto 속성을 주어 브라우저가 원본 비율을 강제로 유지하도록 함 */
     .cap-profile-img { 
-      max-width: 20px; 
-      max-height: 14px; 
-      width: auto !important; 
-      height: auto !important; 
-      display: block;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      max-width: 20px; max-height: 14px; 
+      width: auto !important; height: auto !important; 
       filter: brightness(0) invert(1); 
+      margin: 0 !important; padding: 0 !important;
     }
     
     .cap-dot { color: rgba(255,255,255,0.4); margin: 0 2px; }
@@ -192,10 +196,13 @@
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
     
+    /* 🚨 플레이 버튼 컬러 변경 (Orange) 🚨 */
     .cap-play-btn {
       width: 68px; height: 68px;
-      border-radius: 50%; background: #1DB954;
-      display: flex; align-items: center; justify-content: center; color: #000;
+      border-radius: 50%; 
+      background: var(--accent); /* 오렌지 컬러 적용 */
+      display: flex; align-items: center; justify-content: center; 
+      color: #ffffff; /* 아이콘을 화이트로 변경하여 가독성 업 */
       transform: translateZ(0); 
     }
     .cap-play-icon { 
@@ -204,19 +211,28 @@
       margin-left: 4px; 
     }
 
-    /* 🟢 리스트 캡처용 CSS 덮어쓰기 (폰트/커버 1~2px 일괄 스케일업) */
+    /* 🟢 리스트 밸런스 완벽 교정 (텍스트와 이미지 수직중앙 & 여백 최적화) */
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
-    .cap-list .req-item { padding: 14px 0; border-bottom: none !important; } 
+    .cap-list .req-item { padding: 12px 0 !important; border-bottom: none !important; } 
     .cap-list .req-item.played { opacity: 1 !important; }
     .cap-list .req-item.played .req-track { text-decoration: none !important; }
     
-    .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 16px !important; min-width: 22px; }
-    .cap-list .req-cover { width: 68px !important; height: 68px !important; } 
+    .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 16px !important; min-width: 24px; }
     
-    .cap-list .req-track { font-size: 15px !important; } 
-    .cap-list .req-artist { font-size: 13px !important; } 
-    .cap-list .req-user, .cap-list .req-memo { font-size: 13px !important; line-height: 1.4 !important; } 
+    /* 커버와 텍스트의 수직 중앙 정렬! */
+    .cap-list .req-main-row { align-items: center !important; gap: 14px !important; }
+    
+    /* 커버 사이즈를 살짝 줄여 텍스트 덩어리와 밸런스를 맞춤 */
+    .cap-list .req-cover { width: 60px !important; height: 60px !important; border-radius: 6px !important; } 
+    
+    /* 텍스트 줄간격 타이트하게 압축 */
+    .cap-list .req-body { gap: 3px !important; justify-content: center !important; margin: 0 !important; }
+    
+    .cap-list .req-track { font-size: 15px !important; line-height: 1.2 !important; } 
+    .cap-list .req-artist { font-size: 13px !important; line-height: 1.2 !important; } 
+    .cap-list .req-user { font-size: 12px !important; line-height: 1.2 !important; margin-top: 2px !important; }
+    .cap-list .req-memo { font-size: 12px !important; line-height: 1.2 !important; } 
 
     /* 푸터 영역 */
     .cap-footer {
@@ -494,7 +510,9 @@
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
-      document.getElementById('captureTitle').textContent = `${yyyy}.${mm}.${dd}`;
+      
+      // 🚀 타이틀 포맷 및 내용 변경
+      document.getElementById('captureTitle').textContent = `Music On Vinyl(${yyyy}.${mm}.${dd})`;
       document.getElementById('captureCount').textContent = allRequests.length + '곡';
 
       const covers = allRequests.map(r => r.cover).filter(Boolean);
