@@ -1,122 +1,227 @@
-// ==============================================================================
-// 🔥 신청곡 & 어드민 기능 (단일 업데이트 & 충돌 방지 락 적용)
-// ==============================================================================
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Stylus Admin</title>
+  <meta name="theme-color" content="#0a0a0a">
 
-const SHEET_ID = '1XnYwp6cxnesB0vaFZ955QNpLXnWMsfrob7Ga2-UtvMw';
-const REQUESTS_SHEET = 'Requests';
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://stylusseoul.github.io/vinyl/images/favicon.png">
+  <link rel="stylesheet" href="styles.css">
 
-/**
- * OPTIONS 핸들러 (CORS 대응)
- */
-function doOptions(e) {
-  return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
-}
+  <style>
+    :root {
+      --accent: #EF7C1C; 
+      --played: #1DB954; 
+      --memo-bg: rgba(239, 124, 28, 0.1); 
+    }
 
-/**
- * POST 핸들러
- */
-function doPost(e) {
-  // ★ 동시에 요청이 들어올 경우를 대비해 10초간 시트 접근에 락을 겁니다.
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000); 
+    body { overscroll-behavior: none; }
 
-  try {
-    const postData = e.postData ? e.postData.contents : '';
-    if (!postData) return createJsonResponse_({ result: 'error', message: 'No data' });
+    .main-content {
+      padding: calc(56px + env(safe-area-inset-top) + 16px) 16px calc(40px + env(safe-area-inset-bottom));
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-    let parsedData = null;
-    let isBase64 = false;
+    .req-list { display: flex; flex-direction: column; gap: 10px; }
 
-    // 1단계: JSON vs Base64 식별
+    .req-item {
+      display: flex; align-items: flex-start; padding: 14px;
+      background: var(--card, #111); border-radius: 12px;
+      border: 1px solid transparent; gap: 14px;
+    }
+
+    .req-item.is-played { opacity: 0.45; border-color: var(--border, #222); }
+    .req-cover { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; background-color: #1e1e1e; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+    .is-played .req-cover { filter: grayscale(100%) opacity(0.6); }
+
+    .req-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-top: 2px; }
+    .req-track { font-size: 15px; font-weight: 600; line-height: 1.3; word-break: break-word; color: var(--text, #fff); }
+    .is-played .req-track { text-decoration: line-through; color: var(--sub, #888); }
+    .req-album { font-size: 13px; color: var(--text, #fff); line-height: 1.3; word-break: break-word; }
+    .req-meta { font-size: 12px; color: var(--sub, #888); display: flex; align-items: flex-start; flex-wrap: wrap; gap: 5px; line-height: 1.4; margin-top: 2px; }
+    .req-meta .dot { width: 3px; height: 3px; background: var(--sub, #888); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .req-memo { margin-top: 7px; padding: 7px 10px; background: var(--memo-bg); border-left: 2px solid var(--accent); border-radius: 0 4px 4px 0; font-size: 12px; color: #ddd; line-height: 1.5; word-break: break-word; }
+
+    .switch { position: relative; display: inline-block; width: 52px; height: 30px; flex-shrink: 0; margin-top: 13px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #3a3a3a; transition: .3s; border-radius: 30px; }
+    .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 2px; bottom: 2px; background-color: #fff; transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.25); }
+    input:checked + .slider { background-color: var(--played); }
+    input:checked + .slider:before { transform: translateX(22px); }
+
+    .loading-state { display: flex; justify-content: center; align-items: center; padding: 60px 0; color: var(--sub, #888); font-size: 14px; }
+
+    /* ★ 전체 화면을 덮는 통신 중 락(Lock) 오버레이 */
+    #global-loader {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6); z-index: 9999;
+      display: none; justify-content: center; align-items: center;
+      flex-direction: column; color: white; font-size: 14px; font-weight: 500;
+    }
+    #global-loader .spinner {
+      width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 1s linear infinite; margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- 전체 화면 락 로더 -->
+<div id="global-loader">
+  <div class="spinner"></div>
+  <div>구글 시트에 반영 중입니다...</div>
+</div>
+
+<div id="app">
+  <div class="view">
+    <header class="list-header">
+      <div class="header-top" style="position: relative;">
+        <a href="https://stylusseoul.github.io/vinyl/" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+          <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+          <span class="logo-text" style="display:none">STYLUS</span>
+        </a>
+        <span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--text, #fff); text-transform: uppercase; pointer-events: none;">Admin</span>
+        <div style="width: 36px; height: 36px; flex-shrink: 0;"></div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div id="adminList" class="req-list">
+        <div class="loading-state"><div class="spinner"></div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="config.js"></script>
+
+<script>
+  const adminList = document.getElementById('adminList');
+  const globalLoader = document.getElementById('global-loader');
+  const WEBAPP_URL = typeof REQUEST_API_URL !== 'undefined' ? REQUEST_API_URL : "";
+  const DEFAULT_COVER = typeof COVER_PLACEHOLDER !== 'undefined' ? COVER_PLACEHOLDER : 'images/logo.png';
+
+  async function loadAdminData() {
+    if (typeof SHEET_ID === 'undefined') {
+      adminList.innerHTML = '<div class="loading-state">config.js를 찾을 수 없습니다.</div>';
+      return;
+    }
+
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
+
     try {
-      parsedData = JSON.parse(postData);
-    } catch (parseError) {
-      isBase64 = true;
-    }
+      const res = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
+      const rows = json.table.rows || [];
 
-    // [분기 1] 어드민 단일 업데이트 (락 적용)
-    if (!isBase64 && parsedData && parsedData.timestamp) {
-      const targetTimestamp = String(parsedData.timestamp).trim();
-      const newStatus = parsedData.status || '';
+      adminList.innerHTML = '';
 
-      // active가 아닌 ID로 정확히 시트 타겟팅
-      const ss = SpreadsheetApp.openById(SHEET_ID);
-      const sheet = ss.getSheetByName(REQUESTS_SHEET);
-      const aColumnRange = sheet.getRange("A:A");
-      
-      const textFinder = aColumnRange.createTextFinder(targetTimestamp).matchEntireCell(false);
-      const searchResult = textFinder.findNext();
-      
-      if (searchResult) {
-        const foundRow = searchResult.getRow();
-        sheet.getRange(foundRow, 8).setValue(newStatus);
-        SpreadsheetApp.flush(); // 즉시 기록 강제
-        return createJsonResponse_({ result: 'success' });
-      } else {
-        return createJsonResponse_({ result: 'error', message: 'Not found' });
+      let validItems = [];
+      let sortOrderIndex = 0;
+
+      rows.forEach((r) => {
+        if (!r || !r.c || !r.c[0] || !r.c[3] || r.c[3].v === 'Track') return;
+
+        sortOrderIndex++;
+        const timestampVal = String(r.c[0].f || r.c[0].v).trim();
+        const artistName   = r.c[1] ? r.c[1].v : 'Unknown Artist';
+        const albumName    = r.c[2] ? r.c[2].v : 'Unknown Album';
+        const trackName    = r.c[3].v;
+        const userName     = r.c[4] ? r.c[4].v : '익명';
+        const memoText     = r.c[5] ? r.c[5].v : '';
+        const coverUrl     = r.c[6] && r.c[6].v ? r.c[6].v : DEFAULT_COVER;
+
+        const rawStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim().toUpperCase() : '';
+        const isPlayed  = (rawStatus === 'Y');
+
+        validItems.push({ 
+          orderIdx: sortOrderIndex, timestamp: timestampVal, 
+          artist: artistName, album: albumName, track: trackName, 
+          user: userName, memo: memoText, cover: coverUrl, isPlayed 
+        });
+      });
+
+      if (validItems.length === 0) {
+        adminList.innerHTML = '<div class="loading-state">신청곡이 없습니다.</div>';
+        return;
       }
-    }
 
-    // [분기 2] 웹사이트에서 새 신청곡이 들어온 경우 (Base64)
-    if (isBase64) {
-      const decodedBytes = Utilities.base64Decode(postData);
-      const decodedString = Utilities.newBlob(decodedBytes).getDataAsString('UTF-8');
-      const data = JSON.parse(decodedString);
-      
-      const ss = SpreadsheetApp.openById(SHEET_ID);
-      const sheet = ss.getSheetByName(REQUESTS_SHEET);
-      const configRange = sheet.getRange('A1:B1').getValues()[0];
-      
-      if (configRange[1] !== 'ON') {
-        return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
-      }
-      
-      const kstFormat = Utilities.formatDate(new Date(), "Asia/Seoul", "yyyy.MM.dd HH:mm");
-      
-      const aColumn = sheet.getRange("A:A").getValues();
-      let emptyRow = 1; 
-      for (let i = 1; i < aColumn.length; i++) {
-        if (aColumn[i][0] === "") { emptyRow = i + 1; break; }
-      }
-      if (emptyRow === 1) emptyRow = sheet.getLastRow() + 1;
-      
-      sheet.getRange(emptyRow, 1, 1, 7).setValues([[
-        kstFormat, data.artist || '', data.album || '', data.track || '',
-        data.requester || '익명', data.memo || '', data.cover || ''
-      ]]);
-      
-      SpreadsheetApp.flush();
-      return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
-    }
-    
-    return createJsonResponse_({ result: 'error', message: 'Unknown format' });
+      // 미재생 위, 재생완료 아래 정렬
+      validItems.sort((a, b) => {
+        if (a.isPlayed === b.isPlayed) return a.orderIdx - b.orderIdx;
+        return a.isPlayed ? 1 : -1;
+      });
 
-  } catch (error) {
-    try {
-      const ss = SpreadsheetApp.openById(SHEET_ID);
-      const sheet = ss.getSheetByName(REQUESTS_SHEET);
-      sheet.appendRow([new Date(), "ERROR", error.toString(), "RawData: " + e.postData.contents]);
-    } catch (e2) {}
-    return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
-  } finally {
-    // ★ 에러가 나든 성공하든 무조건 락 해제
-    lock.releaseLock();
+      validItems.forEach((data) => {
+        const item = document.createElement('div');
+        item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
+        const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
+
+        item.innerHTML = `
+          <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
+          <div class="req-info">
+            <span class="req-track">${data.track}</span>
+            <span class="req-album">${data.album}</span>
+            <div class="req-meta"><span>${data.artist}</span><span class="dot"></span><span>👤 ${data.user}</span></div>
+            ${memoHTML}
+          </div>
+          <label class="switch">
+            <input type="checkbox" class="status-toggle" data-ts="${data.timestamp}" ${data.isPlayed ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        `;
+        adminList.appendChild(item);
+      });
+
+      // 스위치 클릭 이벤트
+      document.querySelectorAll('.status-toggle').forEach(toggle => {
+        toggle.addEventListener('change', async function () {
+          const ts = this.getAttribute('data-ts');
+          const newStatus = this.checked ? 'Y' : 'N'; 
+
+          // ★ 통신 시작: 화면 잠금 (연속 클릭 절대 방지)
+          globalLoader.style.display = 'flex';
+
+          try {
+            const response = await fetch(WEBAPP_URL, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ "timestamp": ts, "status": newStatus }) // 단일 업데이트로 원복
+            });
+
+            const responseText = await response.text();
+            if (responseText.includes('error') && !responseText.includes('success')) {
+              throw new Error("서버 에러");
+            }
+            
+            // 통신 성공 시 데이터를 다시 불러와 화면 새로고침 (이때 정렬도 자동 적용)
+            await loadAdminData();
+
+          } catch (error) {
+            console.error(error);
+            alert("업데이트에 실패했습니다. 다시 시도해주세요.");
+            this.checked = !this.checked; // 실패 시 원래대로 복구
+          } finally {
+            // ★ 통신 종료: 화면 잠금 해제
+            globalLoader.style.display = 'none';
+          }
+        });
+      });
+
+    } catch (e) {
+      adminList.innerHTML = '<div class="loading-state">데이터를 불러오지 못했습니다.</div>';
+    }
   }
-}
 
-/**
- * GET 핸들러
- */
-function doGet(e) {
-  try {
-    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(REQUESTS_SHEET);
-    const configRange = sheet.getRange('A1:B1').getValues()[0];
-    return createJsonResponse_({ enabled: configRange[1] === 'ON', status: configRange[1] || 'OFF' });
-  } catch (error) {
-    return createJsonResponse_({ enabled: false, status: 'ERROR' });
-  }
-}
-
-function createJsonResponse_(data) {
-  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
-}
+  loadAdminData();
+</script>
+</body>
+</html>
