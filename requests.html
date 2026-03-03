@@ -91,16 +91,12 @@
     .req-item.played .req-track { text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.2); }
 
     /* ══════════════════════════════
-       LOADING / EMPTY
+       LOADING / EMPTY / FOOTER
     ══════════════════════════════ */
     .req-loading { display: flex; justify-content: center; padding: 80px 0; }
     .spinner { width: 20px; height: 20px; border: 1.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.65s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .req-empty { text-align: center; padding: 80px 20px; color: var(--sub); font-size: 13px; line-height: 1.6; }
-
-    /* ══════════════════════════════
-       FOOTER & BTN
-    ══════════════════════════════ */
     .req-footer { padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 24px); border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 2; text-align: center; font-style: italic; }
     .footer-insta { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
@@ -113,29 +109,44 @@
        📸 캡처 전용 컨테이너 (Spotify Playlist 감성)
     ══════════════════════════════ */
     .capture-container {
-      position: absolute; top: 0; left: -9999px; /* 평소 숨김 */
+      position: absolute; top: 0; left: -9999px; 
       width: 540px; 
-      background-color: #121212; /* 스포티파이 기본 다크 배경 */
+      background-color: #121212; 
       z-index: -1;
     }
     
-    /* 상단 그라데이션 효과 */
     .cap-gradient {
       position: absolute; top: 0; left: 0; right: 0; height: 600px;
       background: linear-gradient(to bottom, rgba(80, 80, 80, 0.4) 0%, #121212 100%);
       z-index: 0; pointer-events: none;
     }
 
-    .cap-content { position: relative; z-index: 1; padding: 60px 40px 30px; }
+    /* 1. 상단 앱 헤더 영역 추가 (Spotify 감성) */
+    .cap-app-header {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      height: 56px; padding: 0 20px;
+      margin-bottom: 10px;
+    }
+    .cap-app-back {
+      position: absolute; left: 20px;
+      width: 24px; height: 24px; color: #fff;
+    }
+    .cap-app-title {
+      font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
 
-    /* 헤더 영역 */
+    .cap-content { position: relative; z-index: 1; padding: 20px 40px 30px; }
+
+    /* 헤더(타이틀) 영역 */
     .cap-header { margin-bottom: 30px; }
     
     .cap-grid {
       width: 260px; height: 260px;
-      margin: 0 auto 40px; /* 가운데 정렬 및 하단 여백 */
+      margin: 0 auto 40px; 
       display: grid; grid-template-columns: 1fr 1fr;
-      box-shadow: 0 24px 50px rgba(0,0,0,0.6); /* 강력한 그림자 */
+      box-shadow: 0 24px 50px rgba(0,0,0,0.6); 
       background: #222;
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
@@ -144,17 +155,18 @@
     .cap-subtitle { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.1em; margin-bottom: 10px; }
     .cap-title { font-size: 42px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.1; }
 
-    /* 프로필 영역 */
+    /* 프로필 영역 (로고 찌그러짐 수정) */
     .cap-profile { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #ffffff; }
     .cap-profile-img-wrap {
-      width: 28px; height: 28px; border-radius: 50%; background: #000;
-      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
-    .cap-profile-img { width: 14px; height: 14px; object-fit: contain; filter: brightness(0) invert(1); }
+    /* 로고 비율 유지하면서 예쁘게 채우기 */
+    .cap-profile-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0) invert(1); padding: 4px; }
     .cap-dot { color: rgba(255,255,255,0.4); margin: 0 2px; }
     .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
 
-    /* 리스트 캡처용 CSS 덮어쓰기 (상태 숨김, 플레이 효과 제거) */
+    /* 리스트 캡처용 CSS 덮어쓰기 */
     .cap-list .req-status { display: none !important; }
     .cap-list .req-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
     .cap-list .req-item.played { opacity: 1 !important; }
@@ -163,9 +175,7 @@
 
     /* 푸터 영역 */
     .cap-footer {
-      margin-top: 40px; 
-      padding-top: 30px; 
-      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.06);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
     }
     .cap-insta { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; }
@@ -189,7 +199,6 @@
         </div>
       </div>
       <div class="header-right">
-        <!-- 다운로드 버튼 -->
         <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 저장">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12m0 0-4-4m4 4 4-4"/>
@@ -231,6 +240,15 @@
   <!-- 📸 이미지 캡처 전용 숨김 도화지 -->
   <div id="captureContainer" class="capture-container">
     <div class="cap-gradient"></div>
+    
+    <!-- 1. 앱 헤더 추가 -->
+    <div class="cap-app-header">
+      <svg class="cap-app-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      <span class="cap-app-title">Playlist</span>
+    </div>
+
     <div class="cap-content">
       <div class="cap-header">
         <div id="captureGrid" class="cap-grid"></div>
@@ -238,6 +256,7 @@
           <div class="cap-subtitle">STYLUS PLAYLIST</div>
           <h1 id="captureTitle" class="cap-title"></h1>
           <div class="cap-profile">
+            <!-- 2. 프로필 썸네일 개선 -->
             <div class="cap-profile-img-wrap">
               <img src="images/logo.png" alt="Stylus" class="cap-profile-img" onerror="this.style.display='none'">
             </div>
@@ -247,9 +266,11 @@
           </div>
         </div>
       </div>
-      <!-- 기존 리스트의 HTML이 복사되며, CSS로 상태 표시만 가려짐 -->
+      
+      <!-- 리스트 -->
       <div id="captureList" class="req-list cap-list"></div>
       
+      <!-- 푸터 -->
       <div class="cap-footer">
         <div class="cap-insta">@stylus.seoul</div>
         <div id="captureTime" class="cap-time"></div>
@@ -326,7 +347,6 @@
         const item = document.createElement('div');
         item.className = 'req-item ' + (isPlayed ? 'played' : 'waiting');
 
-        // 상태값(req-status) 태그는 존재하지만 캡처본에서는 CSS로 안 보이게 처리됨
         const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
         
         const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
@@ -417,12 +437,15 @@
       }
       document.getElementById('captureGrid').innerHTML = gridHtml.join('');
 
-      // 3. 리스트 복사 (상태 숨김 등은 위쪽의 .cap-list CSS가 자동으로 처리해줌)
+      // 3. 리스트 복사 
       document.getElementById('captureList').innerHTML = reqList.innerHTML;
 
-      // 4. 하단 워터마크 시간 셋팅
-      const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('captureTime').textContent = 'Generated at ' + timeStr;
+      // 4. 🚀 하단 워터마크 시간 셋팅 (YYYY.MM.DD HH:MM:SS)
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const fullTimeStamp = `${yyyy}.${mm}.${dd} ${hours}:${minutes}:${seconds}`;
+      document.getElementById('captureTime').textContent = fullTimeStamp;
 
       const container = document.getElementById('captureContainer');
       container.style.left = '0';
@@ -434,7 +457,7 @@
         const canvas = await html2canvas(container, {
           useCORS: true,       
           allowTaint: true,    
-          backgroundColor: '#121212', // 스포티파이 감성 다크
+          backgroundColor: '#121212', 
           scale: 2             
         });
 
