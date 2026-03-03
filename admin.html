@@ -25,7 +25,6 @@
       overscroll-behavior: none;
     }
 
-    /* index.html 헤더 구조를 그대로 가져오되, 3단 레이아웃으로 Admin 가운데 정렬 */
     .admin-header-top {
       display: flex;
       align-items: center;
@@ -198,10 +197,8 @@
 <div id="app">
   <div class="view">
 
-    <!-- index.html 헤더 구조 그대로, 검색 버튼 제거 + Admin 가운데 -->
     <header class="list-header">
       <div class="header-top" style="position: relative;">
-
         <!-- 왼쪽: 로고 -->
         <a href="https://stylusseoul.github.io/vinyl/" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
           <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img"
@@ -209,7 +206,7 @@
           <span class="logo-text" style="display:none">STYLUS</span>
         </a>
 
-        <!-- 가운데: Admin 텍스트 (절대 위치로 완벽하게 가운데 고정) -->
+        <!-- 가운데: Admin 텍스트 -->
         <span style="
           position: absolute;
           left: 50%;
@@ -224,7 +221,6 @@
 
         <!-- 오른쪽: 검색 버튼 대신 빈 공간으로 밸런스 유지 -->
         <div style="width: 36px; height: 36px; flex-shrink: 0;"></div>
-
       </div>
     </header>
 
@@ -254,6 +250,7 @@
       return;
     }
 
+    // 캐시 무효화를 위해 Date.now() 파라미터 추가
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests&_=${Date.now()}`;
 
     try {
@@ -265,12 +262,17 @@
       adminList.innerHTML = '';
 
       let validItems = [];
-      let actualRowNumber = 1;
+      let sortOrderIndex = 0; // 정렬 시 순서 유지를 위한 가상 인덱스
 
       rows.forEach((r) => {
-        actualRowNumber++;
-        if (!r || !r.c || !r.c[3] || r.c[3].v === 'Track') return;
+        // A열(0) 타임스탬프와 D열(3) 트랙이 없으면 스킵
+        if (!r || !r.c || !r.c[0] || !r.c[3] || r.c[3].v === 'Track') return;
 
+        sortOrderIndex++;
+        
+        // 고유 식별자인 타임스탬프 추출 (A열)
+        const timestampVal = String(r.c[0].f || r.c[0].v).trim();
+        
         const artistName = r.c[1] ? r.c[1].v : 'Unknown Artist';
         const albumName  = r.c[2] ? r.c[2].v : 'Unknown Album';
         const trackName  = r.c[3].v;
@@ -280,7 +282,17 @@
         const currentStatus = (r.c[7] && r.c[7].v) ? String(r.c[7].v).trim() : '';
         const isPlayed   = currentStatus.toUpperCase() === 'Y';
 
-        validItems.push({ rowNum: actualRowNumber, artist: artistName, album: albumName, track: trackName, user: userName, memo: memoText, cover: coverUrl, isPlayed });
+        validItems.push({ 
+          orderIdx: sortOrderIndex, 
+          timestamp: timestampVal, 
+          artist: artistName, 
+          album: albumName, 
+          track: trackName, 
+          user: userName, 
+          memo: memoText, 
+          cover: coverUrl, 
+          isPlayed 
+        });
       });
 
       if (validItems.length === 0) {
@@ -288,8 +300,9 @@
         return;
       }
 
+      // 정렬: 미재생이 위, 재생완료가 아래. 상태가 같으면 시트에 들어온 순서(orderIdx) 유지
       validItems.sort((a, b) => {
-        if (a.isPlayed === b.isPlayed) return a.rowNum - b.rowNum;
+        if (a.isPlayed === b.isPlayed) return a.orderIdx - b.orderIdx;
         return a.isPlayed ? 1 : -1;
       });
 
@@ -312,7 +325,8 @@
             ${memoHTML}
           </div>
           <label class="switch">
-            <input type="checkbox" class="status-toggle" data-row="${data.rowNum}" ${data.isPlayed ? 'checked' : ''}>
+            <!-- 행 번호 대신 고유값인 타임스탬프(data-ts)를 심어둡니다 -->
+            <input type="checkbox" class="status-toggle" data-ts="${data.timestamp}" ${data.isPlayed ? 'checked' : ''}>
             <span class="slider"></span>
           </label>
         `;
@@ -322,14 +336,15 @@
 
       document.querySelectorAll('.status-toggle').forEach(toggle => {
         toggle.addEventListener('change', async function () {
-          const rowNum = this.getAttribute('data-row');
+          // 행 번호 대신 타임스탬프를 가져옴
+          const ts = this.getAttribute('data-ts');
           const newStatus = this.checked ? 'Y' : '';
           const parentItem = this.closest('.req-item');
 
           this.disabled = true;
           parentItem.classList.toggle('is-played', this.checked);
 
-          await updateSheetStatus(rowNum, newStatus, this, parentItem);
+          await updateSheetStatus(ts, newStatus, this, parentItem);
         });
       });
 
@@ -339,8 +354,8 @@
     }
   }
 
-  // ★ 통신 에러 해결: 일반 텍스트 모드로 전송하여 CORS 프리플라이트 우회 ★
-  async function updateSheetStatus(row, status, toggleEl, parentItem) {
+  // ★ 통신 에러 해결 및 Timestamp 전송으로 밀림 현상 방지 ★
+  async function updateSheetStatus(timestamp, status, toggleEl, parentItem) {
     if (!WEBAPP_URL) {
       alert('설정된 URL이 없습니다.');
       resetToggle(toggleEl, parentItem, status);
@@ -348,20 +363,24 @@
     }
 
     try {
+      // 일반 텍스트 모드로 전송하여 CORS 프리플라이트(OPTIONS) 우회
       const response = await fetch(WEBAPP_URL, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain;charset=utf-8", 
         },
-        body: JSON.stringify({ "row": row, "status": status })
+        // row 대신 timestamp 전송!
+        body: JSON.stringify({ "timestamp": timestamp, "status": status })
       });
 
       const responseText = await response.text();
       
+      // 서버에서 명시적 에러를 뱉었을 경우
       if (responseText.includes('error') && !responseText.includes('success') && !responseText.includes('Success')) {
-         throw new Error("서버 반환 에러");
+         throw new Error("서버 반환 에러: " + responseText);
       }
 
+      // 성공 시 토글 활성화
       toggleEl.disabled = false;
       
     } catch (error) {
