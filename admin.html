@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>Stylus Admin</title>
   <meta name="theme-color" content="#0a0a0a">
 
@@ -250,7 +250,7 @@
 
   async function loadAdminData() {
     if (typeof SHEET_ID === 'undefined') {
-      adminList.innerHTML = '<div class="loading-state">config.js를 로드하지 못했습니다.</div>';
+      adminList.innerHTML = '<div class="loading-state">config.js를 찾을 수 없습니다.</div>';
       return;
     }
 
@@ -288,7 +288,6 @@
         return;
       }
 
-      // 미재생이 위, 재생완료가 아래 / 동일 상태면 rowNum 순서 유지
       validItems.sort((a, b) => {
         if (a.isPlayed === b.isPlayed) return a.rowNum - b.rowNum;
         return a.isPlayed ? 1 : -1;
@@ -340,9 +339,10 @@
     }
   }
 
+  // ★ 통신 에러 해결: 일반 텍스트 모드로 전송하여 CORS 프리플라이트 우회 ★
   async function updateSheetStatus(row, status, toggleEl, parentItem) {
     if (!WEBAPP_URL) {
-      alert('config.js에서 REQUEST_API_URL을 찾을 수 없습니다.');
+      alert('설정된 URL이 없습니다.');
       resetToggle(toggleEl, parentItem, status);
       return;
     }
@@ -350,19 +350,23 @@
     try {
       const response = await fetch(WEBAPP_URL, {
         method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8", 
+        },
         body: JSON.stringify({ "row": row, "status": status })
       });
 
-      const result = await response.json();
-      if (result.result !== 'success') {
-        alert('업데이트 실패: ' + (result.message || '알 수 없는 오류'));
-        resetToggle(toggleEl, parentItem, status);
-      } else {
-        toggleEl.disabled = false;
+      const responseText = await response.text();
+      
+      if (responseText.includes('error') && !responseText.includes('success') && !responseText.includes('Success')) {
+         throw new Error("서버 반환 에러");
       }
+
+      toggleEl.disabled = false;
+      
     } catch (error) {
       console.error("업데이트 에러:", error);
-      alert('통신 오류가 발생했습니다.');
+      alert('통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       resetToggle(toggleEl, parentItem, status);
     }
   }
