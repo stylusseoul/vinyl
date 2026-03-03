@@ -7,6 +7,13 @@
   <meta name="description" content="스타일러스에 있는 바이닐을 검색합니다">
   <meta name="theme-color" content="#0a0a0a">
 
+  <!-- 성능 최적화: 외부 도메인 사전 연결 -->
+  <link rel="preconnect" href="https://docs.google.com" crossorigin>
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+  
+  <!-- 성능 최적화: 핵심 CSS 프리로드 -->
+  <link rel="preload" href="styles.css" as="style">
+
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://stylusseoul.github.io/vinyl/">
@@ -29,6 +36,10 @@
   
   <!-- 파비콘 -->
   <link rel="icon" type="image/png" href="https://stylusseoul.github.io/vinyl/images/favicon.png">
+  
+  <!-- 성능 최적화: 자바스크립트 비동기-지연 로딩 (렌더링 블로킹 방지) -->
+  <script src="config.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -184,7 +195,5 @@
   <span>Requests</span>
 </a>
 
-<script src="config.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
