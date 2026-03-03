@@ -35,6 +35,8 @@
     input:checked + .slider { background-color: var(--played); }
     input:checked + .slider:before { transform: translateX(22px); }
     .loading-state { display: flex; justify-content: center; align-items: center; padding: 60px 0; color: var(--sub, #888); font-size: 14px; }
+    
+    /* 화면을 잠그는 반투명 로딩 오버레이 */
     #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; color: white; font-size: 14px; }
     #global-loader .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -130,6 +132,7 @@
         item.className = `req-item ${data.isPlayed ? 'is-played' : ''}`;
         const memoHTML = data.memo ? `<div class="req-memo">💬 ${data.memo}</div>` : '';
 
+        // ★ input 요소에 data-track 속성을 추가하여 곡명도 저장해둠
         item.innerHTML = `
           <img src="${data.cover}" class="req-cover" alt="album cover" onerror="this.src='${DEFAULT_COVER}'">
           <div class="req-info">
@@ -139,7 +142,7 @@
             ${memoHTML}
           </div>
           <label class="switch">
-            <input type="checkbox" class="status-toggle" data-ts="${data.timestamp}" ${data.isPlayed ? 'checked' : ''}>
+            <input type="checkbox" class="status-toggle" data-ts="${data.timestamp}" data-track="${data.track}" ${data.isPlayed ? 'checked' : ''}>
             <span class="slider"></span>
           </label>
         `;
@@ -149,6 +152,7 @@
       document.querySelectorAll('.status-toggle').forEach(toggle => {
         toggle.addEventListener('change', async function () {
           const ts = this.getAttribute('data-ts');
+          const trackName = this.getAttribute('data-track'); // ★ 곡명 가져오기
           const newStatus = this.checked ? 'Y' : 'N'; 
 
           // 무조건 화면 락
@@ -158,13 +162,18 @@
             const response = await fetch(WEBAPP_URL, {
               method: "POST",
               headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify({ "timestamp": ts, "status": newStatus })
+              // ★ 서버로 시간, 곡명, 상태 3가지를 모두 보냄
+              body: JSON.stringify({ 
+                "timestamp": ts, 
+                "track": trackName,
+                "status": newStatus 
+              })
             });
 
             const responseText = await response.text();
             
             if (responseText.includes('error') && !responseText.includes('success')) {
-              alert("서버 오류: " + responseText);
+              alert("서버에서 해당 곡을 찾지 못했습니다.");
               this.checked = !this.checked;
             } else {
               // 성공 시 무조건 목록 전체 새로고침
