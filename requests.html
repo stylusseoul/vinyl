@@ -78,14 +78,23 @@
     .req-item.played .req-status { color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.05); }
     .req-top-time { font-size: 11px; font-weight: 400; color: var(--sub); font-variant-numeric: tabular-nums; margin-left: auto; }
 
-    .req-main-row { display: flex; align-items: stretch; gap: 13px; }
+    .req-main-row { display: flex; align-items: center; gap: 13px; }
     .req-cover { flex-shrink: 0; width: 64px; height: 64px; border-radius: 7px; object-fit: cover; display: block; background: var(--surface); }
 
-    .req-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
-    .req-track { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .req-artist { font-size: 12px; font-weight: 400; color: var(--sub); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 1.3; }
-    .req-user { font-size: 11px; font-weight: 500; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.85; }
-    .req-memo { font-size: 11px; font-weight: 400; color: var(--sub); font-style: italic; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .req-body { 
+      flex: 1; 
+      min-width: 0; 
+      display: flex; flex-direction: column; justify-content: center; gap: 3px; 
+    }
+    
+    .req-track, .req-artist, .req-user, .req-memo {
+      display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+    }
+
+    .req-track { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .req-artist { font-size: 12px; font-weight: 400; color: var(--sub); line-height: 1.3; }
+    .req-user { font-size: 11px; font-weight: 500; color: var(--accent); opacity: 0.85; line-height: 1.3; margin-top: 2px;}
+    .req-memo { font-size: 11px; font-weight: 400; color: var(--sub); font-style: italic; line-height: 1.3; }
 
     .req-item.played { opacity: 0.48; }
     .req-item.played .req-track { text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.2); }
@@ -122,7 +131,6 @@
       z-index: 0; pointer-events: none;
     }
 
-    /* 📱 페이크 상단 상태바 */
     .cap-status-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
@@ -133,7 +141,6 @@
     .cap-status-right { display: flex; gap: 8px; align-items: center; }
     .cap-status-icon { width: 22px; height: 22px; fill: currentColor; }
 
-    /* 📱 페이크 네비게이션 헤더 */
     .cap-nav-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
@@ -144,7 +151,6 @@
     
     .cap-content { position: relative; z-index: 1; padding: 10px 32px 30px; }
 
-    /* 플리 타이틀 및 그리드 영역 */
     .cap-header { margin-bottom: 20px; }
     .cap-grid {
       width: 280px; height: 280px; 
@@ -155,20 +161,18 @@
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* 타이틀 영역: 사이즈 축소 및 1줄 고정 */
     .cap-title-area { text-align: left; }
     .cap-title { 
-      font-size: 34px !important; /* 텍스트가 길어져서 사이즈 최적화 */
+      font-size: 33px !important; 
       font-weight: 800; color: #ffffff; letter-spacing: -0.02em; 
       margin-bottom: 12px; line-height: 1.1; 
       white-space: nowrap; 
     }
 
-    /* 🚨 로고 찌그러짐 원천 차단 (Flexbox 제거, Absolute 적용) 🚨 */
     .cap-profile { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #ffffff; }
     .cap-profile-img-wrap {
       width: 28px; height: 28px; border-radius: 4px; background: rgba(255,255,255,0.05);
-      position: relative; /* 플렉스 대신 포지션 릴레이티브 사용 */
+      position: relative; 
     }
     .cap-profile-img { 
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -181,13 +185,12 @@
     .cap-dot { color: rgba(255,255,255,0.4); margin: 0 2px; }
     .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
 
-    /* 액션 버튼 영역 */
+    /* 🚨 액션 버튼 영역 (플레이 버튼 완전히 삭제 및 레이아웃 정리) 🚨 */
     .cap-actions {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: flex-start; /* 좌측 정렬로 변경 */
+      align-items: center;
       margin-top: 24px; margin-bottom: 32px;
-    }
-    .cap-actions-left { 
-      display: flex; gap: 28px; align-items: center; 
+      gap: 28px; /* 아이콘 사이 간격 */
       color: rgba(255,255,255,0.7); 
     }
     .cap-action-icon { 
@@ -195,23 +198,8 @@
       stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; 
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
-    
-    /* 🚨 플레이 버튼 컬러 변경 (Orange) 🚨 */
-    .cap-play-btn {
-      width: 68px; height: 68px;
-      border-radius: 50%; 
-      background: var(--accent); /* 오렌지 컬러 적용 */
-      display: flex; align-items: center; justify-content: center; 
-      color: #ffffff; /* 아이콘을 화이트로 변경하여 가독성 업 */
-      transform: translateZ(0); 
-    }
-    .cap-play-icon { 
-      width: 28px; height: 28px; 
-      display: block; fill: currentColor; 
-      margin-left: 4px; 
-    }
 
-    /* 🟢 리스트 밸런스 완벽 교정 (텍스트와 이미지 수직중앙 & 여백 최적화) */
+    /* 🟢 리스트 밸런스 완벽 교정 (캡처 영역) */
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
     .cap-list .req-item { padding: 12px 0 !important; border-bottom: none !important; } 
@@ -219,16 +207,28 @@
     .cap-list .req-item.played .req-track { text-decoration: none !important; }
     
     .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 16px !important; min-width: 24px; }
-    
-    /* 커버와 텍스트의 수직 중앙 정렬! */
     .cap-list .req-main-row { align-items: center !important; gap: 14px !important; }
-    
-    /* 커버 사이즈를 살짝 줄여 텍스트 덩어리와 밸런스를 맞춤 */
     .cap-list .req-cover { width: 60px !important; height: 60px !important; border-radius: 6px !important; } 
     
-    /* 텍스트 줄간격 타이트하게 압축 */
-    .cap-list .req-body { gap: 3px !important; justify-content: center !important; margin: 0 !important; }
+    .cap-list .req-body { 
+      flex: 1 !important; 
+      min-width: 0 !important; 
+      gap: 3px !important; 
+      justify-content: center !important; 
+      margin: 0 !important; 
+    }
     
+    .cap-list .req-track, 
+    .cap-list .req-artist, 
+    .cap-list .req-user, 
+    .cap-list .req-memo { 
+      display: block !important; 
+      width: 100% !important; 
+      white-space: nowrap !important; 
+      overflow: hidden !important; 
+      text-overflow: ellipsis !important; 
+    }
+
     .cap-list .req-track { font-size: 15px !important; line-height: 1.2 !important; } 
     .cap-list .req-artist { font-size: 13px !important; line-height: 1.2 !important; } 
     .cap-list .req-user { font-size: 12px !important; line-height: 1.2 !important; margin-top: 2px !important; }
@@ -334,18 +334,10 @@
         </div>
       </div>
       
-      <!-- 🟢 스포티파이 핵심 아이콘 영역 -->
+      <!-- 🟢 스포티파이 핵심 아이콘 영역 (플레이 버튼 삭제) -->
       <div class="cap-actions">
-        <div class="cap-actions-left">
-          <svg class="cap-action-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
-          <svg class="cap-action-icon cap-action-icon.fill" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="19" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="2" fill="currentColor" stroke="none"></circle></svg>
-        </div>
-        <div class="cap-play-btn">
-          <!-- 깨짐 방지용 안정적 다각형(Polygon) SVG -->
-          <svg class="cap-play-icon" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="7,4 20,12 7,20"></polygon>
-          </svg>
-        </div>
+        <svg class="cap-action-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
+        <svg class="cap-action-icon cap-action-icon.fill" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="19" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="2" fill="currentColor" stroke="none"></circle></svg>
       </div>
 
       <!-- 리스트 -->
@@ -511,7 +503,6 @@
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       
-      // 🚀 타이틀 포맷 및 내용 변경
       document.getElementById('captureTitle').textContent = `Music On Vinyl(${yyyy}.${mm}.${dd})`;
       document.getElementById('captureCount').textContent = allRequests.length + '곡';
 
