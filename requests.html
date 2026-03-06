@@ -65,10 +65,11 @@
     /* ══════════════════════════════
        LIST (Web UI)
     ══════════════════════════════ */
-    .req-main { padding: 10px 16px 0; } 
+    /* 리퀘스트 페이지: 첫번째 트랙과 마지막 트랙의 상/하단 여백을 완벽히 대칭으로 맞춤 (18px) */
+    .req-main { padding: 0 16px; } 
     .req-list  { display: flex; flex-direction: column; }
     .req-item { display: flex; flex-direction: column; gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--border); }
-    .req-item:last-child { border-bottom: none; padding-bottom: 24px; }
+    .req-item:last-child { border-bottom: none; padding-bottom: 18px; }
 
     .req-top-row { display: flex; align-items: center; gap: 8px; }
     .req-idx { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.01em; color: rgba(255,255,255,0.14); min-width: 26px; }
@@ -82,8 +83,7 @@
     .req-cover { flex-shrink: 0; width: 64px; height: 64px; border-radius: 7px; object-fit: cover; display: block; background: var(--surface); }
 
     .req-body { 
-      flex: 1; 
-      min-width: 0; 
+      flex: 1; min-width: 0; 
       display: flex; flex-direction: column; justify-content: center; gap: 3px; 
     }
     
@@ -111,7 +111,6 @@
     .footer-insta { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
     .footer-insta svg { width: 14px; height: 14px; }
     .float-btn { position: fixed; bottom: calc(max(24px, env(safe-area-inset-bottom, 0px) + 16px)); left: 50%; transform: translateX(-50%); z-index: 1000; display: inline-flex; align-items: center; gap: 7px; background: rgba(20,20,20,0.92); backdrop-filter: blur(16px); color: var(--text); padding: 11px 20px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 28px rgba(0,0,0,0.5); font-size: 13px; font-weight: 600; text-decoration: none; }
-    
     .float-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     @media (min-width: 600px) { .req-header-inner, .req-count-bar, .req-main, .req-footer { max-width: 600px; margin-left: auto; margin-right: auto; } }
@@ -124,7 +123,7 @@
       width: 540px; 
       background-color: #121212; 
       z-index: -1;
-      font-family: var(--font);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", var(--font);
     }
     
     .cap-gradient {
@@ -133,16 +132,16 @@
       z-index: 0; pointer-events: none;
     }
 
+    /* 아이폰 스타일 상태바 */
     .cap-status-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 18px 32px; 
+      padding: 16px 36px 0; 
       color: #fff; font-size: 17px; 
-      font-weight: 600; letter-spacing: 0.02em;
+      font-weight: 600; letter-spacing: -0.01em;
     }
-    .cap-status-right { display: flex; gap: 8px; align-items: center; }
-    .cap-status-icon { width: 22px; height: 22px; fill: currentColor; }
-
+    .cap-status-right { display: flex; gap: 6px; align-items: center; }
+    
     .cap-nav-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
@@ -154,48 +153,49 @@
     .cap-content { position: relative; z-index: 1; padding: 10px 32px 30px; }
 
     .cap-header { margin-bottom: 24px; }
+    
+    /* 동적 그리드 스타일 (스크립트에서 grid-template 재할당) */
     .cap-grid {
       width: 280px; height: 280px; 
       margin: 0 auto 32px; 
-      display: grid; grid-template-columns: 1fr 1fr;
+      display: grid; 
       box-shadow: 0 24px 50px rgba(0,0,0,0.6); 
       background: #222;
+      overflow: hidden;
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
-    .cap-title-area { text-align: center; }
+    /* 좌측 정렬 및 프로필/날짜 레이아웃 스포티파이 스타일 */
+    .cap-title-area { text-align: left; display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
     .cap-title { 
       font-size: 31px !important; 
       font-weight: 800; color: #ffffff; letter-spacing: -0.02em; 
-      margin-bottom: 16px; 
+      margin-bottom: 12px; 
       line-height: 1.1; 
       white-space: nowrap; 
     }
 
-    .cap-profile { 
-      display: flex; align-items: center; justify-content: flex-start; gap: 10px; 
-      font-size: 19.5px; font-weight: 600; color: #ffffff; 
-    }
+    .cap-profile-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
     .cap-profile-img-wrap {
-      width: 36px; height: 36px; border-radius: 6px; background: rgba(255,255,255,0.05);
-      position: relative; 
+      width: 32px; height: 32px; border-radius: 50%; background: #000;
+      position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
     }
     .cap-profile-img { 
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      max-width: 26px; max-height: 18px; 
+      max-width: 20px; max-height: 14px; 
       width: auto !important; height: auto !important; 
       filter: brightness(0) invert(1); 
-      margin: 0 !important; padding: 0 !important;
     }
+    .cap-profile-name { font-size: 19.5px; font-weight: 700; color: #ffffff; }
     
-    .cap-dot { color: rgba(255,255,255,0.4); margin: 0 4px; }
-    .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
+    .cap-subtitle-wrap { font-size: 15.5px; font-weight: 400; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 6px; }
 
+    /* 액션 버튼 영역 (+ 추가 및 간격 조정) */
     .cap-actions {
       display: flex; justify-content: flex-start; 
       align-items: center;
-      margin-top: 28px; margin-bottom: 28px;
-      gap: 28px; 
+      margin-top: 24px; margin-bottom: 24px;
+      gap: 22px; 
       color: rgba(255,255,255,0.7); 
     }
     .cap-action-icon { 
@@ -204,6 +204,13 @@
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
 
+    /* 버튼 하단 라인 (푸터 라인과 동일한 톤 적용) */
+    .cap-divider {
+      width: 100%; height: 1px; background: rgba(255, 255, 255, 0.12);
+      margin-bottom: 0px; 
+    }
+
+    /* 리스트 및 트랙 간격 (첫번째와 나머지 간격 일치) */
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
     .cap-list .req-item { padding: 14px 0 !important; border-bottom: none !important; } 
@@ -215,24 +222,17 @@
     .cap-list .req-cover { width: 78px !important; height: 78px !important; border-radius: 8px !important; } 
     
     .cap-list .req-body { 
-      flex: 1 !important; 
-      min-width: 0 !important; 
-      gap: 4px !important; 
-      justify-content: flex-start !important; 
-      margin: 0 !important; 
+      flex: 1 !important; min-width: 0 !important; 
+      gap: 4px !important; justify-content: flex-start !important; margin: 0 !important; 
     }
     
     .cap-list .req-track, 
     .cap-list .req-artist, 
     .cap-list .req-user, 
     .cap-list .req-memo { 
-      display: block !important; 
-      width: 100% !important; 
-      white-space: normal !important; 
-      word-break: keep-all !important; 
-      overflow-wrap: break-word !important;
-      overflow: visible !important; 
-      text-overflow: clip !important; 
+      display: block !important; width: 100% !important; 
+      white-space: normal !important; word-break: keep-all !important; 
+      overflow-wrap: break-word !important; overflow: visible !important; text-overflow: clip !important; 
     }
 
     .cap-list .req-track { font-size: 19.5px !important; line-height: 1.35 !important; } 
@@ -240,7 +240,7 @@
     .cap-list .req-user { font-size: 15.5px !important; line-height: 1.35 !important; margin-top: 4px !important; }
     .cap-list .req-memo { font-size: 15.5px !important; line-height: 1.35 !important; } 
 
-    /* 캡처 푸터 및 명언 디자인 */
+    /* 캡처 푸터 */
     .cap-footer {
       width: 85%;
       margin: 40px auto 0;
@@ -253,22 +253,13 @@
       margin-bottom: 6px; text-align: center;
     }
     .cap-quote-text {
-      font-size: 15.5px;
-      color: rgba(255, 255, 255, 0.7);
-      font-style: italic;
-      line-height: 1.4;
-      margin-bottom: 4px;
+      font-size: 15.5px; color: rgba(255, 255, 255, 0.7); font-style: italic; line-height: 1.4; margin-bottom: 4px;
     }
     .cap-quote-author {
-      font-size: 13.5px;
-      color: rgba(255, 255, 255, 0.35); /* 확실히 Dimmed 처리된 톤 */
+      font-size: 13.5px; color: rgba(255, 255, 255, 0.35); 
     }
-    .cap-insta { 
-      font-size: 19.2px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; 
-    }
-    .cap-time { 
-      font-size: 15.6px; color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; 
-    }
+    .cap-insta { font-size: 19.2px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; }
+    .cap-time { display: none; } /* 상단 상태바에 시간이 있으므로 하단 시간은 생략 */
   </style>
 </head>
 <body>
@@ -287,7 +278,7 @@
         </div>
       </div>
       <div class="header-right">
-        <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 새 탭에서 열기">
+        <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 저장">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12m0 0-4-4m4 4 4-4"/>
             <path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/>
@@ -328,9 +319,9 @@
     <div class="cap-status-bar">
       <div id="capStatusTime">00:00</div>
       <div class="cap-status-right">
-        <svg class="cap-status-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-        <svg class="cap-status-icon" viewBox="0 0 24 24"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
-        <svg class="cap-status-icon" viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><path d="M1 12h2.5c.3 0 .5-.2.5-.5v-2c0-.3-.2-.5-.5-.5H1c-.3 0-.5.2-.5.5v2c0 .3.2.5.5.5zm4.5 0h2.5c.3 0 .5-.2.5-.5v-4.5c0-.3-.2-.5-.5-.5h-2.5c-.3 0-.5.2-.5.5v4.5c0 .3.2.5.5.5zm4.5 0h2.5c.3 0 .5-.2.5-.5v-7c0-.3-.2-.5-.5-.5h-2.5c-.3 0-.5.2-.5.5v7c0 .3.2.5.5.5zm4.5 0h2.5c.3 0 .5-.2.5-.5v-10c0-.3-.2-.5-.5-.5h-2.5c-.3 0-.5.2-.5.5v10c0 .3.2.5.5.5z" fill="#fff"/></svg>
+        <svg width="17" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 12c.8 0 1.5-.7 1.5-1.5S8.8 9 8 9s-1.5.7-1.5 1.5S7.2 12 8 12zm5.7-4.3c-1.5-1.5-3.5-2.4-5.7-2.4s-4.2.9-5.7 2.4c-.2.2-.2.6 0 .8l.8.8c.2.2.6.2.8 0 1.1-1.1 2.5-1.7 4.1-1.7s3 .6 4.1 1.7c.2.2.6.2.8 0l.8-.8c.2-.2.2-.6 0-.8zm2.8-2.9C14.2 2.6 11.3 1.2 8 1.2S1.8 2.6-.5 4.8c-.2.2-.2.6 0 .8l.8.8c.2.2.6.2.8 0 1.9-1.9 4.6-3 7.4-3s5.5 1.1 7.4 3c.2.2.6.2.8 0l.8-.8c.2-.3.2-.6 0-.8z" fill="#fff"/></svg>
+        <svg width="26" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#fff"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="#fff"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#fff"/></svg>
       </div>
     </div>
 
@@ -343,22 +334,28 @@
       <div class="cap-header">
         <div id="captureGrid" class="cap-grid"></div>
         <div class="cap-title-area">
-          <h1 id="captureTitle" class="cap-title"></h1>
-          <div class="cap-profile">
+          <h1 class="cap-title">Music On Vinyl</h1>
+          <div class="cap-profile-wrap">
             <div class="cap-profile-img-wrap">
               <img src="images/logo.png" alt="Stylus" class="cap-profile-img" onerror="this.style.display='none'">
             </div>
             <span class="cap-profile-name">Stylus</span>
-            <span class="cap-dot">·</span>
-            <span id="captureCount" class="cap-req-count"></span>
+          </div>
+          <div class="cap-subtitle-wrap">
+            <span>플레이리스트</span>
+            <span>·</span>
+            <span id="capOldestDate"></span>
           </div>
         </div>
       </div>
       
       <div class="cap-actions">
+        <svg class="cap-action-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
         <svg class="cap-action-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
         <svg class="cap-action-icon cap-action-icon.fill" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="19" cy="12" r="2" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="2" fill="currentColor" stroke="none"></circle></svg>
       </div>
+
+      <div class="cap-divider"></div>
 
       <div id="captureList" class="req-list cap-list"></div>
       
@@ -368,7 +365,6 @@
           <span class="cap-quote-author">Friedrich Nietzsche</span>
         </div>
         <div class="cap-insta">@stylus.seoul</div>
-        <div id="captureTime" class="cap-time"></div>
       </div>
     </div>
   </div>
@@ -504,7 +500,7 @@
     fetchRequests();
     setInterval(fetchRequests, 10000);
 
-    /* ── 이미지 생성 & 새 탭 열기 로직 ── */
+    /* ── 이미지 다운로드 로직 ── */
     downloadBtn.addEventListener('click', async function() {
       if (allRequests.length === 0) {
         alert('저장할 신청곡이 없습니다.');
@@ -515,18 +511,6 @@
       downloadBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:1.5px;border-top-color:#fff;"></div>';
       downloadBtn.disabled = true;
 
-      // 🚨 팝업 차단 방지: 버튼 클릭 즉시 새 탭을 먼저 엽니다.
-      const newTab = window.open('', '_blank');
-      if (newTab) {
-        newTab.document.title = "Loading...";
-        newTab.document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#121212; color:#fff; font-family:sans-serif;">이미지를 생성하는 중입니다...</div>';
-      } else {
-        alert("팝업 차단이 설정되어 있어 새 탭을 열 수 없습니다. 브라우저 설정에서 팝업 차단을 해제해 주세요.");
-        downloadBtn.innerHTML = originalIcon;
-        downloadBtn.disabled = false;
-        return;
-      }
-
       const now = new Date();
       const hoursCurrent = String(now.getHours()).padStart(2, '0');
       const minsCurrent = String(now.getMinutes()).padStart(2, '0');
@@ -536,21 +520,48 @@
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       
-      document.getElementById('captureTitle').textContent = `Music On Vinyl(${yyyy}.${mm}.${dd})`;
-      document.getElementById('captureCount').textContent = allRequests.length + '곡';
+      // 요청곡 중 가장 오래된 날짜 추출하여 플레이리스트 날짜로 세팅
+      const validReqs = allRequests.filter(r => r.ts > 0);
+      let oldestDateStr = '';
+      if (validReqs.length > 0) {
+        const oldestTs = Math.min(...validReqs.map(r => r.ts));
+        const oldestD = new Date(oldestTs);
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const mName = monthNames[oldestD.getMonth()];
+        const yyStr = String(oldestD.getFullYear()).slice(-2);
+        const ddStr = String(oldestD.getDate()).padStart(2, '0');
+        oldestDateStr = `${mName}.${yyStr}.${ddStr}`;
+      } else {
+        oldestDateStr = 'Just now';
+      }
+      document.getElementById('capOldestDate').textContent = oldestDateStr;
+
+      // 동적 그리드 계산 로직 (2x2, 3x3, 4x4, 5x5)
+      const count = allRequests.length;
+      let gridN = 2; // 기본 2x2
+      if (count > 16) gridN = 5;
+      else if (count > 9) gridN = 4;
+      else if (count > 4) gridN = 3;
+
+      const gridEl = document.getElementById('captureGrid');
+      gridEl.style.gridTemplateColumns = `repeat(${gridN}, 1fr)`;
+      gridEl.style.gridTemplateRows = `repeat(${gridN}, 1fr)`;
 
       const covers = allRequests.map(r => r.cover).filter(Boolean);
       const gridHtml = [];
-      for (let i = 0; i < 4; i++) {
-        const imgSrc = covers[i % covers.length] || ''; 
-        gridHtml.push('<img src="' + thumb(imgSrc) + '" crossorigin="anonymous">');
+      const totalSlots = gridN * gridN;
+      
+      for (let i = 0; i < totalSlots; i++) {
+        if (i < covers.length) {
+          gridHtml.push(`<img src="${thumb(covers[i])}" crossorigin="anonymous">`);
+        } else {
+          // 비어있는 슬롯은 스포티파이 느낌을 살려 다크 그레이 배경 처리
+          gridHtml.push(`<div style="background-color: #1a1a1a; width: 100%; height: 100%;"></div>`);
+        }
       }
-      document.getElementById('captureGrid').innerHTML = gridHtml.join('');
+      gridEl.innerHTML = gridHtml.join('');
 
       document.getElementById('captureList').innerHTML = reqList.innerHTML;
-
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('captureTime').textContent = `${yyyy}.${mm}.${dd} ${hoursCurrent}:${minsCurrent}:${seconds}`;
 
       const container = document.getElementById('captureContainer');
 
@@ -569,19 +580,17 @@
           }
         });
 
-        // 🚨 용량 최적화: PNG 대신 JPEG 품질 85%로 압축하여 변환
+        // 다운로드 로직: 아이폰 등에서 사진첩으로 다운로드를 유도하는 a태그 클릭 방식 
         const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        const link = document.createElement('a');
+        link.download = `Stylus_Playlist_${yyyy}${mm}${dd}.jpg`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-        // 미리 열어둔 새 탭에 생성된 이미지를 그려줍니다.
-        if (newTab) {
-          newTab.document.title = `Stylus_Playlist_${yyyy}${mm}${dd}`;
-          newTab.document.body.style.margin = '0';
-          newTab.document.body.style.backgroundColor = '#121212';
-          newTab.document.body.innerHTML = `<img src="${dataUrl}" style="max-width:100%; height:auto; display:block; margin: 0 auto; padding: 20px 0;">`;
-        }
       } catch (error) {
         console.error('이미지 생성 실패:', error);
-        if (newTab) newTab.close();
         alert('이미지 생성 중 오류가 발생했습니다.');
       } finally {
         downloadBtn.innerHTML = originalIcon;
