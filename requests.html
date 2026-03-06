@@ -131,7 +131,6 @@
       z-index: 0; pointer-events: none;
     }
 
-    /* 📱 아이폰 스타일 상태바 (30% 확대) */
     .cap-status-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
@@ -178,7 +177,6 @@
       white-space: normal; 
     }
 
-    /* 🎶 프로필 및 플레이리스트 텍스트 (20% 확대) */
     .cap-profile-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .cap-profile-img-wrap {
       width: 34px; height: 34px; 
@@ -195,7 +193,6 @@
     
     .cap-subtitle-wrap { font-size: 17.4px; font-weight: 400; color: rgba(255,255,255,0.65); display: flex; align-items: center; gap: 6px; } 
 
-    /* 액션 버튼 영역 */
     .cap-actions {
       display: flex; justify-content: flex-start; 
       align-items: center;
@@ -209,13 +206,12 @@
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
 
-    /* 버튼 하단 라인 */
     .cap-divider {
       width: 100%; height: 1px; background: rgba(255, 255, 255, 0.12);
       margin-bottom: 20px; 
     }
 
-    /* 간격 불일치 및 텍스트 팽창 완벽 해결 */
+    /* 캡처 리스트 스타일 */
     .cap-list {
       display: flex !important;
       flex-direction: column !important;
@@ -227,7 +223,6 @@
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
     
-    /* 🚨 트랙리스트 위쪽 정렬(Top Alignment) 🚨 */
     .cap-list .req-item { 
       display: flex !important;
       flex-direction: row !important;
@@ -304,7 +299,6 @@
     .cap-list .req-user { font-size: 14.5px !important; line-height: 1.3 !important; margin-top: 2px !important; color: var(--accent) !important; }
     .cap-list .req-memo { font-size: 14.5px !important; line-height: 1.3 !important; } 
 
-    /* 캡처 푸터 */
     .cap-footer {
       width: 85%;
       margin: 20px auto 0; 
@@ -379,7 +373,6 @@
 
   <div id="captureContainer" class="capture-container">
     <div class="cap-gradient"></div>
-    
     <div class="cap-status-bar">
       <div id="capStatusTime">00:00</div>
       <div class="cap-status-right">
@@ -440,9 +433,7 @@
     'use strict';
 
     let allRequests = [];
-    let previousFetchText = ''; // 🚨 데이터 변경 캐싱용 변수
-    let renderChunkTimeout = null; 
-    const CHUNK_SIZE = 20;
+    let previousFetchText = '';
 
     const clockEl     = document.getElementById('clock');
     const reqCountNum = document.getElementById('reqCountNum');
@@ -483,49 +474,18 @@
       lastSync.textContent = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0') + ':' + String(n.getSeconds()).padStart(2, '0');
     }
 
-    // 🚨 개별 아이템 HTML 생성 헬퍼 함수 (웹용 & 캡처용 공통 사용)
-    function createItemHtml(req, index) {
-      const isPlayed = req.status.toUpperCase() === 'Y';
-      const idxStr   = String(index + 1).padStart(2, '0');
-      const timeDisp = parseTime(req.rawTime).display;
-      const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
-      const statusText = isPlayed ? 'Played' : 'Waiting';
-      
-      const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
-      const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
-
-      let artistHtml = artistTxt ? '<div class="req-artist">' + esc(artistTxt) + '</div>' : '';
-      let metaHtml = '';
-      if (req.name) metaHtml += '<div class="req-user">' + esc(req.name) + '</div>';
-      if (req.memo) metaHtml += '<div class="req-memo">\u201c' + esc(req.memo) + '\u201d</div>';
-
-      const bodyHtml = '<div class="req-body"><span class="req-track">' + esc(req.track) + '</span>' + artistHtml + metaHtml + '</div>';
-      const mainRowHtml = '<div class="req-main-row">' + coverHtml + bodyHtml + '</div>';
-
-      return '<div class="req-item ' + (isPlayed ? 'played' : 'waiting') + '">' + topRowHtml + mainRowHtml + '</div>';
+    // 🚨 신청곡 데이터를 고유하게 식별하는 ID 생성기 (스마트 업데이트의 핵심)
+    function generateHashId(r) {
+      const str = String(r.rawTime) + String(r.track) + String(r.artist) + String(r.name) + String(r.cover);
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return 'req_' + Math.abs(hash);
     }
 
-    // 🚨 청크(Chunk) 단위 점진적 렌더링 로직 (속도 향상 핵심)
-    function renderChunk(startIndex) {
-      const endIndex = Math.min(startIndex + CHUNK_SIZE, allRequests.length);
-      let chunkHtml = '';
-      
-      for (let i = startIndex; i < endIndex; i++) {
-        chunkHtml += createItemHtml(allRequests[i], i);
-      }
-      
-      if (startIndex === 0) {
-        reqList.innerHTML = chunkHtml;
-      } else {
-        reqList.insertAdjacentHTML('beforeend', chunkHtml);
-      }
-
-      // 아직 남은 아이템이 있다면 0.2초 뒤에 백그라운드에서 이어서 렌더링
-      if (endIndex < allRequests.length) {
-        renderChunkTimeout = setTimeout(() => renderChunk(endIndex), 200);
-      }
-    }
-
+    // 🚨 스마트 DOM 업데이트 로직 (전체 파괴 방지)
     function renderRequests() {
       reqCountNum.textContent = allRequests.length;
       if (allRequests.length === 0) {
@@ -534,9 +494,67 @@
         return;
       }
       reqEmpty.classList.add('hidden');
-      
-      clearTimeout(renderChunkTimeout);
-      renderChunk(0);
+
+      // 1. 현재 화면에 있는 트랙들을 기억해둠
+      const existingNodes = new Map();
+      Array.from(reqList.children).forEach(child => {
+        if (child.id) existingNodes.set(child.id, child);
+      });
+
+      const frag = document.createDocumentFragment();
+
+      // 2. 새 데이터를 돌면서 기존 화면을 재활용하거나 새로 만듦
+      allRequests.forEach(function(req, index) {
+        const isPlayed = req.status.toUpperCase() === 'Y';
+        const idxStr   = String(index + 1).padStart(2, '0');
+        const statusText = isPlayed ? 'Played' : 'Waiting';
+        const itemClass = 'req-item ' + (isPlayed ? 'played' : 'waiting');
+
+        let itemEl = existingNodes.get(req.id);
+
+        if (itemEl) {
+          // 💎 기존에 화면에 있던 트랙 (이미지 로딩 다시 안 함!)
+          itemEl.className = itemClass;
+          
+          const idxEl = itemEl.querySelector('.req-idx');
+          if (idxEl) idxEl.textContent = idxStr;
+          
+          const statusEl = itemEl.querySelector('.req-status');
+          if (statusEl) statusEl.textContent = statusText;
+          
+          existingNodes.delete(req.id); // 재활용 완료 체크
+        } else {
+          // 새로 추가된 트랙 (처음 한 번만 이미지 로딩)
+          itemEl = document.createElement('div');
+          itemEl.id = req.id;
+          itemEl.className = itemClass;
+
+          const timeDisp = parseTime(req.rawTime).display;
+          const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
+          
+          const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
+          const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
+
+          let artistHtml = artistTxt ? '<div class="req-artist">' + esc(artistTxt) + '</div>' : '';
+          let metaHtml = '';
+          if (req.name) metaHtml += '<div class="req-user">' + esc(req.name) + '</div>';
+          if (req.memo) metaHtml += '<div class="req-memo">\u201c' + esc(req.memo) + '\u201d</div>';
+
+          const bodyHtml = '<div class="req-body"><span class="req-track">' + esc(req.track) + '</span>' + artistHtml + metaHtml + '</div>';
+          const mainRowHtml = '<div class="req-main-row">' + coverHtml + bodyHtml + '</div>';
+
+          itemEl.innerHTML = topRowHtml + mainRowHtml;
+        }
+        
+        // 정렬 순서에 맞게 하나씩 차곡차곡 조립
+        frag.appendChild(itemEl);
+      });
+
+      // 3. 구글 시트에서 지워진 트랙이 있다면 화면에서도 삭제
+      existingNodes.forEach(node => node.remove());
+
+      // 4. 완성된 리스트를 한 번에 화면에 반영 (화면 깜빡임 없음)
+      reqList.appendChild(frag);
     }
 
     function sortRequests(arr) {
@@ -555,7 +573,7 @@
         const res  = await fetch(url);
         const text = await res.text();
         
-        // 🚨 캐싱: 데이터가 완전히 동일하면 무거운 렌더링 건너뛰기
+        // 🚨 변경된 내용이 1글자도 없으면 무거운 그리기 작업을 완전히 패스!
         if (text === previousFetchText && allRequests.length > 0) {
           updateSync();
           return;
@@ -567,10 +585,14 @@
         const parsed = rows.map(function(r) {
           if (!r || !r.c) return null;
           function get(i) { const cell = r.c[i]; return cell ? String(cell.f || cell.v || '') : ''; }
-          return {
+          
+          const reqObj = {
             rawTime: get(0), artist: get(1), album: get(2), track: get(3),
             name: get(4), memo: get(5), cover: get(6), status: get(7), ts: parseTime(get(0)).ts,
           };
+          // 고유 ID 부여
+          reqObj.id = generateHashId(reqObj);
+          return reqObj;
         }).filter(function(r) {
           return r && r.track && r.track !== 'Track' && r.track !== '곡명' && r.artist !== 'SWITCH' && r.artist !== 'Artist';
         });
@@ -624,7 +646,7 @@
       }
       document.getElementById('capOldestDate').textContent = oldestDateStr;
 
-      // 동적 그리드 계산 (최대 64개 8x8 지원)
+      // 동적 그리드 계산
       const count = allRequests.length;
       let gridN = 2; 
       if (count >= 64) gridN = 8;
@@ -651,12 +673,8 @@
       }
       gridEl.innerHTML = gridHtml.join('');
 
-      // 🚨 캡처용 리스트: 백그라운드 렌더링 진행 여부와 상관없이 전체 아이템을 한 번에 생성하여 삽입
-      let capListHtml = '';
-      for (let i = 0; i < allRequests.length; i++) {
-        capListHtml += createItemHtml(allRequests[i], i);
-      }
-      document.getElementById('captureList').innerHTML = capListHtml;
+      // 🚨 캡처용 리스트: 이미 완벽하게 정렬된 웹 리스트의 HTML을 그대로 복사해서 사용 (연산 속도 극대화)
+      document.getElementById('captureList').innerHTML = reqList.innerHTML;
 
       const container = document.getElementById('captureContainer');
 
