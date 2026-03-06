@@ -112,7 +112,6 @@
     .footer-insta svg { width: 14px; height: 14px; }
     .float-btn { position: fixed; bottom: calc(max(24px, env(safe-area-inset-bottom, 0px) + 16px)); left: 50%; transform: translateX(-50%); z-index: 1000; display: inline-flex; align-items: center; gap: 7px; background: rgba(20,20,20,0.92); backdrop-filter: blur(16px); color: var(--text); padding: 11px 20px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 28px rgba(0,0,0,0.5); font-size: 13px; font-weight: 600; text-decoration: none; }
     
-    /* 🚨 플로팅 버튼 아이콘 복구용 🚨 */
     .float-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     @media (min-width: 600px) { .req-header-inner, .req-count-bar, .req-main, .req-footer { max-width: 600px; margin-left: auto; margin-right: auto; } }
@@ -154,26 +153,26 @@
     
     .cap-content { position: relative; z-index: 1; padding: 10px 32px 30px; }
 
-    .cap-header { margin-bottom: 20px; }
+    .cap-header { margin-bottom: 24px; } /* 그리드-타이틀-프로필 영역의 전체 하단 여백 약간 증가 */
     .cap-grid {
       width: 280px; height: 280px; 
-      margin: 0 auto 34px; 
+      margin: 0 auto 32px; /* 그리드와 타이틀 간격 34->32로 미세조정 */
       display: grid; grid-template-columns: 1fr 1fr;
       box-shadow: 0 24px 50px rgba(0,0,0,0.6); 
       background: #222;
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* 타이틀 중앙 정렬 */
+    /* 1. 타이틀과 프로필 간격 및 디자인 균형 조정 */
     .cap-title-area { text-align: center; }
     .cap-title { 
       font-size: 31px !important; 
       font-weight: 800; color: #ffffff; letter-spacing: -0.02em; 
-      margin-bottom: 12px; line-height: 1.1; 
+      margin-bottom: 16px; /* 타이틀과 프로필 간의 숨통 트이기 (12->16) */
+      line-height: 1.1; 
       white-space: nowrap; 
     }
 
-    /* 프로필 30% 확대 & 좌측 정렬(기본 flex-start) */
     .cap-profile { 
       display: flex; align-items: center; justify-content: flex-start; gap: 10px; 
       font-size: 19.5px; font-weight: 600; color: #ffffff; 
@@ -193,11 +192,11 @@
     .cap-dot { color: rgba(255,255,255,0.4); margin: 0 4px; }
     .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
 
-    /* 액션 버튼 영역 */
+    /* 1. 액션 버튼 영역 간격 밸런스 조정 */
     .cap-actions {
       display: flex; justify-content: flex-start; 
       align-items: center;
-      margin-top: 24px; margin-bottom: 32px;
+      margin-top: 28px; margin-bottom: 28px; /* 위아래 간격을 동일하게 맞춰서 안정감 부여 */
       gap: 28px; 
       color: rgba(255,255,255,0.7); 
     }
@@ -207,7 +206,7 @@
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
 
-    /* 🟢 리스트 30% 확대 & 말줄임 해제 & 레이아웃 안정화 */
+    /* 리스트 영역 */
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
     .cap-list .req-item { padding: 14px 0 !important; border-bottom: none !important; } 
@@ -215,7 +214,6 @@
     .cap-list .req-item.played .req-track { text-decoration: none !important; }
     
     .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 21px !important; min-width: 32px; }
-    /* 줄 수가 늘어나도 커버와 인덱스가 상단에 고정되도록 flex-start로 변경 */
     .cap-list .req-main-row { align-items: flex-start !important; gap: 16px !important; }
     .cap-list .req-cover { width: 78px !important; height: 78px !important; border-radius: 8px !important; } 
     
@@ -227,15 +225,14 @@
       margin: 0 !important; 
     }
     
-    /* 🚨 말줄임 해제 🚨 */
     .cap-list .req-track, 
     .cap-list .req-artist, 
     .cap-list .req-user, 
     .cap-list .req-memo { 
       display: block !important; 
       width: 100% !important; 
-      white-space: normal !important; /* 줄바꿈 허용 */
-      word-break: keep-all !important; /* 단어 단위로 줄바꿈 */
+      white-space: normal !important; 
+      word-break: keep-all !important; 
       overflow-wrap: break-word !important;
       overflow: visible !important; 
       text-overflow: clip !important; 
@@ -246,13 +243,30 @@
     .cap-list .req-user { font-size: 15.5px !important; line-height: 1.35 !important; margin-top: 4px !important; }
     .cap-list .req-memo { font-size: 15.5px !important; line-height: 1.35 !important; } 
 
-    /* 푸터 영역 */
+    /* 2 & 3 & 4. 푸터 영역 구분선 추가, 폰트 20% 확대, 명언 추가 */
     .cap-footer {
-      margin-top: 20px; padding-top: 40px; 
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      width: 85%; /* 전체 너비를 채우지 않고 좌우 여백을 주기 위해 85% 설정 */
+      margin: 40px auto 0; /* 중앙 정렬 및 위쪽 여백 */
+      padding-top: 26px; /* 구분선과 콘텐츠 사이 간격 */
+      border-top: 1px solid rgba(255, 255, 255, 0.12); /* 은은한 그레이톤 라인 */
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
-    .cap-insta { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; }
-    .cap-time { font-size: 13px; color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; }
+    .cap-quote {
+      font-size: 15.5px; /* 명언 사이즈 */
+      color: rgba(255, 255, 255, 0.55);
+      font-style: italic;
+      text-align: center;
+      line-height: 1.4;
+      margin-bottom: 4px; /* 인스타 아이디와의 간격 */
+    }
+    .cap-insta { 
+      font-size: 19.2px; /* 16px의 20% 확대 */
+      font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; 
+    }
+    .cap-time { 
+      font-size: 15.6px; /* 13px의 20% 확대 */
+      color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; 
+    }
   </style>
 </head>
 <body>
@@ -347,6 +361,7 @@
       <div id="captureList" class="req-list cap-list"></div>
       
       <div class="cap-footer">
+        <div class="cap-quote">Without music, life would be a mistake - Friedrich Nietzsche</div>
         <div class="cap-insta">@stylus.seoul</div>
         <div id="captureTime" class="cap-time"></div>
       </div>
@@ -522,7 +537,6 @@
       document.getElementById('captureTime').textContent = `${yyyy}.${mm}.${dd} ${hoursCurrent}:${minsCurrent}:${seconds}`;
 
       const container = document.getElementById('captureContainer');
-      // 🚨 화면 흔들림 방지: DOM을 직접 조작하지 않고 복제된 도화지 위에서만 위치를 맞춥니다.
 
       try {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -534,7 +548,6 @@
           scale: 2,
           windowWidth: 540,
           onclone: (clonedDoc) => {
-            // 복제된 가상 DOM 안에서만 영역을 활성화시킴
             const clonedContainer = clonedDoc.getElementById('captureContainer');
             clonedContainer.style.left = '0';
           }
