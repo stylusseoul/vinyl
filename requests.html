@@ -131,15 +131,20 @@
       z-index: 0; pointer-events: none;
     }
 
-    /* 아이폰 스타일 상태바 */
+    /* 📱 아이폰 스타일 상태바 (30% 확대) */
     .cap-status-bar {
       position: relative; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 36px 0; 
-      color: #fff; font-size: 17px; 
+      padding: 18px 36px 0; 
+      color: #fff; 
+      font-size: 22px; /* 17px -> 22px */
       font-weight: 600; letter-spacing: -0.01em;
     }
-    .cap-status-right { display: flex; gap: 6px; align-items: center; }
+    .cap-status-right { 
+      display: flex; gap: 8px; align-items: center; 
+      transform: scale(1.3); /* 30% 아이콘 확대 */
+      transform-origin: right center;
+    }
     
     .cap-nav-bar {
       position: relative; z-index: 2;
@@ -164,7 +169,6 @@
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* 🎶 헤더 폰트 비중 스포티파이 완벽 동기화 */
     .cap-title-area { text-align: left; display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
     .cap-title { 
       font-size: 38px !important; 
@@ -174,20 +178,22 @@
       white-space: normal; 
     }
 
-    .cap-profile-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    /* 🎶 프로필 및 플레이리스트 텍스트 (20% 확대) */
+    .cap-profile-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .cap-profile-img-wrap {
-      width: 28px; height: 28px; border-radius: 50%; background: #222;
+      width: 34px; height: 34px; /* 28px -> 34px */
+      border-radius: 50%; background: #222;
       position: relative; overflow: hidden;
     }
     .cap-profile-img { 
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      max-width: 16px; max-height: 12px; 
+      max-width: 19px; max-height: 14px; /* 16px -> 19px */
       width: auto !important; height: auto !important; 
       filter: brightness(0) invert(1); 
     }
-    .cap-profile-name { font-size: 16.5px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
+    .cap-profile-name { font-size: 19.8px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; } /* 16.5px -> 19.8px */
     
-    .cap-subtitle-wrap { font-size: 14.5px; font-weight: 400; color: rgba(255,255,255,0.65); display: flex; align-items: center; gap: 5px; }
+    .cap-subtitle-wrap { font-size: 17.4px; font-weight: 400; color: rgba(255,255,255,0.65); display: flex; align-items: center; gap: 6px; } /* 14.5px -> 17.4px */
 
     /* 액션 버튼 영역 */
     .cap-actions {
@@ -206,15 +212,15 @@
     /* 버튼 하단 라인 */
     .cap-divider {
       width: 100%; height: 1px; background: rgba(255, 255, 255, 0.12);
-      margin-bottom: 20px; /* 🚨 첫번째 트랙과의 상단 여백을 통제하는 핵심 속성 */
+      margin-bottom: 20px; 
     }
 
-    /* 🎶 간격 불일치 완벽 해결 (Flex Gap 기반) */
+    /* 간격 불일치 완벽 해결 (Flex Gap 기반) */
     .cap-list {
       display: flex !important;
       flex-direction: column !important;
-      gap: 16px !important; /* 모든 트랙 사이의 간격을 타이트하게 16px로 고정 */
-      padding: 0 !important; /* 디바이더/푸터 라인과 충돌하지 않도록 내부 여백 완전 제거 */
+      gap: 16px !important; 
+      padding: 0 !important; 
     }
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
@@ -223,7 +229,7 @@
     .cap-list .req-item { 
       display: flex !important;
       flex-direction: row !important;
-      align-items: center !important; /* 텍스트가 줄바꿈되어도 커버와 인덱스가 수직 중앙에 오도록 */
+      align-items: center !important; 
       padding: 0 !important; 
       margin: 0 !important; 
       border: none !important; 
@@ -287,7 +293,7 @@
     /* 캡처 푸터 */
     .cap-footer {
       width: 85%;
-      margin: 20px auto 0; /* 🚨 마지막 트랙과 푸터 라인 사이의 하단 여백 (디바이더 margin-bottom: 20px과 완벽한 대칭) */
+      margin: 20px auto 0; 
       padding-top: 24px; 
       border-top: 1px solid rgba(255, 255, 255, 0.12);
       display: flex; flex-direction: column; align-items: center; gap: 10px;
