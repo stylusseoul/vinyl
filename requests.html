@@ -153,22 +153,21 @@
     
     .cap-content { position: relative; z-index: 1; padding: 10px 32px 30px; }
 
-    .cap-header { margin-bottom: 24px; } /* 그리드-타이틀-프로필 영역의 전체 하단 여백 약간 증가 */
+    .cap-header { margin-bottom: 24px; }
     .cap-grid {
       width: 280px; height: 280px; 
-      margin: 0 auto 32px; /* 그리드와 타이틀 간격 34->32로 미세조정 */
+      margin: 0 auto 32px; 
       display: grid; grid-template-columns: 1fr 1fr;
       box-shadow: 0 24px 50px rgba(0,0,0,0.6); 
       background: #222;
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* 1. 타이틀과 프로필 간격 및 디자인 균형 조정 */
     .cap-title-area { text-align: center; }
     .cap-title { 
       font-size: 31px !important; 
       font-weight: 800; color: #ffffff; letter-spacing: -0.02em; 
-      margin-bottom: 16px; /* 타이틀과 프로필 간의 숨통 트이기 (12->16) */
+      margin-bottom: 16px; 
       line-height: 1.1; 
       white-space: nowrap; 
     }
@@ -192,11 +191,10 @@
     .cap-dot { color: rgba(255,255,255,0.4); margin: 0 4px; }
     .cap-req-count { color: rgba(255,255,255,0.7); font-weight: 400; }
 
-    /* 1. 액션 버튼 영역 간격 밸런스 조정 */
     .cap-actions {
       display: flex; justify-content: flex-start; 
       align-items: center;
-      margin-top: 28px; margin-bottom: 28px; /* 위아래 간격을 동일하게 맞춰서 안정감 부여 */
+      margin-top: 28px; margin-bottom: 28px;
       gap: 28px; 
       color: rgba(255,255,255,0.7); 
     }
@@ -206,7 +204,6 @@
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
 
-    /* 리스트 영역 */
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
     .cap-list .req-item { padding: 14px 0 !important; border-bottom: none !important; } 
@@ -243,29 +240,34 @@
     .cap-list .req-user { font-size: 15.5px !important; line-height: 1.35 !important; margin-top: 4px !important; }
     .cap-list .req-memo { font-size: 15.5px !important; line-height: 1.35 !important; } 
 
-    /* 2 & 3 & 4. 푸터 영역 구분선 추가, 폰트 20% 확대, 명언 추가 */
+    /* 캡처 푸터 및 명언 디자인 */
     .cap-footer {
-      width: 85%; /* 전체 너비를 채우지 않고 좌우 여백을 주기 위해 85% 설정 */
-      margin: 40px auto 0; /* 중앙 정렬 및 위쪽 여백 */
-      padding-top: 26px; /* 구분선과 콘텐츠 사이 간격 */
-      border-top: 1px solid rgba(255, 255, 255, 0.12); /* 은은한 그레이톤 라인 */
+      width: 85%;
+      margin: 40px auto 0;
+      padding-top: 26px; 
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
       display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
     .cap-quote {
-      font-size: 15.5px; /* 명언 사이즈 */
-      color: rgba(255, 255, 255, 0.55);
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 6px; text-align: center;
+    }
+    .cap-quote-text {
+      font-size: 15.5px;
+      color: rgba(255, 255, 255, 0.7);
       font-style: italic;
-      text-align: center;
       line-height: 1.4;
-      margin-bottom: 4px; /* 인스타 아이디와의 간격 */
+      margin-bottom: 4px;
+    }
+    .cap-quote-author {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.35); /* 확실히 Dimmed 처리된 톤 */
     }
     .cap-insta { 
-      font-size: 19.2px; /* 16px의 20% 확대 */
-      font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; 
+      font-size: 19.2px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; 
     }
     .cap-time { 
-      font-size: 15.6px; /* 13px의 20% 확대 */
-      color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; 
+      font-size: 15.6px; color: rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; 
     }
   </style>
 </head>
@@ -285,7 +287,7 @@
         </div>
       </div>
       <div class="header-right">
-        <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 저장">
+        <button class="pdf-btn" id="downloadBtn" aria-label="플레이리스트 이미지 새 탭에서 열기">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12m0 0-4-4m4 4 4-4"/>
             <path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/>
@@ -361,7 +363,10 @@
       <div id="captureList" class="req-list cap-list"></div>
       
       <div class="cap-footer">
-        <div class="cap-quote">Without music, life would be a mistake - Friedrich Nietzsche</div>
+        <div class="cap-quote">
+          <span class="cap-quote-text">Without music, life would be a mistake</span>
+          <span class="cap-quote-author">Friedrich Nietzsche</span>
+        </div>
         <div class="cap-insta">@stylus.seoul</div>
         <div id="captureTime" class="cap-time"></div>
       </div>
@@ -499,7 +504,7 @@
     fetchRequests();
     setInterval(fetchRequests, 10000);
 
-    /* ── 이미지 다운로드 로직 ── */
+    /* ── 이미지 생성 & 새 탭 열기 로직 ── */
     downloadBtn.addEventListener('click', async function() {
       if (allRequests.length === 0) {
         alert('저장할 신청곡이 없습니다.');
@@ -510,8 +515,19 @@
       downloadBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:1.5px;border-top-color:#fff;"></div>';
       downloadBtn.disabled = true;
 
+      // 🚨 팝업 차단 방지: 버튼 클릭 즉시 새 탭을 먼저 엽니다.
+      const newTab = window.open('', '_blank');
+      if (newTab) {
+        newTab.document.title = "Loading...";
+        newTab.document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#121212; color:#fff; font-family:sans-serif;">이미지를 생성하는 중입니다...</div>';
+      } else {
+        alert("팝업 차단이 설정되어 있어 새 탭을 열 수 없습니다. 브라우저 설정에서 팝업 차단을 해제해 주세요.");
+        downloadBtn.innerHTML = originalIcon;
+        downloadBtn.disabled = false;
+        return;
+      }
+
       const now = new Date();
-      
       const hoursCurrent = String(now.getHours()).padStart(2, '0');
       const minsCurrent = String(now.getMinutes()).padStart(2, '0');
       document.getElementById('capStatusTime').textContent = `${hoursCurrent}:${minsCurrent}`;
@@ -553,13 +569,20 @@
           }
         });
 
-        const link = document.createElement('a');
-        link.download = `Stylus_Playlist_${yyyy}${mm}${dd}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        // 🚨 용량 최적화: PNG 대신 JPEG 품질 85%로 압축하여 변환
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+        // 미리 열어둔 새 탭에 생성된 이미지를 그려줍니다.
+        if (newTab) {
+          newTab.document.title = `Stylus_Playlist_${yyyy}${mm}${dd}`;
+          newTab.document.body.style.margin = '0';
+          newTab.document.body.style.backgroundColor = '#121212';
+          newTab.document.body.innerHTML = `<img src="${dataUrl}" style="max-width:100%; height:auto; display:block; margin: 0 auto; padding: 20px 0;">`;
+        }
       } catch (error) {
-        console.error('이미지 저장 실패:', error);
-        alert('이미지 저장 중 오류가 발생했습니다.');
+        console.error('이미지 생성 실패:', error);
+        if (newTab) newTab.close();
+        alert('이미지 생성 중 오류가 발생했습니다.');
       } finally {
         downloadBtn.innerHTML = originalIcon;
         downloadBtn.disabled = false;
