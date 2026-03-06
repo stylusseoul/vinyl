@@ -227,15 +227,16 @@
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
     
+    /* 🚨 트랙리스트 위쪽 정렬(Top Alignment) 🚨 */
     .cap-list .req-item { 
       display: flex !important;
       flex-direction: row !important;
-      align-items: center !important; 
+      align-items: flex-start !important; /* 이미지와 인덱스를 위쪽으로 정렬 */
       padding: 0 !important; 
       margin: 0 !important; 
       border: none !important; 
       gap: 16px !important; 
-      width: 100% !important; /* 영역 제한 */
+      width: 100% !important; 
       max-width: 100% !important;
       box-sizing: border-box !important;
     }
@@ -244,10 +245,11 @@
     
     .cap-list .req-top-row {
       display: flex !important;
-      align-items: center !important;
+      align-items: flex-start !important; /* 인덱스를 위쪽으로 정렬 */
       justify-content: center !important;
       width: 26px !important;
       margin: 0 !important;
+      margin-top: 3px !important; /* 텍스트 첫 줄과 시각적으로 맞추기 위한 미세 마진 */
       flex-shrink: 0 !important;
     }
     .cap-list .req-idx { 
@@ -255,31 +257,34 @@
       font-size: 18px !important; 
       font-weight: 500 !important;
       min-width: unset !important; 
+      line-height: 1 !important;
     }
 
     .cap-list .req-main-row { 
       display: flex !important; 
-      align-items: center !important; 
+      align-items: flex-start !important; /* 앨범 커버를 위쪽으로 정렬 */
       gap: 14px !important; 
       flex: 1 !important; 
       margin: 0 !important;
-      min-width: 0 !important; /* 🚨 Flex 팽창 방지 핵심 🚨 */
+      min-width: 0 !important; 
     }
     .cap-list .req-cover { 
       width: 62px !important; 
       height: 62px !important; 
       border-radius: 4px !important; 
       flex-shrink: 0 !important;
+      margin-top: 0 !important;
     } 
     
     .cap-list .req-body { 
       flex: 1 !important; 
-      min-width: 0 !important; /* 🚨 Flex 팽창 방지 핵심 🚨 */
+      min-width: 0 !important; 
       display: flex !important;
       flex-direction: column !important;
-      justify-content: center !important;
+      justify-content: flex-start !important; /* 텍스트 컨테이너 위쪽 정렬 */
       gap: 4px !important; 
       margin: 0 !important; 
+      margin-top: -2px !important; /* 커버 상단 라인과 텍스트 상단 라인 교정 */
     }
     
     .cap-list .req-track, 
@@ -289,7 +294,7 @@
       display: block !important; 
       width: 100% !important; 
       white-space: normal !important; 
-      word-break: break-all !important; /* 🚨 띄어쓰기 없는 긴 텍스트 강제 줄바꿈 🚨 */
+      word-break: break-all !important; 
       overflow-wrap: break-word !important; 
       overflow: hidden !important; 
     }
@@ -579,7 +584,6 @@
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       
-      // 요청곡 중 가장 오래된 날짜 추출하여 플레이리스트 날짜로 세팅 (YYYY.MM.DD 포맷으로 변경)
       const validReqs = allRequests.filter(r => r.ts > 0);
       let oldestDateStr = '';
       if (validReqs.length > 0) {
@@ -594,12 +598,15 @@
       }
       document.getElementById('capOldestDate').textContent = oldestDateStr;
 
-      // 동적 그리드 계산 로직 (2x2, 3x3, 4x4, 5x5)
+      // 🚨 동적 그리드 계산 로직 (최대 8x8 = 64까지 꽉 차는 레이아웃 찾기) 🚨
       const count = allRequests.length;
       let gridN = 2; // 기본 2x2
-      if (count > 16) gridN = 5;
-      else if (count > 9) gridN = 4;
-      else if (count > 4) gridN = 3;
+      if (count >= 64) gridN = 8;
+      else if (count >= 49) gridN = 7;
+      else if (count >= 36) gridN = 6;
+      else if (count >= 25) gridN = 5;
+      else if (count >= 16) gridN = 4;
+      else if (count >= 9) gridN = 3;
 
       const gridEl = document.getElementById('captureGrid');
       gridEl.style.gridTemplateColumns = `repeat(${gridN}, 1fr)`;
@@ -613,7 +620,6 @@
         if (i < covers.length) {
           gridHtml.push(`<img src="${thumb(covers[i])}" crossorigin="anonymous">`);
         } else {
-          // 비어있는 슬롯은 스포티파이 느낌을 살려 다크 그레이 배경 처리
           gridHtml.push(`<div style="background-color: #1a1a1a; width: 100%; height: 100%;"></div>`);
         }
       }
@@ -638,7 +644,6 @@
           }
         });
 
-        // 다운로드 로직: 갤러리 저장을 위해 다시 a 태그 다운로드 형태로 원복
         const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
         const link = document.createElement('a');
         link.download = `Stylus_Playlist_${yyyy}${mm}${dd}.jpg`;
