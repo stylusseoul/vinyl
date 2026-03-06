@@ -215,7 +215,7 @@
       margin-bottom: 20px; 
     }
 
-    /* 🎶 간격 불일치 및 텍스트 팽창 완벽 해결 */
+    /* 간격 불일치 및 텍스트 팽창 완벽 해결 */
     .cap-list {
       display: flex !important;
       flex-direction: column !important;
@@ -231,7 +231,7 @@
     .cap-list .req-item { 
       display: flex !important;
       flex-direction: row !important;
-      align-items: flex-start !important; /* 이미지와 인덱스를 위쪽으로 정렬 */
+      align-items: flex-start !important; 
       padding: 0 !important; 
       margin: 0 !important; 
       border: none !important; 
@@ -245,11 +245,11 @@
     
     .cap-list .req-top-row {
       display: flex !important;
-      align-items: flex-start !important; /* 인덱스를 위쪽으로 정렬 */
+      align-items: flex-start !important; 
       justify-content: center !important;
       width: 26px !important;
       margin: 0 !important;
-      margin-top: 3px !important; /* 텍스트 첫 줄과 시각적으로 맞추기 위한 미세 마진 */
+      margin-top: 3px !important; 
       flex-shrink: 0 !important;
     }
     .cap-list .req-idx { 
@@ -262,7 +262,7 @@
 
     .cap-list .req-main-row { 
       display: flex !important; 
-      align-items: flex-start !important; /* 앨범 커버를 위쪽으로 정렬 */
+      align-items: flex-start !important; 
       gap: 14px !important; 
       flex: 1 !important; 
       margin: 0 !important;
@@ -281,10 +281,10 @@
       min-width: 0 !important; 
       display: flex !important;
       flex-direction: column !important;
-      justify-content: flex-start !important; /* 텍스트 컨테이너 위쪽 정렬 */
+      justify-content: flex-start !important; 
       gap: 4px !important; 
       margin: 0 !important; 
-      margin-top: -2px !important; /* 커버 상단 라인과 텍스트 상단 라인 교정 */
+      margin-top: -2px !important; 
     }
     
     .cap-list .req-track, 
@@ -440,6 +440,10 @@
     'use strict';
 
     let allRequests = [];
+    let previousFetchText = ''; // 🚨 데이터 변경 캐싱용 변수
+    let renderChunkTimeout = null; 
+    const CHUNK_SIZE = 20;
+
     const clockEl     = document.getElementById('clock');
     const reqCountNum = document.getElementById('reqCountNum');
     const reqLoading  = document.getElementById('reqLoading');
@@ -464,7 +468,6 @@
       return { display: disp, ts: isNaN(ts) ? 0 : ts };
     }
 
-    /* ── CORS 우회 프록시 ── */
     function thumb(url) {
       const u = String(url || '').trim().replace(/&amp;/g, '&').replace(/^\/\//, 'https://').replace(/^http:/, 'https:');
       const core = u.replace(/^https:\/\//, '');
@@ -480,6 +483,49 @@
       lastSync.textContent = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0') + ':' + String(n.getSeconds()).padStart(2, '0');
     }
 
+    // 🚨 개별 아이템 HTML 생성 헬퍼 함수 (웹용 & 캡처용 공통 사용)
+    function createItemHtml(req, index) {
+      const isPlayed = req.status.toUpperCase() === 'Y';
+      const idxStr   = String(index + 1).padStart(2, '0');
+      const timeDisp = parseTime(req.rawTime).display;
+      const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
+      const statusText = isPlayed ? 'Played' : 'Waiting';
+      
+      const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
+      const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
+
+      let artistHtml = artistTxt ? '<div class="req-artist">' + esc(artistTxt) + '</div>' : '';
+      let metaHtml = '';
+      if (req.name) metaHtml += '<div class="req-user">' + esc(req.name) + '</div>';
+      if (req.memo) metaHtml += '<div class="req-memo">\u201c' + esc(req.memo) + '\u201d</div>';
+
+      const bodyHtml = '<div class="req-body"><span class="req-track">' + esc(req.track) + '</span>' + artistHtml + metaHtml + '</div>';
+      const mainRowHtml = '<div class="req-main-row">' + coverHtml + bodyHtml + '</div>';
+
+      return '<div class="req-item ' + (isPlayed ? 'played' : 'waiting') + '">' + topRowHtml + mainRowHtml + '</div>';
+    }
+
+    // 🚨 청크(Chunk) 단위 점진적 렌더링 로직 (속도 향상 핵심)
+    function renderChunk(startIndex) {
+      const endIndex = Math.min(startIndex + CHUNK_SIZE, allRequests.length);
+      let chunkHtml = '';
+      
+      for (let i = startIndex; i < endIndex; i++) {
+        chunkHtml += createItemHtml(allRequests[i], i);
+      }
+      
+      if (startIndex === 0) {
+        reqList.innerHTML = chunkHtml;
+      } else {
+        reqList.insertAdjacentHTML('beforeend', chunkHtml);
+      }
+
+      // 아직 남은 아이템이 있다면 0.2초 뒤에 백그라운드에서 이어서 렌더링
+      if (endIndex < allRequests.length) {
+        renderChunkTimeout = setTimeout(() => renderChunk(endIndex), 200);
+      }
+    }
+
     function renderRequests() {
       reqCountNum.textContent = allRequests.length;
       if (allRequests.length === 0) {
@@ -488,37 +534,9 @@
         return;
       }
       reqEmpty.classList.add('hidden');
-      let totalIdx = 0;
-      const frag = document.createDocumentFragment();
-
-      allRequests.forEach(function(req) {
-        const isPlayed = req.status.toUpperCase() === 'Y';
-        totalIdx++;
-        const idxStr   = String(totalIdx).padStart(2, '0');
-        const timeDisp = parseTime(req.rawTime).display;
-        const artistTxt = [req.artist, req.album].filter(Boolean).join(' · ');
-        const statusText = isPlayed ? 'Played' : 'Waiting';
-        
-        const item = document.createElement('div');
-        item.className = 'req-item ' + (isPlayed ? 'played' : 'waiting');
-
-        const topRowHtml = '<div class="req-top-row"><span class="req-idx">' + idxStr + '</span><span class="req-status">' + statusText + '</span>' + (timeDisp ? '<span class="req-top-time">' + esc(timeDisp) + '</span>' : '') + '</div>';
-        
-        const coverHtml = '<img class="req-cover" src="' + thumb(req.cover) + '" crossorigin="anonymous" alt="" width="64" loading="lazy">';
-
-        let artistHtml = artistTxt ? '<div class="req-artist">' + esc(artistTxt) + '</div>' : '';
-        let metaHtml = '';
-        if (req.name) metaHtml += '<div class="req-user">' + esc(req.name) + '</div>';
-        if (req.memo) metaHtml += '<div class="req-memo">\u201c' + esc(req.memo) + '\u201d</div>';
-
-        const bodyHtml = '<div class="req-body"><span class="req-track">' + esc(req.track) + '</span>' + artistHtml + metaHtml + '</div>';
-        const mainRowHtml = '<div class="req-main-row">' + coverHtml + bodyHtml + '</div>';
-
-        item.innerHTML = topRowHtml + mainRowHtml;
-        frag.appendChild(item);
-      });
-      reqList.innerHTML = '';
-      reqList.appendChild(frag);
+      
+      clearTimeout(renderChunkTimeout);
+      renderChunk(0);
     }
 
     function sortRequests(arr) {
@@ -536,6 +554,14 @@
       try {
         const res  = await fetch(url);
         const text = await res.text();
+        
+        // 🚨 캐싱: 데이터가 완전히 동일하면 무거운 렌더링 건너뛰기
+        if (text === previousFetchText && allRequests.length > 0) {
+          updateSync();
+          return;
+        }
+        previousFetchText = text;
+
         const json = JSON.parse(text.replace(/^[^{]*/, '').replace(/\);\s*$/, ''));
         const rows = (json.table && json.table.rows) ? json.table.rows : [];
         const parsed = rows.map(function(r) {
@@ -598,9 +624,9 @@
       }
       document.getElementById('capOldestDate').textContent = oldestDateStr;
 
-      // 🚨 동적 그리드 계산 로직 (최대 8x8 = 64까지 꽉 차는 레이아웃 찾기) 🚨
+      // 동적 그리드 계산 (최대 64개 8x8 지원)
       const count = allRequests.length;
-      let gridN = 2; // 기본 2x2
+      let gridN = 2; 
       if (count >= 64) gridN = 8;
       else if (count >= 49) gridN = 7;
       else if (count >= 36) gridN = 6;
@@ -625,7 +651,12 @@
       }
       gridEl.innerHTML = gridHtml.join('');
 
-      document.getElementById('captureList').innerHTML = reqList.innerHTML;
+      // 🚨 캡처용 리스트: 백그라운드 렌더링 진행 여부와 상관없이 전체 아이템을 한 번에 생성하여 삽입
+      let capListHtml = '';
+      for (let i = 0; i < allRequests.length; i++) {
+        capListHtml += createItemHtml(allRequests[i], i);
+      }
+      document.getElementById('captureList').innerHTML = capListHtml;
 
       const container = document.getElementById('captureContainer');
 
