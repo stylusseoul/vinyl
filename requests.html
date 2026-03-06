@@ -65,7 +65,6 @@
     /* ══════════════════════════════
        LIST (Web UI)
     ══════════════════════════════ */
-    /* 리퀘스트 페이지: 첫번째 트랙과 마지막 트랙의 상/하단 여백을 완벽히 대칭으로 맞춤 (18px) */
     .req-main { padding: 0 16px; } 
     .req-list  { display: flex; flex-direction: column; }
     .req-item { display: flex; flex-direction: column; gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--border); }
@@ -154,7 +153,7 @@
 
     .cap-header { margin-bottom: 24px; }
     
-    /* 동적 그리드 스타일 (스크립트에서 grid-template 재할당) */
+    /* 동적 그리드 */
     .cap-grid {
       width: 280px; height: 280px; 
       margin: 0 auto 32px; 
@@ -165,32 +164,32 @@
     }
     .cap-grid img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* 좌측 정렬 및 프로필/날짜 레이아웃 스포티파이 스타일 */
+    /* 🎶 1. 헤더 폰트 비중 스포티파이 완벽 동기화 */
     .cap-title-area { text-align: left; display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
     .cap-title { 
-      font-size: 31px !important; 
-      font-weight: 800; color: #ffffff; letter-spacing: -0.02em; 
+      font-size: 38px !important; /* 엄청 크고 굵게 */
+      font-weight: 800; color: #ffffff; letter-spacing: -0.04em; 
       margin-bottom: 12px; 
       line-height: 1.1; 
-      white-space: nowrap; 
+      white-space: normal; 
     }
 
-    .cap-profile-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .cap-profile-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .cap-profile-img-wrap {
-      width: 32px; height: 32px; border-radius: 50%; background: #000;
-      position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+      width: 28px; height: 28px; border-radius: 50%; background: #222;
+      position: relative; overflow: hidden;
     }
     .cap-profile-img { 
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      max-width: 20px; max-height: 14px; 
+      max-width: 16px; max-height: 12px; 
       width: auto !important; height: auto !important; 
       filter: brightness(0) invert(1); 
     }
-    .cap-profile-name { font-size: 19.5px; font-weight: 700; color: #ffffff; }
+    .cap-profile-name { font-size: 16.5px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; } /* 작지만 단단하게 */
     
-    .cap-subtitle-wrap { font-size: 15.5px; font-weight: 400; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 6px; }
+    .cap-subtitle-wrap { font-size: 14.5px; font-weight: 400; color: rgba(255,255,255,0.65); display: flex; align-items: center; gap: 5px; } /* 은은한 회색톤 */
 
-    /* 액션 버튼 영역 (+ 추가 및 간격 조정) */
+    /* 액션 버튼 영역 */
     .cap-actions {
       display: flex; justify-content: flex-start; 
       align-items: center;
@@ -204,26 +203,71 @@
     }
     .cap-action-icon.fill { fill: currentColor; stroke: none; }
 
-    /* 버튼 하단 라인 (푸터 라인과 동일한 톤 적용) */
+    /* 버튼 하단 라인 */
     .cap-divider {
       width: 100%; height: 1px; background: rgba(255, 255, 255, 0.12);
       margin-bottom: 0px; 
     }
 
-    /* 리스트 및 트랙 간격 (첫번째와 나머지 간격 일치) */
+    /* 🎶 2. 간격 불일치 완벽 해결 (Flex Gap 기반의 강제 정렬) */
+    .cap-list {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important; /* 모든 트랙 사이의 간격을 20px로 강제 고정 */
+      padding-top: 20px !important; /* 디바이더 선과 1번 트랙 사이의 간격 */
+    }
     .cap-list .req-status { display: none !important; }
     .cap-list .req-top-time { display: none !important; } 
-    .cap-list .req-item { padding: 14px 0 !important; border-bottom: none !important; } 
+    
+    /* 트랙 하나하나를 [인덱스 - 커버 - 텍스트] 가로 배열로 스포티파이처럼 구현 */
+    .cap-list .req-item { 
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      padding: 0 !important; 
+      margin: 0 !important; 
+      border: none !important; 
+      gap: 16px !important; /* 인덱스와 커버 사이 간격 */
+    }
     .cap-list .req-item.played { opacity: 1 !important; }
     .cap-list .req-item.played .req-track { text-decoration: none !important; }
     
-    .cap-list .req-idx { color: rgba(255,255,255,0.5) !important; font-size: 21px !important; min-width: 32px; }
-    .cap-list .req-main-row { align-items: flex-start !important; gap: 16px !important; }
-    .cap-list .req-cover { width: 78px !important; height: 78px !important; border-radius: 8px !important; } 
+    .cap-list .req-top-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 26px !important; /* 인덱스 열 너비 고정 */
+      margin: 0 !important;
+      flex-shrink: 0 !important;
+    }
+    .cap-list .req-idx { 
+      color: rgba(255,255,255,0.6) !important; 
+      font-size: 18px !important; 
+      font-weight: 500 !important;
+      min-width: unset !important; 
+    }
+
+    .cap-list .req-main-row { 
+      display: flex !important; 
+      align-items: center !important; 
+      gap: 14px !important; /* 커버와 텍스트 사이 간격 */
+      flex: 1 !important; 
+      margin: 0 !important;
+    }
+    .cap-list .req-cover { 
+      width: 62px !important; 
+      height: 62px !important; 
+      border-radius: 4px !important; 
+      flex-shrink: 0 !important;
+    } 
     
     .cap-list .req-body { 
       flex: 1 !important; min-width: 0 !important; 
-      gap: 4px !important; justify-content: flex-start !important; margin: 0 !important; 
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      gap: 4px !important; 
+      margin: 0 !important; 
     }
     
     .cap-list .req-track, 
@@ -235,10 +279,10 @@
       overflow-wrap: break-word !important; overflow: visible !important; text-overflow: clip !important; 
     }
 
-    .cap-list .req-track { font-size: 19.5px !important; line-height: 1.35 !important; } 
-    .cap-list .req-artist { font-size: 17px !important; line-height: 1.35 !important; } 
-    .cap-list .req-user { font-size: 15.5px !important; line-height: 1.35 !important; margin-top: 4px !important; }
-    .cap-list .req-memo { font-size: 15.5px !important; line-height: 1.35 !important; } 
+    .cap-list .req-track { font-size: 18.5px !important; font-weight: 600 !important; line-height: 1.3 !important; color: #ffffff !important; } 
+    .cap-list .req-artist { font-size: 16px !important; font-weight: 400 !important; line-height: 1.3 !important; color: rgba(255, 255, 255, 0.7) !important; } 
+    .cap-list .req-user { font-size: 14.5px !important; line-height: 1.3 !important; margin-top: 2px !important; color: var(--accent) !important; }
+    .cap-list .req-memo { font-size: 14.5px !important; line-height: 1.3 !important; } 
 
     /* 캡처 푸터 */
     .cap-footer {
@@ -259,7 +303,7 @@
       font-size: 13.5px; color: rgba(255, 255, 255, 0.35); 
     }
     .cap-insta { font-size: 19.2px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; }
-    .cap-time { display: none; } /* 상단 상태바에 시간이 있으므로 하단 시간은 생략 */
+    .cap-time { display: none; } 
   </style>
 </head>
 <body>
@@ -580,7 +624,7 @@
           }
         });
 
-        // 다운로드 로직: 아이폰 등에서 사진첩으로 다운로드를 유도하는 a태그 클릭 방식 
+        // 다운로드 로직: 갤러리 저장을 위해 다시 a 태그 다운로드 형태로 원복
         const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
         const link = document.createElement('a');
         link.download = `Stylus_Playlist_${yyyy}${mm}${dd}.jpg`;
