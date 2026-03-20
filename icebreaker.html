@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STYLUS | ICE BREAKER</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        /* 기존 스타일러스 웹사이트의 미니멀리즘 계승 */
+        :root {
+            --black: #000;
+            --white: #fff;
+            --gray: #666;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            margin: 0;
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 헤더 스타일 (기존 사이트와 통일감) */
+        .header {
+            position: absolute;
+            top: 40px;
+            letter-spacing: 0.5em;
+            font-size: 12px;
+            font-weight: 300;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* 번호 표시 영역 */
+        #number-display {
+            font-size: 12vw;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+        }
+
+        #number-display.active {
+            cursor: pointer;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        #number-display.active:hover {
+            transform: scale(1.1);
+        }
+
+        /* 버튼: 기존 사이트의 Filter/Button 스타일 */
+        .draw-btn {
+            background: none;
+            border: 1px solid var(--white);
+            color: var(--white);
+            padding: 12px 32px;
+            font-size: 13px;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .draw-btn:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* 결과 모달 (따란! 하는 느낌) */
+        #result-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10%;
+            z-index: 1000;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .q-label { font-size: 11px; color: var(--gray); letter-spacing: 0.2em; margin-bottom: 20px; }
+        .q-content { font-size: 2.5rem; font-weight: 600; text-align: center; line-height: 1.4; margin-bottom: 50px; word-break: keep-all; }
+        .p-target { font-size: 1.2rem; border-bottom: 1px solid var(--white); padding-bottom: 5px; }
+
+        /* 셔플 중 흐림 효과 */
+        .blur { filter: blur(4px); opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <div class="header">Stylus Archive / Ice Breaking</div>
+
+    <div id="number-display">00</div>
+    <button id="main-btn" class="draw-btn" onclick="handleDraw()">PICK A NUMBER</button>
+
+    <div id="result-overlay" onclick="closeResult()">
+        <div class="q-label">QUESTION</div>
+        <div class="q-content" id="res-q">질문이 표시됩니다.</div>
+        <div class="q-label">SPEAKER</div>
+        <div class="p-target" id="res-p">참여자</div>
+        <div style="margin-top: 80px; font-size: 10px; color: #444; letter-spacing: 0.1em;">CLICK ANYWHERE TO CLOSE</div>
+    </div>
+
+    <script>
+        const SHEET_URL = '본인의_구글시트_CSV_URL'; // 여기에 게시된 CSV URL 입력
+        let questions = [];
+        let participants = [];
+
+        // 데이터 초기 로드
+        Papa.parse(SHEET_URL, {
+            download: true,
+            complete: (results) => {
+                const rows = results.data;
+                if(rows[0] && rows[0][1]) participants = rows[0][1].split(',').map(n => n.trim());
+                questions = rows.slice(3).map(row => row[1]).filter(q => q);
+            }
+        });
+
+        const display = document.getElementById('number-display');
+        const btn = document.getElementById('main-btn');
+
+        function handleDraw() {
+            if (questions.length === 0) return alert("데이터를 불러오고 있습니다.");
+            
+            btn.style.visibility = 'hidden';
+            display.classList.add('blur');
+            
+            let count = 0;
+            const shuffle = setInterval(() => {
+                display.innerText = Math.floor(Math.random() * questions.length) + 1;
+                count++;
+                if (count > 15) {
+                    clearInterval(shuffle);
+                    const finalIdx = Math.floor(Math.random() * questions.length);
+                    display.innerText = (finalIdx + 1).toString().padStart(2, '0');
+                    display.classList.remove('blur');
+                    display.classList.add('active');
+                    display.onclick = () => showResult(finalIdx);
+                }
+            }, 80);
+        }
+
+        function showResult(idx) {
+            const speaker = participants[Math.floor(Math.random() * participants.length)];
+            document.getElementById('res-q').innerText = `"${questions[idx]}"`;
+            document.getElementById('res-p').innerText = speaker || "Anyone";
+            document.getElementById('result-overlay').style.display = 'flex';
+        }
+
+        function closeResult() {
+            document.getElementById('result-overlay').style.display = 'none';
+            display.classList.remove('active');
+            display.onclick = null;
+            display.innerText = "00";
+            btn.style.visibility = 'visible';
+        }
+    </script>
+</body>
+</html>
