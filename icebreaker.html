@@ -5,169 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STYLUS | ICE BREAKER</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
-        /* 기존 스타일러스 웹사이트의 미니멀리즘 계승 */
-        :root {
-            --black: #000;
-            --white: #fff;
-            --gray: #666;
-        }
-
+        :root { --black: #000; --white: #fff; --gray: #888; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             background-color: var(--black);
             color: var(--white);
-            margin: 0;
-            font-family: 'Pretendard', -apple-system, sans-serif;
+            font-family: "Pretendard", sans-serif;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            align-items: center;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
         }
 
-        /* 헤더 스타일 (기존 사이트와 통일감) */
-        .header {
+        /* 기존 스타일러스 헤더 스타일 */
+        header {
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
             position: absolute;
-            top: 40px;
-            letter-spacing: 0.5em;
-            font-size: 12px;
-            font-weight: 300;
-            text-align: center;
-            text-transform: uppercase;
+            top: 0;
         }
+        .logo { font-size: 20px; font-weight: 700; text-decoration: none; color: var(--white); letter-spacing: -0.5px; }
+        .nav-info { font-size: 11px; color: var(--gray); letter-spacing: 0.2em; text-transform: uppercase; }
 
-        /* 번호 표시 영역 */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* 번호 표시 및 애니메이션 */
         #number-display {
-            font-size: 12vw;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 15vw;
+            font-weight: 800;
+            margin-bottom: 30px;
             cursor: default;
+            transition: transform 0.3s ease;
         }
+        #number-display.clickable { cursor: pointer; text-shadow: 0 0 25px rgba(255,255,255,0.6); }
+        #number-display.clickable:hover { transform: scale(1.05); }
+        .shuffling { filter: blur(4px); opacity: 0.6; }
 
-        #number-display.active {
-            cursor: pointer;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        .btn-draw {
+            background: none; border: 1px solid #333; color: var(--white);
+            padding: 14px 40px; font-size: 12px; letter-spacing: 0.2em;
+            cursor: pointer; transition: 0.3s;
         }
+        .btn-draw:hover { border-color: var(--white); background: var(--white); color: var(--black); }
 
-        #number-display.active:hover {
-            transform: scale(1.1);
-        }
-
-        /* 버튼: 기존 사이트의 Filter/Button 스타일 */
-        .draw-btn {
-            background: none;
-            border: 1px solid var(--white);
-            color: var(--white);
-            padding: 12px 32px;
-            font-size: 13px;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .draw-btn:hover {
-            background: var(--white);
-            color: var(--black);
-        }
-
-        /* 결과 모달 (따란! 하는 느낌) */
+        /* 결과 화면 (따란!) */
         #result-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--black);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0 10%;
-            z-index: 1000;
-            animation: fadeIn 0.4s ease-out;
+            position: fixed; inset: 0; background: var(--black);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px; z-index: 100; text-align: center;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .q-label { font-size: 11px; color: var(--gray); letter-spacing: 0.2em; margin-bottom: 20px; }
-        .q-content { font-size: 2.5rem; font-weight: 600; text-align: center; line-height: 1.4; margin-bottom: 50px; word-break: keep-all; }
-        .p-target { font-size: 1.2rem; border-bottom: 1px solid var(--white); padding-bottom: 5px; }
-
-        /* 셔플 중 흐림 효과 */
-        .blur { filter: blur(4px); opacity: 0.5; }
+        .res-label { font-size: 10px; color: var(--gray); letter-spacing: 0.4em; margin-bottom: 20px; }
+        .res-q { font-size: 2.2rem; font-weight: 600; line-height: 1.5; margin-bottom: 50px; word-break: keep-all; max-width: 700px; }
+        .res-p { font-size: 1.4rem; border-bottom: 1.5px solid var(--white); padding-bottom: 8px; font-weight: 500; }
     </style>
 </head>
 <body>
 
-    <div class="header">Stylus Archive / Ice Breaking</div>
+    <header>
+        <a href="index.html" class="logo">STYLUS</a>
+        <div class="nav-info">Ice Breaking Session</div>
+    </header>
 
-    <div id="number-display">00</div>
-    <button id="main-btn" class="draw-btn" onclick="handleDraw()">PICK A NUMBER</button>
+    <main>
+        <div id="number-display">00</div>
+        <button id="draw-btn" class="btn-draw" onclick="startDraw()">PICK A NUMBER</button>
+    </main>
 
     <div id="result-overlay" onclick="closeResult()">
-        <div class="q-label">QUESTION</div>
-        <div class="q-content" id="res-q">질문이 표시됩니다.</div>
-        <div class="q-label">SPEAKER</div>
-        <div class="p-target" id="res-p">참여자</div>
-        <div style="margin-top: 80px; font-size: 10px; color: #444; letter-spacing: 0.1em;">CLICK ANYWHERE TO CLOSE</div>
+        <div class="res-label">QUESTION</div>
+        <div id="display-q" class="res-q">질문이 여기에 표시됩니다.</div>
+        <div class="res-label">SPEAKER</div>
+        <div id="display-p" class="res-p">참여자</div>
+        <div style="margin-top: 80px; font-size: 9px; color: #333; letter-spacing: 0.1em;">CLICK TO CLOSE</div>
     </div>
 
     <script>
-        const SHEET_URL = '본인의_구글시트_CSV_URL'; // 여기에 게시된 CSV URL 입력
+        // 제공해주신 URL의 형식을 CSV 추출용으로 자동 변경합니다.
+        const BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?output=csv';
+
         let questions = [];
         let participants = [];
 
-        // 데이터 초기 로드
-        Papa.parse(SHEET_URL, {
-            download: true,
-            complete: (results) => {
-                const rows = results.data;
-                if(rows[0] && rows[0][1]) participants = rows[0][1].split(',').map(n => n.trim());
-                questions = rows.slice(3).map(row => row[1]).filter(q => q);
-            }
-        });
+        // 데이터 로드 함수
+        function loadSheetData() {
+            Papa.parse(BASE_URL, {
+                download: true,
+                complete: function(results) {
+                    const data = results.data;
+                    // B1: 참여자 명단
+                    if(data[0] && data[0][1]) participants = data[0][1].split(',').map(n => n.trim());
+                    // B4부터 질문 리스트 (빈 칸 제외)
+                    questions = data.slice(3).map(row => row[1]).filter(q => q && q.trim() !== "");
+                    console.log("Data Loaded:", { questions, participants });
+                }
+            });
+        }
 
         const display = document.getElementById('number-display');
-        const btn = document.getElementById('main-btn');
+        const btn = document.getElementById('draw-btn');
 
-        function handleDraw() {
-            if (questions.length === 0) return alert("데이터를 불러오고 있습니다.");
+        function startDraw() {
+            if (questions.length === 0) return alert("데이터를 불러오는 중입니다. 잠시만 기다려주세요.");
             
-            btn.style.visibility = 'hidden';
-            display.classList.add('blur');
-            
+            btn.style.display = 'none';
+            display.classList.add('shuffling');
+
             let count = 0;
-            const shuffle = setInterval(() => {
+            const timer = setInterval(() => {
                 display.innerText = Math.floor(Math.random() * questions.length) + 1;
                 count++;
-                if (count > 15) {
-                    clearInterval(shuffle);
+                if (count > 18) {
+                    clearInterval(timer);
                     const finalIdx = Math.floor(Math.random() * questions.length);
                     display.innerText = (finalIdx + 1).toString().padStart(2, '0');
-                    display.classList.remove('blur');
-                    display.classList.add('active');
-                    display.onclick = () => showResult(finalIdx);
+                    display.classList.remove('shuffling');
+                    display.classList.add('clickable');
+                    
+                    // 번호를 클릭하면 결과 창 표시
+                    display.onclick = () => {
+                        const speaker = participants[Math.floor(Math.random() * participants.length)];
+                        document.getElementById('display-q').innerText = `"${questions[finalIdx]}"`;
+                        document.getElementById('display-p').innerText = speaker || "Anyone";
+                        document.getElementById('result-overlay').style.display = 'flex';
+                    };
                 }
             }, 80);
         }
 
-        function showResult(idx) {
-            const speaker = participants[Math.floor(Math.random() * participants.length)];
-            document.getElementById('res-q').innerText = `"${questions[idx]}"`;
-            document.getElementById('res-p').innerText = speaker || "Anyone";
-            document.getElementById('result-overlay').style.display = 'flex';
-        }
-
         function closeResult() {
             document.getElementById('result-overlay').style.display = 'none';
-            display.classList.remove('active');
-            display.onclick = null;
             display.innerText = "00";
-            btn.style.visibility = 'visible';
+            display.classList.remove('clickable');
+            display.onclick = null;
+            btn.style.display = 'inline-block';
         }
+
+        // 초기화
+        window.onload = loadSheetData;
     </script>
 </body>
 </html>
