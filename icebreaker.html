@@ -15,8 +15,8 @@
             --main-text: #ffffff;
             --surface: #111;
             --border: rgba(255,255,255,0.08);
-            --header-h: 64px;
-            --footer-h: calc(86px + env(safe-area-inset-bottom));
+            --header-h: 72px; /* 높이를 64px에서 72px로 확장 */
+            --footer-h: calc(90px + env(safe-area-inset-bottom));
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,9 +29,10 @@
             display: flex; 
             flex-direction: column; 
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* [HEADER] */
+        /* [HEADER] 로고 및 텍스트 크기 강화 */
         .list-header { 
             height: var(--header-h);
             padding-top: env(safe-area-inset-top, 0);
@@ -44,8 +45,17 @@
             padding: 0 24px; height: 100%; 
             border-bottom: 1px solid var(--border);
         }
-        .logo-img { height: 20px; filter: brightness(0) invert(1); }
-        .header-label { font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; }
+        .logo-img { 
+            height: 26px; /* 20px -> 26px로 대폭 키움 */
+            filter: brightness(0) invert(1); 
+        }
+        .header-label { 
+            font-size: 11px; /* 10px -> 11px */
+            font-weight: 900; /* 800 -> 900 더 굵게 */
+            color: var(--accent); 
+            letter-spacing: 0.25em; /* 자간을 더 넓혀서 프리미엄 느낌 강조 */
+            text-transform: uppercase; 
+        }
 
         /* [MAIN] */
         main { 
@@ -55,10 +65,9 @@
             align-items: center; 
             justify-content: center; 
             padding: 20px;
-            overflow: hidden; /* 요소가 삐져나가지 않도록 강제 */
+            overflow: hidden;
         }
 
-        /* 배경 숫자: 잘림 방지를 위해 너비/높이 제한 강화 */
         .visual-bg { 
             position: absolute; 
             top: 48%;
@@ -71,8 +80,7 @@
             justify-content: center;
         }
         #number-display { 
-            /* 화면 너비(vw)와 높이(vh) 중 작은 쪽을 기준으로 하여 절대 잘리지 않음 */
-            font-size: min(65vw, 60vh, 500px); 
+            font-size: min(68vw, 62vh, 520px); 
             font-weight: 900; 
             color: var(--sub-text); 
             line-height: 0.7; 
@@ -80,12 +88,10 @@
             white-space: nowrap;
         }
 
-        /* 힌트 텍스트: 줄바꿈 방지 및 자동 크기 조절 */
         #hint-display { 
             position: relative; 
             z-index: 10;
-            /* 텍스트가 길어져도 한 줄을 유지하도록 폰트 크기 범위를 정밀하게 조정 */
-            font-size: clamp(1.2rem, 6.5vw, 2.6rem); 
+            font-size: clamp(1.4rem, 7.5vw, 2.8rem); 
             font-weight: 900; 
             text-align: center;
             color: var(--accent);
@@ -93,12 +99,8 @@
             transform: translateY(15px);
             transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
             letter-spacing: -0.02em;
-            
-            /* 핵심: 줄바꿈 금지 및 넘칠 경우 폰트 크기 강제 억제 */
             white-space: nowrap; 
             max-width: 95vw;
-            overflow: hidden;
-            text-overflow: ellipsis; /* 만약의 경우를 대비한 생략 부호 */
         }
         #hint-display.show { opacity: 1; transform: translateY(0); }
 
@@ -106,20 +108,20 @@
         .footer-group { 
             height: var(--footer-h);
             width: 100%;
-            padding: 0 24px calc(20px + env(safe-area-inset-bottom)); 
+            padding: 0 24px calc(24px + env(safe-area-inset-bottom)); 
             display: flex; justify-content: center; align-items: flex-start;
             gap: 12px; 
             z-index: 100;
             flex-shrink: 0;
         }
         .draw-btn { 
-            flex: 1; max-width: 300px; height: 58px;
-            background: #fff; color: #000; border: none; border-radius: 29px; 
-            font-size: 15px; font-weight: 800; text-transform: uppercase; 
+            flex: 1; max-width: 320px; height: 60px; /* 버튼도 살짝 키움 */
+            background: #fff; color: #000; border: none; border-radius: 30px; 
+            font-size: 16px; font-weight: 900; text-transform: uppercase; 
             cursor: pointer;
         }
         .reroll-btn { 
-            width: 58px; height: 58px; border-radius: 50%; 
+            width: 60px; height: 60px; border-radius: 50%; 
             background: var(--surface); border: 1px solid var(--border); 
             display: none; align-items: center; justify-content: center;
         }
@@ -128,16 +130,16 @@
         #result-overlay { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.97); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 24px; z-index: 3000; backdrop-filter: blur(15px);
+            padding: 24px; z-index: 3000; backdrop-filter: blur(20px);
         }
         .res-card { 
-            background: var(--surface); width: 100%; max-width: 440px; 
-            padding: 50px 24px; border-radius: 40px; 
+            background: var(--surface); width: 100%; max-width: 460px; 
+            padding: 60px 24px; border-radius: 40px; 
             border: 1px solid var(--border); text-align: center;
         }
-        .res-label { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 0.3em; margin-bottom: 20px; text-transform: uppercase; }
-        .res-question { font-size: 1.5rem; font-weight: 700; line-height: 1.5; margin-bottom: 40px; word-break: keep-all; color: #fff; }
-        .speaker-tag { padding: 10px 24px; background: #000; border-radius: 30px; font-size: 15px; font-weight: 600; border: 1px solid var(--border); color: #fff; }
+        .res-label { font-size: 11px; color: var(--accent); font-weight: 900; letter-spacing: 0.3em; margin-bottom: 24px; text-transform: uppercase; }
+        .res-question { font-size: 1.6rem; font-weight: 700; line-height: 1.6; margin-bottom: 45px; word-break: keep-all; color: #fff; }
+        .speaker-tag { padding: 12px 28px; background: #000; border-radius: 35px; font-size: 16px; font-weight: 700; border: 1px solid var(--border); color: #fff; }
     </style>
 </head>
 <body>
@@ -156,7 +158,7 @@
     <div class="footer-group">
         <button id="draw-btn" class="draw-btn" onclick="handleAction()">Pick a Number</button>
         <button id="reroll-btn" class="reroll-btn" onclick="runShuffle()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:20px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:22px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
         </button>
     </div>
 
@@ -167,7 +169,7 @@
             <div class="res-label">Speaker</div>
             <div class="speaker-tag" id="display-p">...</div>
         </div>
-        <p style="margin-top:30px; font-size:10px; color:rgba(255,255,255,0.2); letter-spacing:0.15em; text-transform: uppercase;">Tap to close</p>
+        <p style="margin-top:40px; font-size:11px; color:rgba(255,255,255,0.2); letter-spacing:0.15em; text-transform: uppercase;">Tap to close</p>
     </div>
 
     <script>
