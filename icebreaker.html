@@ -27,12 +27,13 @@
             display: flex; 
             flex-direction: column; 
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* [HEADER] 모든 화면에서 유지 */
+        /* [HEADER] */
         .list-header { 
             position: relative;
-            z-index: 2100; /* 오버레이보다 높게 설정 */
+            z-index: 2100;
             padding-top: env(safe-area-inset-top, 0); 
             background: var(--bg);
         }
@@ -55,6 +56,7 @@
             position: absolute; inset: 0;
             display: flex; align-items: center; justify-content: center; 
             z-index: 1; pointer-events: none;
+            margin-top: -20px; /* 시각적 무게중심 보정 */
         }
         #number-display { 
             font-size: min(65vw, 450px); 
@@ -62,16 +64,19 @@
             line-height: 1; letter-spacing: -0.05em;
         }
 
-        /* 힌트 디자인 수정: 오렌지 라인을 텍스트 밑줄로 통합 */
+        /* 힌트: 언더라인 디테일 강화 */
         #hint-display { 
             position: relative; z-index: 10;
             font-size: clamp(1.4rem, 6vw, 2.2rem); 
             font-weight: 800; text-align: center;
-            opacity: 0; transform: translateY(10px);
+            opacity: 0; transform: translateY(12px);
             transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            padding-bottom: 8px;
+            
             display: inline-block;
-            border-bottom: 5px solid var(--accent); /* 어색한 라인 대신 텍스트와 결합 */
+            padding-bottom: 12px; /* 글자와 선 사이 여백 */
+            border-bottom: 3px solid var(--accent); /* 슬림하고 세련된 3px */
+            letter-spacing: -0.02em;
+            word-break: keep-all;
         }
         #hint-display.show { opacity: 1; transform: translateY(0); }
 
@@ -86,29 +91,25 @@
             flex: 1; max-width: 280px; height: 56px;
             background: #fff; color: #000; border: none; border-radius: 28px; 
             font-size: 14px; font-weight: 800; text-transform: uppercase; 
-            cursor: pointer;
+            cursor: pointer; transition: transform 0.1s;
         }
+        .draw-btn:active { transform: scale(0.97); }
         .reroll-btn { 
             width: 56px; height: 56px; border-radius: 50%; 
             background: var(--surface); border: 1px solid var(--border); 
             display: none; align-items: center; justify-content: center;
         }
 
-        /* [RESULT OVERLAY] 헤더 아래로 배치되도록 수정 */
+        /* [RESULT OVERLAY] */
         #result-overlay { 
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95); 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 80px 24px 24px; /* 헤더 공간 확보 */
-            z-index: 2000; 
-            backdrop-filter: blur(10px);
+            padding: 80px 24px 24px; z-index: 2000; backdrop-filter: blur(10px);
         }
         .res-card { 
             background: var(--surface); width: 100%; max-width: 420px; 
             padding: 50px 24px; border-radius: 32px; 
             border: 1px solid var(--border); text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
         .res-label { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 0.25em; margin-bottom: 20px; text-transform: uppercase; }
         .res-question { font-size: 1.5rem; font-weight: 700; line-height: 1.6; margin-bottom: 45px; word-break: keep-all; }
@@ -142,7 +143,7 @@
             <div class="res-label">Speaker</div>
             <div class="speaker-tag" id="display-p">...</div>
         </div>
-        <p style="margin-top:40px; font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:0.1em;">TAP ANYWHERE TO CLOSE</p>
+        <p style="margin-top:40px; font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform: uppercase;">Tap anywhere to close</p>
     </div>
 
     <script>
@@ -202,7 +203,7 @@
 
         function showResult() {
             document.getElementById('display-q').innerText = questionData[finalIdx].q;
-            document.getElementById('display-p').innerText = participants[Math.floor(Math.random() * participants.length)] || "Anyone";
+            document.getElementById('display-p').innerText = participants[Math.floor(Math.random() * participants.length)] || "Guest";
             document.getElementById('result-overlay').style.display = 'flex';
         }
 
