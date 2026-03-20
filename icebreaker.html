@@ -13,7 +13,7 @@
         :root {
             --bg: #080808;
             --surface: #111;
-            --border: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.08);
             --text: #fff;
             --sub: rgba(255,255,255,0.38);
             --accent: #EF7C1C;
@@ -33,9 +33,9 @@
             overflow: hidden;
         }
 
-        /* HEADER */
+        /* HEADER - 결과창에서도 보일 수 있도록 z-index 조정 */
         .list-header {
-            position: sticky; top: 0; z-index: 50;
+            position: sticky; top: 0; z-index: 1100;
             background: var(--bg);
             padding-top: env(safe-area-inset-top, 0);
             box-shadow: 0 1px 0 rgba(255,255,255,0.05);
@@ -52,6 +52,7 @@
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 20px; text-align: center;
+            z-index: 1;
         }
 
         #number-display {
@@ -59,43 +60,72 @@
             margin-bottom: 32px; line-height: 0.9;
             transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        #number-display.shuffling { filter: blur(8px); opacity: 0.4; transform: scale(0.88); }
-        #number-display.ready { transform: scale(1.02); text-shadow: 0 0 30px rgba(255, 255, 255, 0.15); }
+        #number-display.shuffling { filter: blur(8px); opacity: 0.3; transform: scale(0.9); }
+        #number-display.ready { transform: scale(1.02); text-shadow: 0 0 30px rgba(255, 255, 255, 0.1); }
 
-        /* BUTTON UI (Always Visible & Consistent) */
         .draw-btn {
-            background: rgba(30, 30, 30, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text);
-            padding: 18px 40px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            text-transform: uppercase;
-            min-width: 220px;
+            padding: 18px 40px; border-radius: 40px;
+            font-size: 14px; font-weight: 700; letter-spacing: 0.08em;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            text-transform: uppercase; min-width: 220px;
         }
         .draw-btn:active { transform: scale(0.96); background: var(--surface); }
         .draw-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* RESULT OVERLAY */
+        /* RESULT OVERLAY (헤더 아래에서 나타나도록 설정) */
         #result-overlay {
-            position: fixed; inset: 0; background: var(--bg);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            padding: 40px; z-index: 1000; text-align: center;
-            animation: fadeIn 0.4s ease;
+            padding: 40px 24px; z-index: 1000; text-align: center;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .res-label { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 24px; }
-        .res-question { font-size: 30px; font-weight: 700; line-height: 1.4; margin-bottom: 60px; word-break: keep-all; max-width: 600px; color: var(--text); letter-spacing: -0.01em; }
-        .res-speaker { font-size: 17px; font-weight: 500; color: var(--text); padding: 12px 32px; background: var(--surface); border-radius: 100px; border: 1px solid var(--border); }
-        .close-hint { margin-top: 100px; font-size: 11px; color: var(--sub); font-style: italic; letter-spacing: 0.1em; text-transform: uppercase; }
+        /* 텍스트 애니메이션 */
+        .res-content-box {
+            animation: contentUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        @keyframes contentUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .res-label { 
+            font-size: 11px; font-weight: 600; color: var(--accent); 
+            letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; 
+        }
+        .res-question { 
+            font-size: 28px; font-weight: 700; line-height: 1.45; 
+            margin-bottom: 56px; word-break: keep-all; max-width: 500px; 
+            color: var(--text); letter-spacing: -0.01em; 
+        }
+
+        /* SPEAKER 디자인 수정: 버튼과 확실히 다르게 */
+        .res-speaker-box {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 20px; border-radius: 999px;
+            border: 1px solid var(--border);
+            background: transparent; /* 배경 제거 */
+        }
+        .res-speaker-box::before {
+            content: ''; width: 6px; height: 6px; 
+            background: var(--accent); border-radius: 50%;
+        }
+        .res-speaker { 
+            font-size: 15px; font-weight: 500; color: var(--sub); 
+            letter-spacing: 0.02em; 
+        }
+
+        .close-hint { 
+            position: absolute; bottom: 60px;
+            font-size: 11px; color: var(--sub2); 
+            font-style: italic; letter-spacing: 0.1em; 
+            text-transform: uppercase; opacity: 0.6;
+        }
     </style>
 </head>
 <body>
@@ -116,11 +146,16 @@
     </main>
 
     <div id="result-overlay" onclick="closeOverlay()">
-        <div class="res-label">Selected Question</div>
-        <div id="display-q" class="res-question">...</div>
-        <div class="res-label">Speaker</div>
-        <div id="display-p" class="res-speaker">...</div>
-        <div class="close-hint">Tap to continue</div>
+        <div class="res-content-box">
+            <div class="res-label">Selected Question</div>
+            <div id="display-q" class="res-question">...</div>
+            
+            <div class="res-label">Speaker</div>
+            <div class="res-speaker-box">
+                <span id="display-p" class="res-speaker">...</span>
+            </div>
+        </div>
+        <div class="close-hint">Tap anywhere to close</div>
     </div>
 
     <script>
@@ -129,7 +164,7 @@
 
         let questions = [];
         let participants = [];
-        let currentState = 'init'; // 'init', 'shuffling', 'ready'
+        let currentState = 'init';
         let finalIdx = null;
 
         const numEl = document.getElementById('number-display');
@@ -150,16 +185,12 @@
         }
 
         function handleButtonClick() {
-            if (currentState === 'init') {
-                runShuffle();
-            } else if (currentState === 'ready') {
-                showResult();
-            }
+            if (currentState === 'init') runShuffle();
+            else if (currentState === 'ready') showResult();
         }
 
         function runShuffle() {
             if (questions.length === 0) return;
-            
             currentState = 'shuffling';
             btnEl.disabled = true;
             btnEl.innerText = 'Picking...';
@@ -170,14 +201,12 @@
             const itv = setInterval(() => {
                 numEl.innerText = Math.floor(Math.random() * questions.length) + 1;
                 count++;
-                if (count > 25) { // 셔플 시간 최적화
+                if (count > 25) {
                     clearInterval(itv);
                     finalIdx = Math.floor(Math.random() * questions.length);
                     numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
-                    
                     numEl.classList.remove('shuffling');
                     numEl.classList.add('ready');
-                    
                     currentState = 'ready';
                     btnEl.disabled = false;
                     btnEl.innerText = 'Reveal Question';
@@ -193,14 +222,10 @@
             document.getElementById('result-overlay').style.display = 'flex';
         }
 
-        // 결과창을 닫을 때 'Pick a number' 상태로 완전 초기화
         function closeOverlay() {
             document.getElementById('result-overlay').style.display = 'none';
-            
-            // 번호와 버튼 상태를 처음으로 돌림
             numEl.innerText = "00";
             numEl.classList.remove('ready', 'shuffling');
-            
             currentState = 'init';
             finalIdx = null;
             btnEl.innerText = 'Pick a number';
