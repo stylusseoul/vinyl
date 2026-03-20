@@ -22,111 +22,103 @@
         body { 
             background: var(--bg); 
             color: var(--main-text); 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Inter', -apple-system, sans-serif; 
             height: 100dvh; 
             display: flex; 
             flex-direction: column; 
             overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        /* HEADER: 고정 높이 + 반응형 패딩 */
+        /* [HEADER] 모든 화면에서 유지 */
         .list-header { 
-            flex-shrink: 0;
+            position: relative;
+            z-index: 2100; /* 오버레이보다 높게 설정 */
             padding-top: env(safe-area-inset-top, 0); 
             background: var(--bg);
-            z-index: 100;
         }
         .header-top { 
             display: flex; align-items: center; justify-content: space-between; 
             padding: 0 20px; height: 60px; 
             border-bottom: 1px solid var(--border);
         }
-        .logo-img { height: 20px; filter: brightness(0) invert(1); }
-        .header-label { font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 0.15em; }
+        .logo-img { height: 22px; filter: brightness(0) invert(1); }
+        .header-label { font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
 
-        /* MAIN: 반응형 유연성 확보 */
+        /* [MAIN] */
         main { 
             flex: 1; 
             position: relative; 
-            display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; 
-            padding: 0 20px;
+            display: flex; align-items: center; justify-content: center; 
         }
 
-        /* 배경 숫자: 화면 너비에 맞춰 유동적으로 조절 */
         .visual-bg { 
             position: absolute; inset: 0;
             display: flex; align-items: center; justify-content: center; 
             z-index: 1; pointer-events: none;
         }
         #number-display { 
-            font-size: min(60vw, 400px); /* 최대 크기 제한으로 태블릿 대응 */
+            font-size: min(65vw, 450px); 
             font-weight: 900; color: var(--sub-text); 
             line-height: 1; letter-spacing: -0.05em;
         }
 
-        /* 힌트: 텍스트 길이에 맞춰 자동 줄바꿈 및 크기 조절 */
+        /* 힌트 디자인 수정: 오렌지 라인을 텍스트 밑줄로 통합 */
         #hint-display { 
             position: relative; z-index: 10;
-            font-size: clamp(1.2rem, 5vw, 1.8rem); /* 최소/최대 폰트 크기 지정 */
+            font-size: clamp(1.4rem, 6vw, 2.2rem); 
             font-weight: 800; text-align: center;
             opacity: 0; transform: translateY(10px);
-            transition: all 0.4s ease;
-            max-width: 100%; word-break: keep-all;
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            padding-bottom: 8px;
+            display: inline-block;
+            border-bottom: 5px solid var(--accent); /* 어색한 라인 대신 텍스트와 결합 */
         }
         #hint-display.show { opacity: 1; transform: translateY(0); }
-        #hint-display::before {
-            content: ''; display: block; width: 24px; height: 3px; 
-            background: var(--accent); margin: 0 auto 16px;
-        }
 
-        /* FOOTER: 하단 고정 및 반응형 버튼 */
+        /* [FOOTER] */
         .footer-group { 
-            flex-shrink: 0;
             width: 100%;
-            padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); 
+            padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
             display: flex; justify-content: center; align-items: center; 
             gap: 12px; z-index: 100;
         }
         .draw-btn { 
-            flex: 1; max-width: 300px; height: 54px;
-            background: #fff; color: #000; border: none; border-radius: 27px; 
+            flex: 1; max-width: 280px; height: 56px;
+            background: #fff; color: #000; border: none; border-radius: 28px; 
             font-size: 14px; font-weight: 800; text-transform: uppercase; 
-            cursor: pointer; transition: transform 0.1s;
+            cursor: pointer;
         }
-        .draw-btn:active { transform: scale(0.96); }
         .reroll-btn { 
-            width: 54px; height: 54px; border-radius: 50%; 
+            width: 56px; height: 56px; border-radius: 50%; 
             background: var(--surface); border: 1px solid var(--border); 
             display: none; align-items: center; justify-content: center;
         }
 
-        /* RESULT OVERLAY: 모바일 최적화 */
+        /* [RESULT OVERLAY] 헤더 아래로 배치되도록 수정 */
         #result-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98); 
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 20px; z-index: 2000; 
+            padding: 80px 24px 24px; /* 헤더 공간 확보 */
+            z-index: 2000; 
+            backdrop-filter: blur(10px);
         }
         .res-card { 
-            background: var(--surface); width: 100%; max-width: 400px; 
-            padding: clamp(30px, 8vh, 50px) 24px; 
-            border-radius: 28px; border: 1px solid var(--border); text-align: center;
+            background: var(--surface); width: 100%; max-width: 420px; 
+            padding: 50px 24px; border-radius: 32px; 
+            border: 1px solid var(--border); text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        .res-question { 
-            font-size: clamp(1.2rem, 4.5vw, 1.6rem); 
-            font-weight: 700; line-height: 1.6; margin-bottom: 40px; 
-        }
-        .speaker-tag { 
-            padding: 8px 20px; background: #000; border-radius: 20px; 
-            font-size: 14px; font-weight: 600; border: 1px solid var(--border);
-        }
+        .res-label { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 0.25em; margin-bottom: 20px; text-transform: uppercase; }
+        .res-question { font-size: 1.5rem; font-weight: 700; line-height: 1.6; margin-bottom: 45px; word-break: keep-all; }
+        .speaker-tag { padding: 10px 24px; background: #000; border-radius: 25px; font-size: 15px; font-weight: 600; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
     <header class="list-header">
         <div class="header-top">
-            <img src="images/logo.png" alt="Stylus" class="logo-img">
+            <a href="index.html"><img src="images/logo.png" alt="Stylus" class="logo-img"></a>
             <div class="header-label">Ice Breaker</div>
         </div>
     </header>
@@ -139,21 +131,21 @@
     <div class="footer-group">
         <button id="draw-btn" class="draw-btn" onclick="handleAction()">Pick a Number</button>
         <button id="reroll-btn" class="reroll-btn" onclick="runShuffle()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:20px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:22px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
         </button>
     </div>
 
     <div id="result-overlay" onclick="closeOverlay()">
         <div class="res-card">
-            <div class="res-label" style="font-size:10px; color:var(--accent); letter-spacing:0.2em; margin-bottom:15px; font-weight:800; text-transform:uppercase;">Selected Question</div>
+            <div class="res-label">Selected Question</div>
             <div id="display-q" class="res-question">...</div>
-            <div class="res-label" style="font-size:10px; color:var(--accent); letter-spacing:0.2em; margin-bottom:15px; font-weight:800; text-transform:uppercase;">Speaker</div>
+            <div class="res-label">Speaker</div>
             <div class="speaker-tag" id="display-p">...</div>
         </div>
+        <p style="margin-top:40px; font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:0.1em;">TAP ANYWHERE TO CLOSE</p>
     </div>
 
     <script>
-        // (기존 스크립트 로직 동일하게 유지하되, 리사이즈 이슈 방지 위해 최적화)
         const SHEET_GID = '1769137139'; 
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?gid=${SHEET_GID}&output=csv`;
 
@@ -168,7 +160,7 @@
                 complete: function(results) {
                     const data = results.data;
                     if (data[0] && data[0][1]) participants = data[0][1].split(',').map(n => n.trim());
-                    questionData = data.slice(3).filter(r => r[1]).map(r => ({ q: r[1], h: r[2] || "#복선_없음" }));
+                    questionData = data.slice(3).filter(r => r[1]).map(r => ({ q: r[1], h: r[2] || "#NO_HINT" }));
                 }
             });
         }
@@ -188,32 +180,35 @@
             btn.disabled = true;
             btn.innerText = 'Picking...';
             hintEl.classList.remove('show');
+            numEl.style.color = "rgba(255,255,255,0.1)";
 
             let count = 0;
             const shuffle = setInterval(() => {
                 numEl.innerText = Math.floor(Math.random() * questionData.length + 1).toString().padStart(2, '0');
-                if (++count > 15) {
+                if (++count > 20) {
                     clearInterval(shuffle);
                     finalIdx = Math.floor(Math.random() * questionData.length);
                     numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
                     hintEl.innerText = questionData[finalIdx].h;
+                    numEl.style.color = "var(--sub-text)";
                     hintEl.classList.add('show');
                     currentState = 'ready';
                     btn.disabled = false;
                     btn.innerText = 'Open Question';
                     document.getElementById('reroll-btn').style.display = 'flex';
                 }
-            }, 70);
+            }, 60);
         }
 
         function showResult() {
             document.getElementById('display-q').innerText = questionData[finalIdx].q;
-            document.getElementById('display-p').innerText = participants[Math.floor(Math.random() * participants.length)] || "Guest";
+            document.getElementById('display-p').innerText = participants[Math.floor(Math.random() * participants.length)] || "Anyone";
             document.getElementById('result-overlay').style.display = 'flex';
         }
 
         function closeOverlay() {
             document.getElementById('result-overlay').style.display = 'none';
+            document.getElementById('number-display').innerText = "00";
             document.getElementById('hint-display').classList.remove('show');
             document.getElementById('reroll-btn').style.display = 'none';
             document.getElementById('draw-btn').innerText = 'Pick a Number';
