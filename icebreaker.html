@@ -1,153 +1,210 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STYLUS | ICE BREAKER</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+    <title>Stylus | Ice Breaker</title>
+    <meta name="theme-color" content="#0a0a0a">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
     <style>
-        :root { --black: #000; --white: #fff; --gray: #888; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* [1] STYLUS 기존 CSS 변수 및 초기화 */
+        :root {
+            --bg: #080808;
+            --surface: #111;
+            --border: rgba(255,255,255,0.05);
+            --text: #fff;
+            --sub: rgba(255,255,255,0.38);
+            --accent: #EF7C1C;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            background-color: var(--black);
-            color: var(--white);
-            font-family: "Pretendard", sans-serif;
-            height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            -webkit-font-smoothing: antialiased;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* 기존 스타일러스 헤더 스타일 */
-        header {
-            padding: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            position: absolute;
-            top: 0;
+        /* [2] 기존 HEADER 스타일 완벽 복제 */
+        .list-header {
+            position: sticky; top: 0; z-index: 50;
+            background: var(--bg);
+            padding-top: env(safe-area-inset-top, 0);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
         }
-        .logo { font-size: 20px; font-weight: 700; text-decoration: none; color: var(--white); letter-spacing: -0.5px; }
-        .nav-info { font-size: 11px; color: var(--gray); letter-spacing: 0.2em; text-transform: uppercase; }
+        .header-top {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px 10px; height: 56px;
+        }
+        .logo-img {
+            height: 28px; object-fit: contain;
+            filter: brightness(0) invert(1); opacity: 0.95;
+            display: block;
+        }
+        .logo-text {
+            font-size: 16px; font-weight: 800; letter-spacing: 0.18em;
+            color: var(--text); text-decoration: none;
+        }
 
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* [3] 뽑기 메인 UI */
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 20px; text-align: center;
+        }
 
-        /* 번호 표시 및 애니메이션 */
         #number-display {
-            font-size: 15vw;
-            font-weight: 800;
-            margin-bottom: 30px;
-            cursor: default;
-            transition: transform 0.3s ease;
+            font-size: 35vw; font-weight: 800; color: var(--text);
+            margin-bottom: 24px; line-height: 0.9;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        #number-display.clickable { cursor: pointer; text-shadow: 0 0 25px rgba(255,255,255,0.6); }
-        #number-display.clickable:hover { transform: scale(1.05); }
-        .shuffling { filter: blur(4px); opacity: 0.6; }
-
-        .btn-draw {
-            background: none; border: 1px solid #333; color: var(--white);
-            padding: 14px 40px; font-size: 12px; letter-spacing: 0.2em;
-            cursor: pointer; transition: 0.3s;
+        #number-display.shuffling { filter: blur(10px); opacity: 0.4; transform: scale(0.85); }
+        #number-display.ready { 
+            cursor: pointer; color: var(--accent); 
+            text-shadow: 0 0 40px rgba(239, 124, 28, 0.6); 
         }
-        .btn-draw:hover { border-color: var(--white); background: var(--white); color: var(--black); }
 
-        /* 결과 화면 (따란!) */
+        /* 기존 Floating Button 스타일의 감성을 버튼에 적용 */
+        .draw-btn {
+            background: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 16px 36px;
+            border-radius: 32px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+        }
+        .draw-btn:active { transform: scale(0.94); }
+
+        /* [4] 결과 레이어 (STYLUS Detail View 감성) */
         #result-overlay {
-            position: fixed; inset: 0; background: var(--black);
+            position: fixed; inset: 0; background: var(--bg);
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            padding: 40px; z-index: 100; text-align: center;
+            padding: 40px; z-index: 1000; text-align: center;
+            animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .res-label { font-size: 10px; color: var(--gray); letter-spacing: 0.4em; margin-bottom: 20px; }
-        .res-q { font-size: 2.2rem; font-weight: 600; line-height: 1.5; margin-bottom: 50px; word-break: keep-all; max-width: 700px; }
-        .res-p { font-size: 1.4rem; border-bottom: 1.5px solid var(--white); padding-bottom: 8px; font-weight: 500; }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .res-label { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 30px; }
+        .res-question { font-size: 32px; font-weight: 700; line-height: 1.35; margin-bottom: 64px; word-break: keep-all; max-width: 600px; color: var(--text); letter-spacing: -0.02em; }
+        .res-speaker { font-size: 18px; font-weight: 500; color: var(--text); padding: 12px 28px; background: var(--surface); border-radius: 999px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+
+        .close-hint { margin-top: 120px; font-size: 12px; color: var(--sub); font-style: italic; letter-spacing: 0.05em; }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="index.html" class="logo">STYLUS</a>
-        <div class="nav-info">Ice Breaking Session</div>
+    <header class="list-header">
+        <div class="header-top">
+            <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <img src="images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <span class="logo-text" style="display:none">STYLUS</span>
+            </a>
+            <div style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; font-weight: 700; text-transform: uppercase;">Ice Breaker</div>
+        </div>
     </header>
 
     <main>
         <div id="number-display">00</div>
-        <button id="draw-btn" class="btn-draw" onclick="startDraw()">PICK A NUMBER</button>
+        <button id="draw-btn" class="draw-btn" onclick="runShuffle()">Pick a number</button>
     </main>
 
-    <div id="result-overlay" onclick="closeResult()">
-        <div class="res-label">QUESTION</div>
-        <div id="display-q" class="res-q">질문이 여기에 표시됩니다.</div>
-        <div class="res-label">SPEAKER</div>
-        <div id="display-p" class="res-p">참여자</div>
-        <div style="margin-top: 80px; font-size: 9px; color: #333; letter-spacing: 0.1em;">CLICK TO CLOSE</div>
+    <div id="result-overlay" onclick="closeOverlay()">
+        <div class="res-label">Selected Question</div>
+        <div id="display-q" class="res-question">...</div>
+        
+        <div class="res-label">Speaker</div>
+        <div id="display-p" class="res-speaker">...</div>
+
+        <div class="close-hint">Tap anywhere to close</div>
     </div>
 
     <script>
-        // 제공해주신 URL의 형식을 CSV 추출용으로 자동 변경합니다.
-        const BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?output=csv';
+        // 제공된 GID (1769137139) 반영
+        const SHEET_GID = '1769137139'; 
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?gid=${SHEET_GID}&output=csv`;
 
         let questions = [];
         let participants = [];
 
-        // 데이터 로드 함수
-        function loadSheetData() {
-            Papa.parse(BASE_URL, {
+        function initData() {
+            Papa.parse(SHEET_URL, {
                 download: true,
                 complete: function(results) {
                     const data = results.data;
-                    // B1: 참여자 명단
-                    if(data[0] && data[0][1]) participants = data[0][1].split(',').map(n => n.trim());
-                    // B4부터 질문 리스트 (빈 칸 제외)
-                    questions = data.slice(3).map(row => row[1]).filter(q => q && q.trim() !== "");
-                    console.log("Data Loaded:", { questions, participants });
+                    console.log("Raw Data:", data);
+                    
+                    // A1 참여자, B1 명단 (쉼표 구분)
+                    if (data[0] && data[0][1]) {
+                        participants = data[0][1].split(',').map(n => n.trim());
+                    }
+                    // B4부터 질문 리스트 (Index 3부터 B열 데이터 추출)
+                    questions = data.slice(3)
+                                    .map(row => row[1])
+                                    .filter(q => q && q.trim() !== "");
+                    
+                    console.log("Parsed:", { q_count: questions.length, participants });
                 }
             });
         }
 
-        const display = document.getElementById('number-display');
-        const btn = document.getElementById('draw-btn');
+        const numEl = document.getElementById('number-display');
+        const btnEl = document.getElementById('draw-btn');
 
-        function startDraw() {
+        function runShuffle() {
             if (questions.length === 0) return alert("데이터를 불러오는 중입니다. 잠시만 기다려주세요.");
             
-            btn.style.display = 'none';
-            display.classList.add('shuffling');
+            btnEl.style.visibility = 'hidden';
+            numEl.classList.add('shuffling');
+            numEl.onclick = null; // 중복 방지
 
             let count = 0;
-            const timer = setInterval(() => {
-                display.innerText = Math.floor(Math.random() * questions.length) + 1;
+            const itv = setInterval(() => {
+                numEl.innerText = Math.floor(Math.random() * questions.length) + 1;
                 count++;
-                if (count > 18) {
-                    clearInterval(timer);
+                if (count > 20) {
+                    clearInterval(itv);
                     const finalIdx = Math.floor(Math.random() * questions.length);
-                    display.innerText = (finalIdx + 1).toString().padStart(2, '0');
-                    display.classList.remove('shuffling');
-                    display.classList.add('clickable');
+                    numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
+                    numEl.classList.remove('shuffling');
+                    numEl.classList.add('ready');
                     
-                    // 번호를 클릭하면 결과 창 표시
-                    display.onclick = () => {
+                    // 멈춘 번호 클릭 시 결과창
+                    numEl.onclick = () => {
                         const speaker = participants[Math.floor(Math.random() * participants.length)];
-                        document.getElementById('display-q').innerText = `"${questions[finalIdx]}"`;
-                        document.getElementById('display-p').innerText = speaker || "Anyone";
+                        document.getElementById('display-q').innerText = questions[finalIdx];
+                        document.getElementById('display-p').innerText = speaker || "Everyone";
                         document.getElementById('result-overlay').style.display = 'flex';
                     };
                 }
             }, 80);
         }
 
-        function closeResult() {
+        function closeOverlay() {
             document.getElementById('result-overlay').style.display = 'none';
-            display.innerText = "00";
-            display.classList.remove('clickable');
-            display.onclick = null;
-            btn.style.display = 'inline-block';
+            numEl.innerText = "00";
+            numEl.classList.remove('ready');
+            numEl.onclick = null;
+            btnEl.style.visibility = 'visible';
         }
 
-        // 초기화
-        window.onload = loadSheetData;
+        window.onload = initData;
     </script>
 </body>
 </html>
