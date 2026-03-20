@@ -3,233 +3,212 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-    <title>STYLUS | ICE BREAKER</title>
+    <title>Stylus - Ice Breaker</title>
     <meta name="theme-color" content="#0a0a0a">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
     <style>
         :root {
-            --bg: #080808;
-            --surface: #111;
-            --border: rgba(255,255,255,0.08);
-            --text: #fff;
-            --sub: rgba(255,255,255,0.38);
-            --accent: #EF7C1C;
+            --bg: #080808; --surface: #111; --border: rgba(255,255,255,0.08);
+            --text: #fff; --sub: rgba(255,255,255,0.38); --accent: #EF7C1C;
             --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: var(--font);
-            -webkit-font-smoothing: antialiased;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* HEADER - 결과창에서도 보일 수 있도록 z-index 조정 */
-        .list-header {
-            position: sticky; top: 0; z-index: 1100;
-            background: var(--bg);
-            padding-top: env(safe-area-inset-top, 0);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.05);
-        }
-        .header-top {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 16px 10px; height: 56px;
-        }
+        /* HEADER */
+        .list-header { position: sticky; top: 0; z-index: 1100; background: var(--bg); padding-top: env(safe-area-inset-top, 0); box-shadow: 0 1px 0 rgba(255,255,255,0.05); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 10px; height: 56px; }
         .logo-img { height: 28px; filter: brightness(0) invert(1); opacity: 0.95; }
-        .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); text-decoration: none; }
+        .header-label { font-size: 10px; color: var(--accent); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
 
         /* MAIN UI */
-        main {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 20px; text-align: center;
-            z-index: 1;
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .number-container { margin-bottom: 40px; }
+        #number-display { font-size: 35vw; font-weight: 800; color: var(--text); line-height: 0.8; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        #number-display.shuffling { filter: blur(10px); opacity: 0.3; transform: scale(0.9); }
+        
+        #hint-display { 
+            margin-top: 24px; font-size: 14px; color: var(--accent); 
+            font-weight: 600; letter-spacing: 0.15em; opacity: 0; transition: opacity 0.4s ease;
+            text-transform: uppercase; min-height: 1.5em;
         }
+        #hint-display.show { opacity: 0.85; }
 
-        #number-display {
-            font-size: 35vw; font-weight: 800; color: var(--text);
-            margin-bottom: 32px; line-height: 0.9;
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        #number-display.shuffling { filter: blur(8px); opacity: 0.3; transform: scale(0.9); }
-        #number-display.ready { transform: scale(1.02); text-shadow: 0 0 30px rgba(255, 255, 255, 0.1); }
+        /* BUTTONS */
+        .btn-group { display: flex; align-items: center; gap: 12px; }
+        .draw-btn { background: rgba(30, 30, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text); padding: 18px 40px; border-radius: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; min-width: 220px; }
+        .draw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .reroll-btn { background: var(--surface); border: 1px solid var(--border); color: var(--sub); width: 54px; height: 54px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        .reroll-btn:active { transform: rotate(180deg); }
+        .reroll-btn svg { width: 20px; height: 20px; }
 
-        .draw-btn {
-            background: rgba(30, 30, 30, 0.8);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text);
-            padding: 18px 40px; border-radius: 40px;
-            font-size: 14px; font-weight: 700; letter-spacing: 0.08em;
-            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            text-transform: uppercase; min-width: 220px;
-        }
-        .draw-btn:active { transform: scale(0.96); background: var(--surface); }
-        .draw-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        /* RESULT OVERLAY (헤더 아래에서 나타나도록 설정) */
-        #result-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            padding: 40px 24px; z-index: 1000; text-align: center;
-        }
-
-        /* 텍스트 애니메이션 */
-        .res-content-box {
-            animation: contentUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        @keyframes contentUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .res-label { 
-            font-size: 11px; font-weight: 600; color: var(--accent); 
-            letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; 
-        }
-        .res-question { 
-            font-size: 28px; font-weight: 700; line-height: 1.45; 
-            margin-bottom: 56px; word-break: keep-all; max-width: 500px; 
-            color: var(--text); letter-spacing: -0.01em; 
-        }
-
-        /* SPEAKER 디자인 수정: 버튼과 확실히 다르게 */
-        .res-speaker-box {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 20px; border-radius: 999px;
-            border: 1px solid var(--border);
-            background: transparent; /* 배경 제거 */
-        }
-        .res-speaker-box::before {
-            content: ''; width: 6px; height: 6px; 
-            background: var(--accent); border-radius: 50%;
-        }
-        .res-speaker { 
-            font-size: 15px; font-weight: 500; color: var(--sub); 
-            letter-spacing: 0.02em; 
-        }
-
-        .close-hint { 
-            position: absolute; bottom: 60px;
-            font-size: 11px; color: var(--sub2); 
-            font-style: italic; letter-spacing: 0.1em; 
-            text-transform: uppercase; opacity: 0.6;
-        }
+        /* RESULT OVERLAY */
+        #result-overlay { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; z-index: 2000; text-align: center; }
+        .res-label { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; }
+        .res-question { font-size: 28px; font-weight: 700; line-height: 1.5; margin-bottom: 56px; color: var(--text); max-width: 600px; word-break: keep-all; }
+        .res-speaker-box { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); }
+        .res-speaker-box::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+        .res-speaker { font-size: 16px; font-weight: 500; color: var(--text); }
+        
+        /* CLOSE BUTTON */
+        .close-hint { margin-top: 60px; font-size: 12px; color: var(--sub); letter-spacing: 0.1em; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
     </style>
 </head>
 <body>
-
     <header class="list-header">
         <div class="header-top">
-            <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                <img src="images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                <span class="logo-text" style="display:none">STYLUS</span>
-            </a>
-            <div style="font-size: 10px; color: var(--sub); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase;">Ice Breaker</div>
+            <a href="index.html" style="display: flex; align-items: center; text-decoration: none;"><img src="images/logo.png" alt="Stylus" class="logo-img"></a>
+            <div class="header-label">Ice Breaker</div>
         </div>
     </header>
 
     <main>
-        <div id="number-display">00</div>
-        <button id="draw-btn" class="draw-btn">Pick a number</button>
+        <div class="number-container">
+            <div id="number-display">00</div>
+            <div id="hint-display"></div>
+        </div>
+        <div class="btn-group">
+            <button id="draw-btn" class="draw-btn">Pick a number</button>
+            <button id="reroll-btn" class="reroll-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+        </div>
     </main>
 
-    <div id="result-overlay" onclick="closeOverlay()">
-        <div class="res-content-box">
-            <div class="res-label">Selected Question</div>
-            <div id="display-q" class="res-question">...</div>
-            
-            <div class="res-label">Speaker</div>
-            <div class="res-speaker-box">
-                <span id="display-p" class="res-speaker">...</span>
-            </div>
-        </div>
-        <div class="close-hint">Tap anywhere to close</div>
+    <div id="result-overlay">
+        <div class="res-label">Selected Question</div>
+        <div id="display-q" class="res-question">...</div>
+        <div class="res-label">Speaker</div>
+        <div class="res-speaker-box"><span id="display-p" class="res-speaker">...</span></div>
+        <div class="close-hint" onclick="closeOverlay()">Tap to Close</div>
     </div>
 
     <script>
+        // 시트 설정
         const SHEET_GID = '1769137139'; 
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?gid=${SHEET_GID}&output=csv`;
 
-        let questions = [];
+        let questionData = []; // [{q: 질문, h: 힌트}]
         let participants = [];
-        let currentState = 'init';
+        let currentState = 'init'; // init -> shuffling -> ready
         let finalIdx = null;
+        let lastSpeakerIdx = -1;
 
         const numEl = document.getElementById('number-display');
+        const hintEl = document.getElementById('hint-display');
         const btnEl = document.getElementById('draw-btn');
+        const rerollBtn = document.getElementById('reroll-btn');
 
         function initData() {
             Papa.parse(SHEET_URL, {
                 download: true,
                 complete: function(results) {
                     const data = results.data;
+                    // 참여자 명단 추출 (A1 셀 데이터 파싱)
                     if (data[0] && data[0][1]) {
-                        participants = data[0][1].split(',').map(n => n.trim());
+                        participants = data[0][1].split(',').map(n => n.trim()).filter(n => n !== "");
                     }
-                    questions = data.slice(3).map(row => row[1]).filter(q => q && q.trim() !== "");
+                    
+                    // 질문(B열)과 힌트(C열) 추출 (4행부터)
+                    questionData = data.slice(3)
+                        .filter(row => row[1] && row[1].trim() !== "")
+                        .map(row => ({
+                            q: row[1].trim(),
+                            h: row[2] ? row[2].trim() : "???" 
+                        }));
+                    
+                    console.log("Loaded questions:", questionData.length);
                 }
             });
-            btnEl.addEventListener('click', handleButtonClick);
-        }
 
-        function handleButtonClick() {
-            if (currentState === 'init') runShuffle();
-            else if (currentState === 'ready') showResult();
+            btnEl.addEventListener('click', () => {
+                if (currentState === 'init') runShuffle();
+                else if (currentState === 'ready') showResult();
+            });
+            
+            rerollBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                runShuffle();
+            });
         }
 
         function runShuffle() {
-            if (questions.length === 0) return;
+            if (questionData.length === 0) return;
+            
             currentState = 'shuffling';
             btnEl.disabled = true;
             btnEl.innerText = 'Picking...';
+            rerollBtn.style.display = 'none';
+            
             numEl.classList.add('shuffling');
-            numEl.classList.remove('ready');
+            hintEl.classList.remove('show');
 
             let count = 0;
-            const itv = setInterval(() => {
-                numEl.innerText = Math.floor(Math.random() * questions.length) + 1;
+            const maxCount = 28; 
+            
+            const shuffleEffect = () => {
+                // 랜덤 번호 애니메이션
+                const tempIdx = Math.floor(Math.random() * questionData.length);
+                numEl.innerText = (tempIdx + 1).toString().padStart(2, '0');
                 count++;
-                if (count > 25) {
-                    clearInterval(itv);
-                    finalIdx = Math.floor(Math.random() * questions.length);
+                
+                if (count < maxCount) {
+                    const delay = count > 20 ? 60 + (count - 20) * 20 : 60;
+                    setTimeout(shuffleEffect, delay);
+                } else {
+                    // 최종 확정
+                    finalIdx = Math.floor(Math.random() * questionData.length);
                     numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
+                    
+                    // 힌트 텍스트 적용 (시트 C열 내용)
+                    hintEl.innerText = questionData[finalIdx].h;
+                    
                     numEl.classList.remove('shuffling');
-                    numEl.classList.add('ready');
+                    hintEl.classList.add('show');
+                    
                     currentState = 'ready';
                     btnEl.disabled = false;
                     btnEl.innerText = 'Reveal Question';
+                    rerollBtn.style.display = 'flex'; 
                 }
-            }, 60);
+            };
+            shuffleEffect();
         }
 
         function showResult() {
             if (finalIdx === null) return;
-            const speaker = participants[Math.floor(Math.random() * participants.length)];
-            document.getElementById('display-q').innerText = questions[finalIdx];
-            document.getElementById('display-p').innerText = speaker || "Anyone";
+            
+            // 화자 랜덤 배정 (연속 중복 방지)
+            let speakerIdx;
+            if (participants.length > 1) {
+                do { speakerIdx = Math.floor(Math.random() * participants.length); } 
+                while (speakerIdx === lastSpeakerIdx);
+            } else {
+                speakerIdx = 0;
+            }
+            lastSpeakerIdx = speakerIdx;
+
+            // 오버레이 데이터 세팅
+            document.getElementById('display-q').innerText = questionData[finalIdx].q;
+            document.getElementById('display-p').innerText = participants[speakerIdx] || "Anyone";
+            
+            // 화면 표시
             document.getElementById('result-overlay').style.display = 'flex';
         }
 
         function closeOverlay() {
             document.getElementById('result-overlay').style.display = 'none';
+            
+            // 초기 상태로 리셋
             numEl.innerText = "00";
-            numEl.classList.remove('ready', 'shuffling');
+            hintEl.innerText = "";
+            hintEl.classList.remove('show');
             currentState = 'init';
             finalIdx = null;
             btnEl.innerText = 'Pick a number';
-            btnEl.disabled = false;
+            rerollBtn.style.display = 'none';
         }
 
         window.onload = initData;
