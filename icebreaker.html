@@ -3,14 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-    <title>Stylus | Ice Breaker</title>
+    <title>STYLUS | ICE BREAKER</title>
     <meta name="theme-color" content="#0a0a0a">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
     <style>
-        /* [1] STYLUS 기존 CSS 변수 및 초기화 */
         :root {
             --bg: #080808;
             --surface: #111;
@@ -34,28 +33,21 @@
             overflow: hidden;
         }
 
-        /* [2] 기존 HEADER 스타일 완벽 복제 */
+        /* HEADER */
         .list-header {
             position: sticky; top: 0; z-index: 50;
             background: var(--bg);
             padding-top: env(safe-area-inset-top, 0);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.05);
         }
         .header-top {
             display: flex; align-items: center; justify-content: space-between;
             padding: 12px 16px 10px; height: 56px;
         }
-        .logo-img {
-            height: 28px; object-fit: contain;
-            filter: brightness(0) invert(1); opacity: 0.95;
-            display: block;
-        }
-        .logo-text {
-            font-size: 16px; font-weight: 800; letter-spacing: 0.18em;
-            color: var(--text); text-decoration: none;
-        }
+        .logo-img { height: 28px; filter: brightness(0) invert(1); opacity: 0.95; }
+        .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); text-decoration: none; }
 
-        /* [3] 뽑기 메인 UI */
+        /* MAIN UI */
         main {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
@@ -64,48 +56,46 @@
 
         #number-display {
             font-size: 35vw; font-weight: 800; color: var(--text);
-            margin-bottom: 24px; line-height: 0.9;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            margin-bottom: 32px; line-height: 0.9;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        #number-display.shuffling { filter: blur(10px); opacity: 0.4; transform: scale(0.85); }
-        #number-display.ready { 
-            cursor: pointer; color: var(--accent); 
-            text-shadow: 0 0 40px rgba(239, 124, 28, 0.6); 
-        }
+        #number-display.shuffling { filter: blur(8px); opacity: 0.4; transform: scale(0.88); }
+        #number-display.ready { transform: scale(1.02); text-shadow: 0 0 30px rgba(255, 255, 255, 0.15); }
 
-        /* 기존 Floating Button 스타일의 감성을 버튼에 적용 */
+        /* BUTTON UI (Always Visible & Consistent) */
         .draw-btn {
             background: rgba(30, 30, 30, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text);
-            padding: 16px 36px;
-            border-radius: 32px;
-            font-size: 15px;
+            padding: 18px 40px;
+            border-radius: 40px;
+            font-size: 14px;
             font-weight: 700;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-transform: uppercase;
+            min-width: 220px;
         }
-        .draw-btn:active { transform: scale(0.94); }
+        .draw-btn:active { transform: scale(0.96); background: var(--surface); }
+        .draw-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* [4] 결과 레이어 (STYLUS Detail View 감성) */
+        /* RESULT OVERLAY */
         #result-overlay {
             position: fixed; inset: 0; background: var(--bg);
             display: none; flex-direction: column; align-items: center; justify-content: center;
             padding: 40px; z-index: 1000; text-align: center;
-            animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: fadeIn 0.4s ease;
         }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .res-label { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 30px; }
-        .res-question { font-size: 32px; font-weight: 700; line-height: 1.35; margin-bottom: 64px; word-break: keep-all; max-width: 600px; color: var(--text); letter-spacing: -0.02em; }
-        .res-speaker { font-size: 18px; font-weight: 500; color: var(--text); padding: 12px 28px; background: var(--surface); border-radius: 999px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-
-        .close-hint { margin-top: 120px; font-size: 12px; color: var(--sub); font-style: italic; letter-spacing: 0.05em; }
+        .res-label { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 24px; }
+        .res-question { font-size: 30px; font-weight: 700; line-height: 1.4; margin-bottom: 60px; word-break: keep-all; max-width: 600px; color: var(--text); letter-spacing: -0.01em; }
+        .res-speaker { font-size: 17px; font-weight: 500; color: var(--text); padding: 12px 32px; background: var(--surface); border-radius: 100px; border: 1px solid var(--border); }
+        .close-hint { margin-top: 100px; font-size: 11px; color: var(--sub); font-style: italic; letter-spacing: 0.1em; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -116,92 +106,105 @@
                 <img src="images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                 <span class="logo-text" style="display:none">STYLUS</span>
             </a>
-            <div style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; font-weight: 700; text-transform: uppercase;">Ice Breaker</div>
+            <div style="font-size: 10px; color: var(--sub); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase;">Ice Breaker</div>
         </div>
     </header>
 
     <main>
         <div id="number-display">00</div>
-        <button id="draw-btn" class="draw-btn" onclick="runShuffle()">Pick a number</button>
+        <button id="draw-btn" class="draw-btn">Pick a number</button>
     </main>
 
     <div id="result-overlay" onclick="closeOverlay()">
         <div class="res-label">Selected Question</div>
         <div id="display-q" class="res-question">...</div>
-        
         <div class="res-label">Speaker</div>
         <div id="display-p" class="res-speaker">...</div>
-
-        <div class="close-hint">Tap anywhere to close</div>
+        <div class="close-hint">Tap to continue</div>
     </div>
 
     <script>
-        // 제공된 GID (1769137139) 반영
         const SHEET_GID = '1769137139'; 
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?gid=${SHEET_GID}&output=csv`;
 
         let questions = [];
         let participants = [];
+        let currentState = 'init'; // 'init', 'shuffling', 'ready'
+        let finalIdx = null;
+
+        const numEl = document.getElementById('number-display');
+        const btnEl = document.getElementById('draw-btn');
 
         function initData() {
             Papa.parse(SHEET_URL, {
                 download: true,
                 complete: function(results) {
                     const data = results.data;
-                    console.log("Raw Data:", data);
-                    
-                    // A1 참여자, B1 명단 (쉼표 구분)
                     if (data[0] && data[0][1]) {
                         participants = data[0][1].split(',').map(n => n.trim());
                     }
-                    // B4부터 질문 리스트 (Index 3부터 B열 데이터 추출)
-                    questions = data.slice(3)
-                                    .map(row => row[1])
-                                    .filter(q => q && q.trim() !== "");
-                    
-                    console.log("Parsed:", { q_count: questions.length, participants });
+                    questions = data.slice(3).map(row => row[1]).filter(q => q && q.trim() !== "");
                 }
             });
+            btnEl.addEventListener('click', handleButtonClick);
         }
 
-        const numEl = document.getElementById('number-display');
-        const btnEl = document.getElementById('draw-btn');
+        function handleButtonClick() {
+            if (currentState === 'init') {
+                runShuffle();
+            } else if (currentState === 'ready') {
+                showResult();
+            }
+        }
 
         function runShuffle() {
-            if (questions.length === 0) return alert("데이터를 불러오는 중입니다. 잠시만 기다려주세요.");
+            if (questions.length === 0) return;
             
-            btnEl.style.visibility = 'hidden';
+            currentState = 'shuffling';
+            btnEl.disabled = true;
+            btnEl.innerText = 'Picking...';
             numEl.classList.add('shuffling');
-            numEl.onclick = null; // 중복 방지
+            numEl.classList.remove('ready');
 
             let count = 0;
             const itv = setInterval(() => {
                 numEl.innerText = Math.floor(Math.random() * questions.length) + 1;
                 count++;
-                if (count > 20) {
+                if (count > 25) { // 셔플 시간 최적화
                     clearInterval(itv);
-                    const finalIdx = Math.floor(Math.random() * questions.length);
+                    finalIdx = Math.floor(Math.random() * questions.length);
                     numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
+                    
                     numEl.classList.remove('shuffling');
                     numEl.classList.add('ready');
                     
-                    // 멈춘 번호 클릭 시 결과창
-                    numEl.onclick = () => {
-                        const speaker = participants[Math.floor(Math.random() * participants.length)];
-                        document.getElementById('display-q').innerText = questions[finalIdx];
-                        document.getElementById('display-p').innerText = speaker || "Everyone";
-                        document.getElementById('result-overlay').style.display = 'flex';
-                    };
+                    currentState = 'ready';
+                    btnEl.disabled = false;
+                    btnEl.innerText = 'Reveal Question';
                 }
-            }, 80);
+            }, 60);
         }
 
+        function showResult() {
+            if (finalIdx === null) return;
+            const speaker = participants[Math.floor(Math.random() * participants.length)];
+            document.getElementById('display-q').innerText = questions[finalIdx];
+            document.getElementById('display-p').innerText = speaker || "Anyone";
+            document.getElementById('result-overlay').style.display = 'flex';
+        }
+
+        // 결과창을 닫을 때 'Pick a number' 상태로 완전 초기화
         function closeOverlay() {
             document.getElementById('result-overlay').style.display = 'none';
+            
+            // 번호와 버튼 상태를 처음으로 돌림
             numEl.innerText = "00";
-            numEl.classList.remove('ready');
-            numEl.onclick = null;
-            btnEl.style.visibility = 'visible';
+            numEl.classList.remove('ready', 'shuffling');
+            
+            currentState = 'init';
+            finalIdx = null;
+            btnEl.innerText = 'Pick a number';
+            btnEl.disabled = false;
         }
 
         window.onload = initData;
