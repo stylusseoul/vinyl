@@ -5,96 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
     <title>Stylus - Ice Breaker</title>
     <meta name="theme-color" content="#0a0a0a">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
     <style>
         :root {
-            --bg: #080808; --surface: #111; --border: rgba(255,255,255,0.08);
-            --text: #fff; --sub: rgba(255,255,255,0.38); --accent: #EF7C1C;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --bg: #080808; 
+            --surface: #111; 
+            --border: rgba(255,255,255,0.08);
+            --text: #fff; 
+            --sub: rgba(255,255,255,0.15); /* 숫자를 더 흐리게 */
+            --accent: #EF7C1C;
+            --font: 'Inter', sans-serif;
         }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: var(--font); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* HEADER */
-        .list-header { position: sticky; top: 0; z-index: 1100; background: var(--bg); padding-top: env(safe-area-inset-top, 0); box-shadow: 0 1px 0 rgba(255,255,255,0.05); }
-        .header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 10px; height: 56px; }
-        .logo-img { height: 28px; filter: brightness(0) invert(1); opacity: 0.95; }
-        .header-label { font-size: 10px; color: var(--accent); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
+        .list-header { position: sticky; top: 0; z-index: 1100; background: var(--bg); padding-top: env(safe-area-inset-top, 0); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; height: 56px; }
+        .logo-img { height: 24px; filter: brightness(0) invert(1); opacity: 0.8; }
+        .header-label { font-size: 10px; color: var(--accent); letter-spacing: 0.2em; font-weight: 700; text-transform: uppercase; }
 
         /* MAIN UI */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .number-container { margin-bottom: 40px; }
-        #number-display { font-size: 35vw; font-weight: 800; color: var(--text); line-height: 0.8; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        #number-display.shuffling { filter: blur(10px); opacity: 0.3; transform: scale(0.9); }
         
-        #hint-display { 
-            margin-top: 24px; font-size: 14px; color: var(--accent); 
-            font-weight: 600; letter-spacing: 0.15em; opacity: 0; transition: opacity 0.4s ease;
-            text-transform: uppercase; min-height: 1.5em;
+        /* 숫자는 존재감을 죽임 */
+        #number-display { 
+            font-size: 28vw; 
+            font-weight: 900; 
+            color: var(--sub); 
+            line-height: 1; 
+            transition: all 0.4s ease; 
+            letter-spacing: -0.05em;
         }
-        #hint-display.show { opacity: 0.85; }
+        
+        /* 태그(복선)를 가장 강조 */
+        #hint-display { 
+            margin-top: -20px; 
+            font-size: 1.5rem; 
+            color: var(--text); 
+            font-weight: 800; 
+            letter-spacing: -0.02em; 
+            opacity: 0; 
+            transition: all 0.5s ease;
+            border-bottom: 4px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+        #hint-display.show { opacity: 1; transform: translateY(-10px); }
 
         /* BUTTONS */
-        .btn-group { display: flex; align-items: center; gap: 12px; }
-        .draw-btn { background: rgba(30, 30, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text); padding: 18px 40px; border-radius: 40px; font-size: 14px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; min-width: 220px; }
-        .draw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .reroll-btn { background: var(--surface); border: 1px solid var(--border); color: var(--sub); width: 54px; height: 54px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
-        .reroll-btn:active { transform: rotate(180deg); }
-        .reroll-btn svg { width: 20px; height: 20px; }
+        .btn-group { margin-top: 50px; display: flex; align-items: center; gap: 12px; }
+        .draw-btn { 
+            background: #fff; 
+            color: #000; 
+            border: none;
+            padding: 18px 48px; 
+            border-radius: 40px; 
+            font-size: 14px; 
+            font-weight: 800; 
+            letter-spacing: 0.05em; 
+            cursor: pointer; 
+            text-transform: uppercase;
+        }
+        .draw-btn:disabled { opacity: 0.3; }
+
+        .reroll-btn { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            color: var(--text); 
+            width: 56px; height: 56px; 
+            border-radius: 50%; 
+            display: none; align-items: center; justify-content: center;
+        }
 
         /* RESULT OVERLAY */
-        #result-overlay { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; z-index: 2000; text-align: center; }
-        .res-label { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; }
-        .res-question { font-size: 28px; font-weight: 700; line-height: 1.5; margin-bottom: 56px; color: var(--text); max-width: 600px; word-break: keep-all; }
-        .res-speaker-box { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); }
-        .res-speaker-box::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
-        .res-speaker { font-size: 16px; font-weight: 500; color: var(--text); }
+        #result-overlay { 
+            position: fixed; inset: 0; background: #000; 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 40px; z-index: 2000; 
+        }
+        .res-label { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 12px; }
+        .res-question { 
+            font-size: 26px; font-weight: 700; line-height: 1.45; 
+            margin-bottom: 40px; color: #fff; word-break: keep-all; 
+        }
+        .res-speaker-box { 
+            padding: 12px 30px; border-radius: 999px; 
+            background: var(--surface); border: 1px solid var(--border);
+        }
+        .res-speaker { font-size: 18px; font-weight: 600; }
         
-        /* CLOSE BUTTON */
-        .close-hint { margin-top: 60px; font-size: 12px; color: var(--sub); letter-spacing: 0.1em; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+        .close-hint { margin-top: 80px; font-size: 11px; color: var(--sub); letter-spacing: 0.1em; cursor: pointer; }
     </style>
 </head>
 <body>
     <header class="list-header">
         <div class="header-top">
-            <a href="index.html" style="display: flex; align-items: center; text-decoration: none;"><img src="images/logo.png" alt="Stylus" class="logo-img"></a>
-            <div class="header-label">Ice Breaker</div>
+            <img src="images/logo.png" alt="Stylus" class="logo-img">
+            <div class="header-label">Shuffle</div>
         </div>
     </header>
 
     <main>
-        <div class="number-container">
-            <div id="number-display">00</div>
-            <div id="hint-display"></div>
-        </div>
+        <div id="number-display">00</div>
+        <div id="hint-display">#복선이_여기에</div>
+        
         <div class="btn-group">
-            <button id="draw-btn" class="draw-btn">Pick a number</button>
+            <button id="draw-btn" class="draw-btn">Shuffle</button>
             <button id="reroll-btn" class="reroll-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:20px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
             </button>
         </div>
     </main>
 
     <div id="result-overlay">
-        <div class="res-label">Selected Question</div>
-        <div id="display-q" class="res-question">...</div>
+        <div class="res-label">Selected Card</div>
+        <div id="display-q" class="res-question">질문을 불러오지 못했습니다.</div>
         <div class="res-label">Speaker</div>
         <div class="res-speaker-box"><span id="display-p" class="res-speaker">...</span></div>
-        <div class="close-hint" onclick="closeOverlay()">Tap to Close</div>
+        <div class="close-hint" onclick="closeOverlay()">Tap to close and reset</div>
     </div>
 
     <script>
-        // 시트 설정
         const SHEET_GID = '1769137139'; 
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTXikyTZ6Abe3Ome-3JYTQK83jSC7vpQXKBPqLuGhNLVmn_1Dzh48iVB77w_9GbUCHO4VuK2K3LZ48P/pub?gid=${SHEET_GID}&output=csv`;
 
-        let questionData = []; // [{q: 질문, h: 힌트}]
+        let questionData = [];
         let participants = [];
-        let currentState = 'init'; // init -> shuffling -> ready
+        let currentState = 'init'; 
         let finalIdx = null;
-        let lastSpeakerIdx = -1;
 
         const numEl = document.getElementById('number-display');
         const hintEl = document.getElementById('hint-display');
@@ -106,20 +148,16 @@
                 download: true,
                 complete: function(results) {
                     const data = results.data;
-                    // 참여자 명단 추출 (A1 셀 데이터 파싱)
                     if (data[0] && data[0][1]) {
                         participants = data[0][1].split(',').map(n => n.trim()).filter(n => n !== "");
                     }
-                    
-                    // 질문(B열)과 힌트(C열) 추출 (4행부터)
+                    // B열(질문), C열(힌트) 로드
                     questionData = data.slice(3)
                         .filter(row => row[1] && row[1].trim() !== "")
                         .map(row => ({
                             q: row[1].trim(),
-                            h: row[2] ? row[2].trim() : "???" 
+                            h: row[2] ? row[2].trim() : "#복선_없음" 
                         }));
-                    
-                    console.log("Loaded questions:", questionData.length);
                 }
             });
 
@@ -141,36 +179,30 @@
             btnEl.disabled = true;
             btnEl.innerText = 'Picking...';
             rerollBtn.style.display = 'none';
-            
-            numEl.classList.add('shuffling');
             hintEl.classList.remove('show');
+            numEl.style.opacity = "0.5";
 
             let count = 0;
-            const maxCount = 28; 
+            const maxCount = 20; 
             
             const shuffleEffect = () => {
-                // 랜덤 번호 애니메이션
                 const tempIdx = Math.floor(Math.random() * questionData.length);
                 numEl.innerText = (tempIdx + 1).toString().padStart(2, '0');
                 count++;
                 
                 if (count < maxCount) {
-                    const delay = count > 20 ? 60 + (count - 20) * 20 : 60;
-                    setTimeout(shuffleEffect, delay);
+                    setTimeout(shuffleEffect, 50);
                 } else {
-                    // 최종 확정
                     finalIdx = Math.floor(Math.random() * questionData.length);
                     numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
-                    
-                    // 힌트 텍스트 적용 (시트 C열 내용)
                     hintEl.innerText = questionData[finalIdx].h;
                     
-                    numEl.classList.remove('shuffling');
-                    hintEl.classList.add('show');
+                    numEl.style.opacity = "0.15"; // 숫자는 다시 흐리게
+                    hintEl.classList.add('show'); // 태그 등장
                     
                     currentState = 'ready';
                     btnEl.disabled = false;
-                    btnEl.innerText = 'Reveal Question';
+                    btnEl.innerText = 'Open Question';
                     rerollBtn.style.display = 'flex'; 
                 }
             };
@@ -178,36 +210,19 @@
         }
 
         function showResult() {
-            if (finalIdx === null) return;
-            
-            // 화자 랜덤 배정 (연속 중복 방지)
-            let speakerIdx;
-            if (participants.length > 1) {
-                do { speakerIdx = Math.floor(Math.random() * participants.length); } 
-                while (speakerIdx === lastSpeakerIdx);
-            } else {
-                speakerIdx = 0;
-            }
-            lastSpeakerIdx = speakerIdx;
-
-            // 오버레이 데이터 세팅
+            const pIdx = Math.floor(Math.random() * participants.length);
             document.getElementById('display-q').innerText = questionData[finalIdx].q;
-            document.getElementById('display-p').innerText = participants[speakerIdx] || "Anyone";
-            
-            // 화면 표시
+            document.getElementById('display-p').innerText = participants[pIdx] || "Guest";
             document.getElementById('result-overlay').style.display = 'flex';
         }
 
         function closeOverlay() {
             document.getElementById('result-overlay').style.display = 'none';
-            
-            // 초기 상태로 리셋
             numEl.innerText = "00";
-            hintEl.innerText = "";
+            numEl.style.opacity = "0.3";
             hintEl.classList.remove('show');
             currentState = 'init';
-            finalIdx = null;
-            btnEl.innerText = 'Pick a number';
+            btnEl.innerText = 'Shuffle';
             rerollBtn.style.display = 'none';
         }
 
