@@ -15,6 +15,9 @@
             --main-text: #ffffff;
             --surface: #111;
             --border: rgba(255,255,255,0.08);
+            /* 여백 시스템 정의 */
+            --header-h: 64px;
+            --footer-h: calc(86px + env(safe-area-inset-bottom));
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,109 +30,112 @@
             display: flex; 
             flex-direction: column; 
             overflow: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* [HEADER] */
+        /* [HEADER] 고정 높이로 기준점 설정 */
         .list-header { 
-            position: relative;
+            height: var(--header-h);
+            padding-top: env(safe-area-inset-top, 0);
             z-index: 2100;
-            padding-top: env(safe-area-inset-top, 0); 
             background: var(--bg);
+            flex-shrink: 0;
         }
         .header-top { 
             display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; height: 60px; 
+            padding: 0 24px; height: 100%; 
             border-bottom: 1px solid var(--border);
         }
-        .logo-img { height: 22px; filter: brightness(0) invert(1); }
-        .header-label { font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
+        .logo-img { height: 20px; filter: brightness(0) invert(1); }
+        .header-label { font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; }
 
-        /* [MAIN] 정밀 미들 정렬 레이아웃 */
+        /* [MAIN] 상하 여백의 균형을 맞춘 컨테이너 */
         main { 
             flex: 1; 
             position: relative; 
             display: flex; 
+            flex-direction: column;
             align-items: center; 
             justify-content: center; 
-            padding: 0 20px;
+            padding: 40px 24px; /* 최소 상하 여백 확보 */
         }
 
-        /* 배경 숫자: 절대 중앙 정렬 및 행간 보정 */
+        /* 배경 숫자: 시각적 중앙(Optical Center) 배치 */
         .visual-bg { 
             position: absolute; 
-            top: 50%; 
+            top: 48%; /* 물리적 중앙보다 살짝 위로 올려 헤더-푸터 사이의 균형 조절 */
             left: 50%;
             transform: translate(-50%, -50%); 
             z-index: 1; 
             pointer-events: none;
-            margin-top: -2dvh; /* 시각적 무게중심 상향 보정 */
         }
         #number-display { 
-            font-size: min(65vw, 450px); 
+            font-size: min(70vw, 500px); 
             font-weight: 900; 
             color: var(--sub-text); 
-            line-height: 0.8; /* 폰트 자체 상하 여백 제거 */
-            letter-spacing: -0.05em;
+            line-height: 0.75; 
+            letter-spacing: -0.06em;
         }
 
-        /* 힌트: 숫자 정중앙에 겹치도록 배치 */
+        /* 힌트 텍스트: 숫자 중심부에 안착 */
         #hint-display { 
             position: relative; 
             z-index: 10;
-            font-size: clamp(1.6rem, 7vw, 2.6rem); 
+            font-size: clamp(1.8rem, 8vw, 2.8rem); 
             font-weight: 900; 
             text-align: center;
             color: var(--accent);
             opacity: 0; 
-            transform: translateY(12px);
-            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            transform: translateY(15px);
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
             letter-spacing: -0.03em;
             word-break: keep-all;
+            max-width: 90%;
         }
         #hint-display.show { opacity: 1; transform: translateY(0); }
 
-        /* [FOOTER] */
+        /* [FOOTER] 버튼 영역의 높이를 명시적으로 선언하여 메인과의 여백 분리 */
         .footer-group { 
+            height: var(--footer-h);
             width: 100%;
-            padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
-            display: flex; justify-content: center; align-items: center; 
-            gap: 12px; z-index: 100;
+            padding: 0 24px calc(20px + env(safe-area-inset-bottom)); 
+            display: flex; justify-content: center; align-items: flex-start; /* 버튼이 너무 아래 붙지 않게 */
+            gap: 12px; 
+            z-index: 100;
+            flex-shrink: 0;
         }
         .draw-btn { 
-            flex: 1; max-width: 280px; height: 56px;
-            background: #fff; color: #000; border: none; border-radius: 28px; 
-            font-size: 14px; font-weight: 800; text-transform: uppercase; 
-            cursor: pointer; transition: transform 0.1s;
+            flex: 1; max-width: 300px; height: 58px;
+            background: #fff; color: #000; border: none; border-radius: 29px; 
+            font-size: 15px; font-weight: 800; text-transform: uppercase; 
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .draw-btn:active { transform: scale(0.97); }
         .reroll-btn { 
-            width: 56px; height: 56px; border-radius: 50%; 
+            width: 58px; height: 58px; border-radius: 50%; 
             background: var(--surface); border: 1px solid var(--border); 
             display: none; align-items: center; justify-content: center;
         }
 
         /* [RESULT OVERLAY] */
         #result-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.96); 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.97); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 80px 24px 24px; z-index: 2000; backdrop-filter: blur(12px);
+            padding: 24px; z-index: 3000; backdrop-filter: blur(15px);
         }
         .res-card { 
-            background: var(--surface); width: 100%; max-width: 420px; 
-            padding: 50px 24px; border-radius: 32px; 
+            background: var(--surface); width: 100%; max-width: 440px; 
+            padding: 60px 24px; border-radius: 40px; 
             border: 1px solid var(--border); text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
         }
-        .res-label { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 0.25em; margin-bottom: 20px; text-transform: uppercase; }
-        .res-question { font-size: 1.5rem; font-weight: 700; line-height: 1.6; margin-bottom: 45px; word-break: keep-all; color: #fff; }
-        .speaker-tag { padding: 10px 24px; background: #000; border-radius: 25px; font-size: 15px; font-weight: 600; border: 1px solid var(--border); color: #fff; }
+        .res-label { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 0.3em; margin-bottom: 24px; text-transform: uppercase; }
+        .res-question { font-size: 1.6rem; font-weight: 700; line-height: 1.6; margin-bottom: 50px; word-break: keep-all; color: #fff; }
+        .speaker-tag { padding: 12px 28px; background: #000; border-radius: 30px; font-size: 16px; font-weight: 600; border: 1px solid var(--border); color: #fff; }
     </style>
 </head>
 <body>
     <header class="list-header">
         <div class="header-top">
-            <a href="index.html" style="display:flex; align-items:center;"><img src="images/logo.png" alt="Stylus" class="logo-img"></a>
+            <a href="index.html" style="display:flex;"><img src="images/logo.png" alt="Stylus" class="logo-img"></a>
             <div class="header-label">Ice Breaker</div>
         </div>
     </header>
@@ -153,7 +159,7 @@
             <div class="res-label">Speaker</div>
             <div class="speaker-tag" id="display-p">...</div>
         </div>
-        <p style="margin-top:40px; font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:0.12em; text-transform: uppercase;">Tap anywhere to close</p>
+        <p style="margin-top:40px; font-size:11px; color:rgba(255,255,255,0.25); letter-spacing:0.15em; text-transform: uppercase;">Tap to close</p>
     </div>
 
     <script>
@@ -199,7 +205,7 @@
             let count = 0;
             const shuffle = setInterval(() => {
                 numEl.innerText = Math.floor(Math.random() * questionData.length + 1).toString().padStart(2, '0');
-                if (++count > 18) {
+                if (++count > 22) {
                     clearInterval(shuffle);
                     finalIdx = Math.floor(Math.random() * questionData.length);
                     numEl.innerText = (finalIdx + 1).toString().padStart(2, '0');
@@ -211,7 +217,7 @@
                     btn.innerText = 'Open Question';
                     document.getElementById('reroll-btn').style.display = 'flex';
                 }
-            }, 65);
+            }, 60);
         }
 
         function showResult() {
