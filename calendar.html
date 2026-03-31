@@ -31,7 +31,7 @@
         }
 
         /* ============================================================
-           2. 원본 HEADER & FOOTER CSS
+           2. HEADER & FOOTER CSS
            ============================================================ */
         .list-header {
             position: sticky; top: 0; z-index: 50; background: var(--bg);
@@ -45,14 +45,7 @@
         }
         .logo-img { height: 28px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.95; display: block; }
         .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
-        .icon-btn {
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; background: none; border: none; color: #ffffff; cursor: pointer;
-            border-radius: 50%; transition: color 0.15s; -webkit-tap-highlight-color: transparent; padding: 0;
-        }
-        .icon-btn svg { width: 20px; height: 20px; display: block; }
-        .icon-btn:active { color: var(--accent); }
-
+        
         .list-footer {
             padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px);
             margin-top: 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px;
@@ -64,7 +57,6 @@
             border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
         }
         .footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
-        .footer-insta:active { color: var(--text); }
 
         /* ============================================================
            3. CALENDAR CSS
@@ -137,7 +129,6 @@
         .input-label { font-size: 11px; font-weight: 500; color: var(--sub); margin-bottom: 6px; display: block; padding-left: 4px; }
 
         .request-sheet-submit { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; margin-bottom: 8px; }
-        .request-sheet-submit:active { opacity: 0.8; }
         .request-sheet-delete { width: 100%; background: transparent; color: #ff4d4d; border: 1px solid rgba(255,77,77,0.3); border-radius: 12px; padding: 16px; font-size: 14px; font-weight: 500; cursor: pointer; }
     </style>
 </head>
@@ -229,6 +220,37 @@
                 events: fetchEvents
             });
             calendar.render();
+
+            // ★ 모바일 스와이프 기능 추가
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+
+            calendarEl.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            calendarEl.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+
+                // 세로 스크롤보다 가로 움직임이 크고, 최소 50px 이상 밀었을 때만 스와이프 작동
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX < 0) {
+                        calendar.next(); // 왼쪽으로 스와이프 -> 다음 달
+                    } else {
+                        calendar.prev(); // 오른쪽으로 스와이프 -> 이전 달
+                    }
+                }
+            }
         });
 
         async function fetchEvents(info, successCallback) {
