@@ -30,32 +30,39 @@
         }
 
         /* ============================================================
-           2. HEADER (기존 디자인 완벽 복구 - 좌측 정렬 및 간격 유지)
+           2. HEADER (원본 CSS 그대로 100% 복구)
            ============================================================ */
         .list-header {
             position: sticky; top: 0; z-index: 50; background: var(--bg);
             padding-top: env(safe-area-inset-top, 0);
             box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
+            will-change: transform; transform: translateZ(0);
         }
         .header-top {
-            display: flex; align-items: center; justify-content: flex-start; /* 좌측 정렬 복구 */
+            display: flex; align-items: center; justify-content: space-between;
             padding: 12px 16px 10px; height: 56px;
         }
+        .logo-img { height: 28px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.95; display: block; }
         .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
+        .icon-btn {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; background: none; border: none; color: #ffffff ; cursor: pointer;
+            border-radius: 50%; transition: color 0.15s; -webkit-tap-highlight-color: transparent; padding: 0;
+        }
+        .icon-btn svg { width: 20px; height: 20px; display: block; }
+        .icon-btn:active, .icon-btn.active { color: var(--accent); }
 
         /* ============================================================
            3. CALENDAR (레이아웃 정렬 완벽 매칭)
            ============================================================ */
-        .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; }
+        .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; min-height: calc(100vh - 200px); }
 
         .fc { --fc-border-color: transparent; background: transparent; }
         .fc-theme-standard .fc-scrollgrid { border: none !important; }
         .fc-scrollgrid-sync-table { border-collapse: separate; border-spacing: 0; }
 
-        /* 가로선 유지 */
         .fc td, .fc th { border: none !important; border-bottom: 1px solid var(--border) !important; }
         
-        /* 상단 툴바 */
         .fc .fc-toolbar { padding: 24px 0 16px; margin: 0 !important; }
         .fc .fc-toolbar-title { font-size: 18px !important; font-weight: 700; letter-spacing: -0.02em; }
         .fc .fc-button-primary { 
@@ -64,30 +71,22 @@
         }
         .fc .fc-button-primary:active { color: var(--accent) !important; background: transparent !important; }
 
-        /* 요일 헤더 - 중앙 정렬 */
         .fc .fc-col-header-cell-cushion { 
             display: inline-block; width: 100%; text-align: center;
             color: var(--sub) !important; font-size: 11px; font-weight: 500; 
             letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 0 !important; 
         }
 
-        /* 날짜 숫자 상단 영역 - 중앙 정렬 보정 */
-        .fc .fc-daygrid-day-top {
-            display: flex; justify-content: center; /* 요일과 일치하도록 중앙 정렬 */
-        }
+        .fc .fc-daygrid-day-top { display: flex; justify-content: center; }
         
-        /* 날짜 숫자 */
         .fc .fc-daygrid-day-number { 
             font-size: 14px; font-weight: 400; color: var(--text) !important; 
             padding: 12px 8px !important; opacity: 0.9; text-decoration: none;
         }
         .fc .fc-day-other .fc-daygrid-day-number { opacity: 0.3; }
-
-        /* 오늘 날짜 */
         .fc .fc-day-today { background: transparent !important; }
         .fc .fc-day-today .fc-daygrid-day-number { color: var(--accent) !important; font-weight: 700; }
 
-        /* 일정 표시 (오렌지 도트 스타일) */
         .fc-event { 
             background: transparent !important; border: none !important; 
             padding: 2px 8px 6px !important; cursor: pointer;
@@ -101,27 +100,22 @@
             content: ''; display: block; width: 4px; height: 4px; 
             border-radius: 50%; background: var(--accent); flex-shrink: 0;
         }
-
         .fc-daygrid-day-events { margin-bottom: 8px !important; }
 
         /* ============================================================
-           4. BOTTOM SHEET MODAL (입력 항목 수정)
+           4. BOTTOM SHEET MODAL
            ============================================================ */
         .request-bottom-sheet {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 100;
-            display: flex; flex-direction: column; justify-content: flex-end;
+            background: rgba(0,0,0,0.6); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end;
             opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         .request-bottom-sheet.open { opacity: 1; pointer-events: auto; }
         
         .sheet-content {
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px 28px 0 0;
-            padding: 32px 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px 28px 0 0;
+            padding: 32px 24px calc(env(safe-area-inset-bottom, 0px) + 24px); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
             transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .request-bottom-sheet.open .sheet-content { transform: translateY(0); }
@@ -129,11 +123,9 @@
         .request-sheet-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
         .request-sheet-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
         .request-sheet-subtitle { font-size: 13px; color: var(--accent); font-weight: 500; }
-        
         .close-btn { background: none; border: none; color: var(--sub); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
 
         .request-sheet-body { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        
         .time-row { display: flex; gap: 12px; }
         .time-row > div { flex: 1; }
 
@@ -144,7 +136,6 @@
         }
         .request-sheet-input:focus { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent); }
         .request-sheet-input::placeholder { color: var(--sub); font-weight: 400; }
-        
         input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; cursor: pointer; }
 
         .input-label { font-size: 11px; font-weight: 500; color: var(--sub); margin-bottom: 6px; display: block; padding-left: 4px; }
@@ -155,11 +146,32 @@
             cursor: pointer; transition: opacity 0.2s; margin-bottom: 8px;
         }
         .request-sheet-submit:active { opacity: 0.8; }
-        
         .request-sheet-delete {
             width: 100%; background: transparent; color: #ff4d4d; border: 1px solid rgba(255,77,77,0.3);
             border-radius: 12px; padding: 16px; font-size: 14px; font-weight: 500; cursor: pointer;
         }
+
+        /* ============================================================
+           5. FOOTER (원본 CSS 그대로 100% 복구)
+           ============================================================ */
+        .list-footer {
+            padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px);
+            margin-top: 0; border-top: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .footer-desc {
+            font-size: 12px; font-weight: 300; color: var(--sub); line-height: 1.85; 
+            text-align: center; letter-spacing: 0.01em; font-style: italic;
+        }
+        .footer-insta {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500;
+            letter-spacing: 0.04em; line-height: 1; transition: color 0.15s;
+            border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
+        }
+        .footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
+        .footer-insta:active { color: var(--text); }
+
     </style>
 </head>
 <body>
@@ -167,12 +179,23 @@
     <header class="list-header">
         <div class="header-top">
             <div class="logo-text">STYLUS VINYL</div>
+            <a href="index.html" class="icon-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </a>
         </div>
     </header>
 
     <main class="calendar-main">
         <div id="calendar"></div>
     </main>
+
+    <footer class="list-footer">
+        <div class="footer-desc">Shared Vinyl Listening Schedule</div>
+        <a href="#" class="footer-insta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            Instagram
+        </a>
+    </footer>
 
     <div class="request-bottom-sheet" id="modal">
         <div class="sheet-content">
@@ -217,7 +240,6 @@
     </div>
 
     <script>
-        // 전달해주신 GAS URL 적용
         const API_URL = 'https://script.google.com/macros/s/AKfycbxmAQDzoB_apWLmq7YwAZdobLoCLG--SxYRDTD_d0tCFsvx-y7ijBdYf_KDGV9IFIAO2w/exec'; 
 
         let calendar;
