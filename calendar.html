@@ -48,7 +48,7 @@
         .footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
 
         /* ============================================================
-           3. CALENDAR CSS
+           3. CALENDAR CSS (가독성 개선 디자인 적용)
            ============================================================ */
         .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; min-height: calc(100vh - 200px); position: relative; }
 
@@ -56,23 +56,36 @@
         .fc-theme-standard .fc-scrollgrid { border: none !important; }
         .fc-scrollgrid-sync-table { border-collapse: separate; border-spacing: 0; }
         .fc td, .fc th { border: none !important; border-bottom: 1px solid var(--border) !important; }
+        
         .fc .fc-toolbar { padding: 24px 0 16px; margin: 0 !important; }
-        .fc .fc-toolbar-title { font-size: 18px !important; font-weight: 700; letter-spacing: -0.02em; }
+        .fc .fc-toolbar-title { font-size: 19px !important; font-weight: 700; letter-spacing: 0.02em; }
         .fc .fc-button-primary { background: transparent !important; border: none !important; color: var(--sub) !important; padding: 0 8px !important; box-shadow: none !important; }
+        
         .fc .fc-col-header-cell-cushion { display: inline-block; width: 100%; text-align: center; color: var(--sub) !important; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 0 !important; }
         .fc .fc-daygrid-day-top { display: flex; justify-content: center; }
         .fc .fc-daygrid-day-number { font-size: 14px; font-weight: 400; color: var(--text) !important; padding: 12px 8px !important; opacity: 0.9; text-decoration: none; }
         .fc .fc-day-today { background: transparent !important; }
         .fc .fc-day-today .fc-daygrid-day-number { color: var(--accent) !important; font-weight: 700; }
-        .fc-daygrid-event-dot { display: none !important; } 
-        .fc-event { background: transparent !important; border: none !important; padding: 2px 8px 6px !important; cursor: pointer; }
-        .fc-event-main { display: flex; align-items: center; justify-content: flex-start; gap: 6px; color: var(--sub) !important; font-size: 11px !important; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .fc-event-main::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+        
+        /* +X more 버튼 디자인 */
+        .fc-daygrid-more-link { font-size: 11px; color: var(--sub) !important; font-weight: 500; margin-left: 4px; text-decoration: none !important; }
+
+        /* 이벤트 블록 자체 여백 완화 */
+        .fc-daygrid-event-harness { margin-bottom: 3px !important; }
+        .fc-event { background: transparent !important; border: none !important; cursor: pointer; padding: 0 !important; }
+        .fc-event-main { color: inherit !important; font-size: inherit !important; padding: 0 !important; }
+
+        /* ★ 가독성 극대화 커스텀 이벤트 UI */
+        .custom-event { display: flex; align-items: flex-start; gap: 5px; padding: 2px 4px; overflow: hidden; width: 100%; }
+        .custom-event-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+        .custom-event-text { display: flex; flex-direction: column; overflow: hidden; width: calc(100% - 10px); }
+        .custom-event-time { font-size: 10px; color: var(--accent); line-height: 1; margin-bottom: 3px; font-weight: 600; }
+        .custom-event-title { font-size: 11px; color: var(--text); font-weight: 400; line-height: 1.2; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 100%; }
 
         /* ============================================================
-           4. BOTTOM SHEET MODAL CSS
+           4. BOTTOM SHEET MODALS
            ============================================================ */
-        .request-bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .request-bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .request-bottom-sheet.open { opacity: 1; pointer-events: auto; }
         .sheet-content { background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px 28px 0 0; padding: 32px 24px calc(env(safe-area-inset-bottom, 0px) + 24px); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8); transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .request-bottom-sheet.open .sheet-content { transform: translateY(0); }
@@ -80,26 +93,34 @@
         .request-sheet-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
         .request-sheet-subtitle { font-size: 13px; color: var(--accent); font-weight: 500; }
         .close-btn { background: none; border: none; color: var(--sub); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
+
+        /* 일별 목록 모달 (Daily List) 전용 스타일 */
+        .daily-event-list { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; margin-bottom: 24px; }
+        .daily-event-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: all 0.2s; }
+        .daily-event-item:active { background: rgba(255,255,255,0.08); border-color: var(--accent); }
+        .daily-event-time { font-size: 13px; color: var(--accent); font-weight: 600; letter-spacing: 0.02em; }
+        .daily-event-title { font-size: 16px; color: var(--text); font-weight: 500; line-height: 1.4; word-break: keep-all; }
+        .daily-event-author { font-size: 12px; color: var(--sub); margin-top: 4px; }
+        .daily-empty { text-align: center; padding: 40px 0; color: var(--sub); font-size: 14px; font-weight: 500; }
+
+        /* 단일 조회 및 폼 입력 스타일 */
         .request-sheet-body { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
         .time-row { display: flex; gap: 12px; }
         .time-row > div { flex: 1; }
         .request-sheet-input { width: 100%; background: rgba(255, 255, 255, 0.06); border: 1px solid transparent; border-radius: 12px; color: var(--text); font-size: 15px; padding: 16px; outline: none; font-family: var(--font); transition: all 0.2s; -webkit-appearance: none; }
         .request-sheet-input:focus { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent); }
         .input-label { font-size: 11px; font-weight: 500; color: var(--sub); margin-bottom: 6px; display: block; padding-left: 4px; }
-        .request-sheet-submit { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; margin-bottom: 8px; }
-
-        /* 조회 팝업 전용 스타일 */
+        .request-sheet-submit { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        
         .view-details { display: flex; flex-direction: column; gap: 18px; margin-bottom: 30px; }
         .view-row { display: flex; flex-direction: column; gap: 6px; }
         .view-label { font-size: 11px; font-weight: 500; color: var(--sub); text-transform: uppercase; letter-spacing: 0.05em; }
         .view-value { font-size: 16px; color: var(--text); font-weight: 400; line-height: 1.5; word-break: keep-all; }
         
-        /* 버튼 그룹 (수정 / 삭제 나란히 배치) */
         .btn-group-row { display: flex; gap: 12px; }
         .btn-group-row button { flex: 1; margin: 0; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
         .btn-edit { background: var(--accent); color: #fff; border: none; }
         .btn-delete { background: transparent; border: 1px solid rgba(255,77,77,0.3); color: #ff4d4d; }
-        .btn-group-row button:active { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -129,8 +150,25 @@
       </a>
     </footer>
 
-    <div class="request-bottom-sheet" id="view-modal">
-        <div class="sheet-content">
+    <div class="request-bottom-sheet" id="daily-modal" onclick="if(event.target===this) window.closeDailyModal()">
+        <div class="sheet-content" onclick="event.stopPropagation()">
+            <div class="request-sheet-header">
+                <div>
+                    <div class="request-sheet-subtitle" id="dl-date">DATE</div>
+                    <div class="request-sheet-title">Schedules</div>
+                </div>
+                <button class="close-btn" onclick="window.closeDailyModal()">×</button>
+            </div>
+            
+            <div class="daily-event-list" id="daily-event-list">
+                </div>
+
+            <button class="request-sheet-submit" onclick="window.openEditModalFromDaily()">+ ADD SCHEDULE</button>
+        </div>
+    </div>
+
+    <div class="request-bottom-sheet" id="view-modal" onclick="if(event.target===this) window.closeViewModal()">
+        <div class="sheet-content" onclick="event.stopPropagation()">
             <div class="request-sheet-header">
                 <div>
                     <div class="request-sheet-subtitle" id="v-date">DATE</div>
@@ -161,8 +199,8 @@
         </div>
     </div>
 
-    <div class="request-bottom-sheet" id="edit-modal">
-        <div class="sheet-content">
+    <div class="request-bottom-sheet" id="edit-modal" onclick="if(event.target===this) window.closeEditModal()">
+        <div class="sheet-content" onclick="event.stopPropagation()">
             <div class="request-sheet-header">
                 <div>
                     <div class="request-sheet-subtitle" id="m-date">DATE</div>
@@ -203,6 +241,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
+        // 기존 파이어베이스 연결 설정 유지
         const firebaseConfig = {
             apiKey: "AIzaSyCrI2SCAJ0SlpXR4o8MDJW1rgwqZ6GNlu0",
             authDomain: "stylus-b4f6f.firebaseapp.com",
@@ -218,7 +257,7 @@
 
         let calendar;
         window.selectedDate = null;
-        window.currentSelectedEvent = null; // 선택된 이벤트 데이터를 임시 저장하는 전역 변수
+        window.currentSelectedEvent = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
@@ -229,12 +268,47 @@
                 contentHeight: 'auto',
                 fixedWeekCount: false,
                 displayEventTime: false,
+                dayMaxEvents: 2, // 3개 이상 등록 시 '+X more' 표시로 UI 보호
+
+                // ★ 개선 4: 달력 헤더 포맷을 2026.04 형태로 강제 수정
+                datesSet: function(info) {
+                    const titleEl = document.querySelector('.fc-toolbar-title');
+                    if (titleEl) {
+                        const date = info.view.currentStart;
+                        const y = date.getFullYear();
+                        const m = String(date.getMonth() + 1).padStart(2, '0');
+                        titleEl.innerText = `${y}.${m}`;
+                    }
+                },
+
+                // ★ 개선 3: 가독성을 위해 캘린더 내 이벤트 블록 커스텀 렌더링
+                eventContent: function(arg) {
+                    return {
+                        html: `
+                        <div class="custom-event">
+                            <div class="custom-event-dot"></div>
+                            <div class="custom-event-text">
+                                <span class="custom-event-time">${arg.event.extendedProps.start_time}</span>
+                                <span class="custom-event-title">${arg.event.extendedProps.content}</span>
+                            </div>
+                        </div>`
+                    };
+                },
                 
-                // 빈 날짜 클릭 시 -> 바로 등록(Add) 모달 열기
-                dateClick: (info) => window.openAddModal(info.dateStr),
+                // 빈 날짜 클릭 시 -> 해당 날짜의 Daily List 팝업 열기
+                dateClick: (info) => window.openDailyModal(info.dateStr),
                 
-                // 등록된 이벤트 클릭 시 -> 조회(View) 모달 열기
-                eventClick: (info) => window.openViewModal(info.event),
+                // 기존 이벤트 클릭 시 -> 해당 날짜의 Daily List 팝업 열기 (UX 통일 및 다중 일정 추가 가능하도록)
+                eventClick: (info) => window.openDailyModal(info.event.startStr.split('T')[0]),
+
+                // +1 more 링크 클릭 시 -> 기본 팝업 대신 Daily List 모달로 유도
+                moreLinkClick: function(info) {
+                    const y = info.date.getFullYear();
+                    const m = String(info.date.getMonth() + 1).padStart(2, '0');
+                    const d = String(info.date.getDate()).padStart(2, '0');
+                    window.openDailyModal(`${y}-${m}-${d}`);
+                    return "function";
+                },
                 
                 events: async function(info, successCallback, failureCallback) {
                     try {
@@ -268,26 +342,51 @@
             }, { passive: true });
         });
 
-        // 1. 등록 모달 열기 (빈 날짜 클릭 시)
-        window.openAddModal = function(dateStr) {
+        // ==========================================
+        // ★ 개선 2: 프로세스 함수 분리 (Daily -> View -> Edit)
+        // ==========================================
+
+        // 1. 일별 목록(Daily) 열기
+        window.openDailyModal = function(dateStr) {
             window.selectedDate = dateStr;
-            document.getElementById('m-title-text').innerText = "Add Schedule";
-            document.getElementById('m-id').value = '';
-            document.getElementById('m-start').value = '19:00';
-            document.getElementById('m-end').value = '21:00';
-            document.getElementById('m-content').value = '';
-            document.getElementById('m-author').value = '';
-            document.getElementById('m-date').innerText = dateStr;
+            document.getElementById('dl-date').innerText = dateStr.replace(/-/g, '.');
             
-            document.getElementById('edit-modal').classList.add('open');
+            const listContainer = document.getElementById('daily-event-list');
+            listContainer.innerHTML = '';
+
+            // 선택한 날짜에 해당하는 일정만 필터링
+            const events = calendar.getEvents().filter(e => e.startStr.split('T')[0] === dateStr);
+            
+            if (events.length === 0) {
+                listContainer.innerHTML = '<div class="daily-empty">등록된 일정이 없습니다.</div>';
+            } else {
+                // 시간순 정렬
+                events.sort((a, b) => a.extendedProps.start_time.localeCompare(b.extendedProps.start_time));
+                
+                events.forEach(e => {
+                    const el = document.createElement('div');
+                    el.className = 'daily-event-item';
+                    el.onclick = () => {
+                        window.closeDailyModal();
+                        setTimeout(() => window.openViewModal(e), 200); // 닫히는 애니메이션 후 뷰 열기
+                    };
+                    el.innerHTML = `
+                        <div class="daily-event-time">${e.extendedProps.start_time} - ${e.extendedProps.end_time}</div>
+                        <div class="daily-event-title">${e.extendedProps.content}</div>
+                        <div class="daily-event-author">By. ${e.extendedProps.author}</div>
+                    `;
+                    listContainer.appendChild(el);
+                });
+            }
+            
+            document.getElementById('daily-modal').classList.add('open');
         };
 
-        // 2. 조회 모달 열기 (일정 클릭 시)
+        // 2. 단일 조회(View) 열기
         window.openViewModal = function(event) {
-            window.currentSelectedEvent = event; // 수정이나 삭제를 위해 전역 변수에 저장
+            window.currentSelectedEvent = event; 
             
-            // 팝업 내용 채우기
-            document.getElementById('v-date').innerText = event.startStr.split('T')[0];
+            document.getElementById('v-date').innerText = event.startStr.split('T')[0].replace(/-/g, '.');
             document.getElementById('v-time').innerText = `${event.extendedProps.start_time} - ${event.extendedProps.end_time}`;
             document.getElementById('v-content').innerText = event.extendedProps.content;
             document.getElementById('v-author').innerText = event.extendedProps.author;
@@ -295,30 +394,49 @@
             document.getElementById('view-modal').classList.add('open');
         };
 
-        // 3. 조회 모달에서 'EDIT' 버튼 클릭 시 작동
+        // 3. 일별 목록에서 'ADD' 버튼 클릭 시
+        window.openEditModalFromDaily = function() {
+            window.closeDailyModal();
+            setTimeout(() => {
+                window.currentSelectedEvent = null; // 신규 등록 모드
+                document.getElementById('m-title-text').innerText = "Add Schedule";
+                document.getElementById('m-id').value = '';
+                document.getElementById('m-start').value = '19:00';
+                document.getElementById('m-end').value = '21:00';
+                document.getElementById('m-content').value = '';
+                document.getElementById('m-author').value = '';
+                document.getElementById('m-date').innerText = window.selectedDate.replace(/-/g, '.');
+                
+                document.getElementById('edit-modal').classList.add('open');
+            }, 200);
+        };
+
+        // 4. 조회 모달에서 'EDIT' 버튼 클릭 시
         window.goToEdit = function() {
-            window.closeViewModal(); // 조회 모달 닫기
+            window.closeViewModal(); 
             
-            const event = window.currentSelectedEvent;
-            window.selectedDate = event.startStr.split('T')[0];
-            
-            // 수정 모달에 기존 데이터 채우기
-            document.getElementById('m-title-text').innerText = "Edit Schedule";
-            document.getElementById('m-id').value = event.id;
-            document.getElementById('m-start').value = event.extendedProps.start_time;
-            document.getElementById('m-end').value = event.extendedProps.end_time;
-            document.getElementById('m-content').value = event.extendedProps.content;
-            document.getElementById('m-author').value = event.extendedProps.author;
-            document.getElementById('m-date').innerText = window.selectedDate;
-            
-            document.getElementById('edit-modal').classList.add('open'); // 수정 모달 열기
+            setTimeout(() => {
+                const event = window.currentSelectedEvent;
+                document.getElementById('m-title-text').innerText = "Edit Schedule";
+                document.getElementById('m-id').value = event.id;
+                document.getElementById('m-start').value = event.extendedProps.start_time;
+                document.getElementById('m-end').value = event.extendedProps.end_time;
+                document.getElementById('m-content').value = event.extendedProps.content;
+                document.getElementById('m-author').value = event.extendedProps.author;
+                document.getElementById('m-date').innerText = window.selectedDate.replace(/-/g, '.');
+                
+                document.getElementById('edit-modal').classList.add('open');
+            }, 200);
         };
 
         // 모달 닫기 함수들
+        window.closeDailyModal = function() { document.getElementById('daily-modal').classList.remove('open'); };
         window.closeViewModal = function() { document.getElementById('view-modal').classList.remove('open'); };
         window.closeEditModal = function() { document.getElementById('edit-modal').classList.remove('open'); };
 
-        // 4. 저장 및 수정 처리
+        // ==========================================
+        // ★ 파이어베이스 저장 및 삭제 로직
+        // ==========================================
         window.saveEvent = async function() {
             const eventId = document.getElementById('m-id').value;
             const payload = {
@@ -349,7 +467,6 @@
             }
         };
 
-        // 5. 조회 모달에서 삭제 처리
         window.deleteFromView = async function() {
             if(!confirm("이 일정을 삭제하시겠습니까?")) return;
             
