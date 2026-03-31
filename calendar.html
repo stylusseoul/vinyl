@@ -2,129 +2,166 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>STYLUS VINYL — SCHEDULE</title>
     
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        /* ============================================================
+           1. 기존 STYLUS VINYL 변수 및 기본 설정
+           ============================================================ */
         :root {
-            --bg: #080808;
+            --bg:      #080808;
             --surface: #111;
-            --border: rgba(255,255,255,0.05);
-            --text: #fff;
-            --sub: rgba(255,255,255,0.38);
-            --sub2: rgba(255,255,255,0.18);
-            --accent: #EF7C1C;
-            --font: 'Inter', 'Pretendard', -apple-system, sans-serif;
+            --border:  rgba(255,255,255,0.05);
+            --text:    #fff;
+            --sub:     rgba(255,255,255,0.38);
+            --sub2:    rgba(255,255,255,0.18);
+            --accent:  #EF7C1C;
+            --font:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { 
-            background: var(--bg); color: var(--text); 
-            font-family: var(--font); -webkit-font-smoothing: antialiased;
-            overflow-x: hidden; height: 100%;
+            background: var(--bg); color: var(--text); font-family: var(--font);
+            -webkit-font-smoothing: antialiased; overscroll-behavior: none; min-height: 100dvh;
         }
 
-        /* [1] HEADER: 홈 버튼 제거, 타이틀 중앙 정렬 스타일 */
+        /* ============================================================
+           2. HEADER (기존 list-header 디자인 100% 이식)
+           ============================================================ */
         .list-header {
-            position: sticky; top: 0; z-index: 100;
-            background: var(--bg);
+            position: sticky; top: 0; z-index: 50; background: var(--bg);
             padding-top: env(safe-area-inset-top, 0);
             box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
         }
         .header-top {
-            display: flex; align-items: center; justify-content: center; /* 중앙 정렬 */
+            display: flex; align-items: center; justify-content: center;
             padding: 12px 16px 10px; height: 56px;
         }
-        .logo-text {
-            font-size: 15px; font-weight: 800; letter-spacing: 0.18em; 
-            color: var(--text); text-transform: uppercase;
-        }
+        .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
 
-        /* [2] 캘린더 메인 컨테이너 */
-        .calendar-main { padding: 20px 16px; max-width: 1000px; margin: 0 auto; }
+        /* ============================================================
+           3. CALENDAR (투박한 표 디자인 제거, 리스트 감성 주입)
+           ============================================================ */
+        .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; }
 
-        /* [3] FullCalendar 커스텀 (디자인 고도화) */
-        .fc { --fc-border-color: var(--border); }
+        .fc { --fc-border-color: transparent; background: transparent; }
         .fc-theme-standard .fc-scrollgrid { border: none !important; }
-        .fc td, .fc th { border: 0.5px solid var(--border) !important; }
+        .fc-scrollgrid-sync-table { border-collapse: separate; border-spacing: 0; }
 
-        /* 툴바: 월 이동 버튼 미니멀화 */
-        .fc .fc-toolbar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 4px 15px; margin-bottom: 10px !important; 
-        }
-        .fc .fc-toolbar-title { 
-            font-size: 14px !important; font-weight: 700; 
-            letter-spacing: 0.05em; text-transform: uppercase; 
-        }
+        /* 가로선만 얇게 */
+        .fc td, .fc th { border: none !important; border-bottom: 1px solid var(--border) !important; }
         
-        /* 이전/다음 버튼 디자인 */
+        /* 상단 툴바 */
+        .fc .fc-toolbar { padding: 24px 0 16px; margin: 0 !important; }
+        .fc .fc-toolbar-title { font-size: 18px !important; font-weight: 700; letter-spacing: -0.02em; }
         .fc .fc-button-primary { 
-            background: var(--surface) !important; border: 1px solid var(--border) !important; 
-            color: var(--text) !important; border-radius: 8px !important; 
-            padding: 5px 10px !important; font-size: 11px !important;
+            background: transparent !important; border: none !important; color: var(--sub) !important; 
+            padding: 0 8px !important; box-shadow: none !important; transition: color 0.2s;
         }
-        .fc .fc-button-primary:active { opacity: 0.6; }
-        
-        /* 날짜 및 요일 스타일 */
+        .fc .fc-button-primary:active { color: var(--accent) !important; background: transparent !important; }
+
+        /* 요일 헤더 */
         .fc .fc-col-header-cell-cushion { 
-            color: var(--sub) !important; font-size: 11px; 
-            text-decoration: none; padding: 12px 0 !important; 
+            color: var(--sub) !important; font-size: 11px; font-weight: 500; 
+            letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 0 !important; 
         }
+
+        /* 날짜 숫자 */
         .fc .fc-daygrid-day-number { 
-            color: var(--sub) !important; font-size: 12px; 
-            font-weight: 300; padding: 10px !important; text-decoration: none; 
+            font-size: 14px; font-weight: 400; color: var(--text) !important; 
+            padding: 12px 8px !important; width: 100%; text-align: left; opacity: 0.9;
         }
-        .fc .fc-day-today { background: rgba(255,255,255,0.03) !important; }
-        .fc .fc-day-today .fc-daygrid-day-number { color: var(--accent) !important; font-weight: 800; }
+        .fc .fc-day-other .fc-daygrid-day-number { opacity: 0.3; }
 
-        /* 이벤트 디자인 */
+        /* 오늘 날짜 */
+        .fc .fc-day-today { background: transparent !important; }
+        .fc .fc-day-today .fc-daygrid-day-number { color: var(--accent) !important; font-weight: 700; }
+
+        /* 일정 표시 (오렌지 도트 스타일) */
         .fc-event { 
-            background: rgba(239, 124, 28, 0.08) !important; border: none !important; 
-            border-left: 2px solid var(--accent) !important; border-radius: 0 !important;
-            margin: 2px 4px !important; padding: 2px 4px !important;
+            background: transparent !important; border: none !important; 
+            padding: 2px 8px 6px !important; cursor: pointer;
         }
-        .fc-event-main { color: var(--text) !important; font-size: 10px !important; font-weight: 500; }
-
-        /* [4] 모달: 하단 시트 스타일 */
-        #modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000; align-items: flex-end; 
+        .fc-event-main { 
+            display: flex; align-items: center; gap: 6px; 
+            color: var(--sub) !important; font-size: 11px !important; font-weight: 400;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        #modal.active { display: flex; }
-        .modal-content {
-            background: #161616; width: 100%; border-radius: 28px 28px 0 0;
-            padding: 32px 24px calc(env(safe-area-inset-bottom) + 32px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        .fc-event-main::before { 
+            content: ''; display: block; width: 4px; height: 4px; 
+            border-radius: 50%; background: var(--accent); flex-shrink: 0;
         }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .modal-content h3 { font-size: 17px; margin-bottom: 20px; font-weight: 600; color: var(--text); }
-        .input-group { display: flex; gap: 12px; margin-bottom: 12px; }
-        .modal-content input {
-            width: 100%; background: rgba(255,255,255,0.06); border: 1px solid transparent;
-            border-radius: 12px; color: #fff; padding: 16px; font-size: 15px; outline: none; font-family: var(--font);
+        .fc-daygrid-day-events { margin-bottom: 8px !important; }
+
+        /* ============================================================
+           4. BOTTOM SHEET MODAL (Request Sheet 완벽 복구)
+           ============================================================ */
+        .request-bottom-sheet {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 100;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-        .modal-content input:focus { border: 1px solid var(--accent); background: rgba(255,255,255,0.1); }
-        .label-small { font-size: 11px; color: var(--sub); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+        .request-bottom-sheet.open { opacity: 1; pointer-events: auto; }
+        
+        .sheet-content {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px 28px 0 0;
+            padding: 32px 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+            transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .request-bottom-sheet.open .sheet-content { transform: translateY(0); }
 
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
-        .btn-save { background: var(--accent); color: #fff; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .btn-close { background: var(--sub2); color: #fff; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .btn-del { background: transparent; color: #ff4d4d; padding: 10px; border: none; font-size: 13px; cursor: pointer; margin-top: 5px; }
+        .request-sheet-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .request-sheet-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .request-sheet-subtitle { font-size: 13px; color: var(--accent); font-weight: 500; }
+        
+        .close-btn { background: none; border: none; color: var(--sub); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
 
+        .request-sheet-body { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        
+        .time-row { display: flex; gap: 12px; }
+        .time-row > div { flex: 1; }
+
+        .request-sheet-input {
+            width: 100%; background: rgba(255, 255, 255, 0.06); border: 1px solid transparent;
+            border-radius: 12px; color: var(--text); font-size: 15px; padding: 16px;
+            outline: none; font-family: var(--font); transition: all 0.2s; -webkit-appearance: none;
+        }
+        .request-sheet-input:focus { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent); }
+        .request-sheet-input::placeholder { color: var(--sub); font-weight: 400; }
+        
+        /* 시간 입력 필드 전용 다크모드 아이콘 처리 */
+        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; cursor: pointer; }
+
+        .input-label { font-size: 11px; font-weight: 500; color: var(--sub); margin-bottom: 6px; display: block; padding-left: 4px; }
+
+        .request-sheet-submit {
+            width: 100%; background: var(--accent); color: #fff; border: none;
+            border-radius: 12px; padding: 16px; font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: opacity 0.2s; margin-bottom: 8px;
+        }
+        .request-sheet-submit:active { opacity: 0.8; }
+        
+        .request-sheet-delete {
+            width: 100%; background: transparent; color: #ff4d4d; border: 1px solid rgba(255,77,77,0.3);
+            border-radius: 12px; padding: 16px; font-size: 14px; font-weight: 500; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <header class="list-header">
         <div class="header-top">
-            <div class="logo-text">STYLUS SCHEDULE</div>
+            <div class="logo-text">SCHEDULE</div>
         </div>
     </header>
 
@@ -132,39 +169,51 @@
         <div id="calendar"></div>
     </main>
 
-    <div id="modal">
-        <div class="modal-content">
-            <h3 id="m-date">DATE</h3>
+    <div class="request-bottom-sheet" id="modal">
+        <div class="sheet-content">
+            <div class="request-sheet-header">
+                <div>
+                    <div class="request-sheet-subtitle" id="m-date">DATE</div>
+                    <div class="request-sheet-title" id="m-title-text">Add Schedule</div>
+                </div>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            
             <input type="hidden" id="m-id">
             
-            <div class="input-group">
-                <div style="flex:1">
-                    <span class="label-small">Start Time</span>
-                    <input type="time" id="m-start" value="19:00">
+            <div class="request-sheet-body">
+                <div class="time-row">
+                    <div>
+                        <span class="input-label">START TIME</span>
+                        <input type="time" class="request-sheet-input" id="m-start" value="19:00">
+                    </div>
+                    <div>
+                        <span class="input-label">END TIME</span>
+                        <input type="time" class="request-sheet-input" id="m-end" value="21:00">
+                    </div>
                 </div>
-                <div style="flex:1">
-                    <span class="label-small">End Time</span>
-                    <input type="time" id="m-end" value="21:00">
+
+                <div>
+                    <span class="input-label">VINYL / ARTIST</span>
+                    <input type="text" class="request-sheet-input" id="m-content" placeholder="앨범이나 아티스트 입력">
+                </div>
+                
+                <div>
+                    <span class="input-label">REQUESTED BY</span>
+                    <input type="text" class="request-sheet-input" id="m-author" placeholder="작성자 성함">
                 </div>
             </div>
 
-            <span class="label-small">Vinyl / Artist</span>
-            <input type="text" id="m-content" placeholder="무엇을 들을까요?" style="margin-bottom:12px">
-            
-            <span class="label-small">Requested By</span>
-            <input type="text" id="m-author" placeholder="성함 입력">
-
-            <div class="btn-group">
-                <button class="btn-save" onclick="saveEvent()">SAVE SCHEDULE</button>
-                <button class="btn-close" onclick="closeModal()">CLOSE</button>
-                <button id="del-btn" class="btn-del" onclick="deleteEvent()" style="display:none">DELETE THIS SCHEDULE</button>
+            <div class="request-sheet-footer">
+                <button class="request-sheet-submit" onclick="saveEvent()">SAVE</button>
+                <button class="request-sheet-delete" id="del-btn" onclick="deleteEvent()" style="display:none">DELETE</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ★ 본인의 Google Apps Script URL을 여기에 넣으세요
-        const API_URL = '본인의_GAS_URL'; 
+        // 전달해주신 GAS URL 적용
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxmAQDzoB_apWLmq7YwAZdobLoCLG--SxYRDTD_d0tCFsvx-y7ijBdYf_KDGV9IFIAO2w/exec'; 
 
         let calendar;
         let selectedDate;
@@ -173,9 +222,10 @@
             const calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                locale: 'ko',
-                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
-                height: 'auto',
+                locale: 'en', // 영문 텍스트가 Inter 폰트와 매칭이 잘 됩니다.
+                headerToolbar: { left: 'prev', center: 'title', right: 'next' },
+                contentHeight: 'auto',
+                fixedWeekCount: false,
                 dateClick: (info) => openModal(info.dateStr),
                 eventClick: (info) => openModal(null, info.event),
                 events: fetchEvents
@@ -205,10 +255,12 @@
         function openModal(dateStr, event = null) {
             const modal = document.getElementById('modal');
             const delBtn = document.getElementById('del-btn');
-            modal.classList.add('active');
+            const titleText = document.getElementById('m-title-text');
+            modal.classList.add('open');
 
             if (event) {
                 selectedDate = event.startStr;
+                titleText.innerText = "Edit Schedule";
                 document.getElementById('m-id').value = event.id;
                 document.getElementById('m-start').value = event.extendedProps.start_time;
                 document.getElementById('m-end').value = event.extendedProps.end_time;
@@ -217,6 +269,7 @@
                 delBtn.style.display = 'block';
             } else {
                 selectedDate = dateStr;
+                titleText.innerText = "Add Schedule";
                 document.getElementById('m-id').value = '';
                 document.getElementById('m-start').value = '19:00';
                 document.getElementById('m-end').value = '21:00';
@@ -227,7 +280,7 @@
             document.getElementById('m-date').innerText = selectedDate;
         }
 
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
         async function saveEvent() {
             const payload = {
@@ -238,20 +291,39 @@
                 content: document.getElementById('m-content').value,
                 author: document.getElementById('m-author').value
             };
-            const btn = document.querySelector('.btn-save');
+            const btn = document.querySelector('.request-sheet-submit');
             btn.innerText = "SAVING...";
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-            calendar.refetchEvents();
-            btn.innerText = "SAVE SCHEDULE";
-            closeModal();
+            
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                calendar.refetchEvents();
+            } catch(e) {
+                console.error("Save Error:", e);
+                alert("저장 중 오류가 발생했습니다.");
+            } finally {
+                btn.innerText = "SAVE";
+                closeModal();
+            }
         }
 
         async function deleteEvent() {
-            if(!confirm("삭제할까요?")) return;
+            if(!confirm("이 일정을 삭제하시겠습니까?")) return;
             const payload = { action: 'delete', id: document.getElementById('m-id').value };
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-            calendar.refetchEvents();
-            closeModal();
+            
+            const btn = document.getElementById('del-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "DELETING...";
+            
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                calendar.refetchEvents();
+            } catch(e) {
+                console.error("Delete Error:", e);
+                alert("삭제 중 오류가 발생했습니다.");
+            } finally {
+                btn.innerText = originalText;
+                closeModal();
+            }
         }
     </script>
 </body>
