@@ -31,7 +31,7 @@
         }
 
         /* ============================================================
-           2. 원본 HEADER & FOOTER CSS
+           2. HEADER & FOOTER
            ============================================================ */
         .list-header {
             position: sticky; top: 0; z-index: 50; background: var(--bg);
@@ -39,20 +39,10 @@
             box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
             will-change: transform; transform: translateZ(0);
         }
-        .header-top {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 16px 10px; height: 56px;
-        }
+        .header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 10px; height: 56px; }
         .logo-img { height: 28px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.95; display: block; }
         .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
-        .icon-btn {
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; background: none; border: none; color: #ffffff; cursor: pointer;
-            border-radius: 50%; transition: color 0.15s; -webkit-tap-highlight-color: transparent; padding: 0;
-        }
-        .icon-btn svg { width: 20px; height: 20px; display: block; }
-        .icon-btn:active { color: var(--accent); }
-
+        
         .list-footer {
             padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px);
             margin-top: 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px;
@@ -64,12 +54,17 @@
             border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
         }
         .footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
-        .footer-insta:active { color: var(--text); }
+
+        /* 로딩 스피너 (기존 CSS 복구) */
+        .loading-state { display: none; justify-content: center; padding: 60px 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ============================================================
-           3. CALENDAR CSS
+           3. CALENDAR CSS (파란색 도트 박멸 및 중앙 정렬)
            ============================================================ */
-        .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; min-height: calc(100vh - 200px); }
+        .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; min-height: calc(100vh - 200px); position: relative; }
+        #calendar { transition: opacity 0.3s; }
 
         .fc { --fc-border-color: transparent; background: transparent; }
         .fc-theme-standard .fc-scrollgrid { border: none !important; }
@@ -92,16 +87,20 @@
         .fc .fc-day-today { background: transparent !important; }
         .fc .fc-day-today .fc-daygrid-day-number { color: var(--accent) !important; font-weight: 700; }
 
+        /* ★ 하늘색 도트 제거 및 오렌지색 커스텀 도트 적용 */
+        .fc-daygrid-event-dot { display: none !important; } /* FullCalendar 기본 파란색 강제 숨김 */
         .fc-event { background: transparent !important; border: none !important; padding: 2px 8px 6px !important; cursor: pointer; }
         .fc-event-main { 
-            display: flex; align-items: center; justify-content: center; gap: 6px; 
+            display: flex; align-items: center; justify-content: flex-start; gap: 6px; 
             color: var(--sub) !important; font-size: 11px !important; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
         }
-        .fc-event-main::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+        .fc-event-main::before { 
+            content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; 
+        }
         .fc-daygrid-day-events { margin-bottom: 8px !important; }
 
         /* ============================================================
-           4. BOTTOM SHEET MODAL CSS
+           4. BOTTOM SHEET MODAL
            ============================================================ */
         .request-bottom-sheet {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 100%;
@@ -153,6 +152,9 @@
     </header>
 
     <main class="calendar-main">
+        <div id="loading" class="loading-state">
+            <div class="spinner"></div>
+        </div>
         <div id="calendar"></div>
     </main>
 
@@ -211,7 +213,6 @@
     </div>
 
     <script>
-        // 새로 전달해주신 GAS URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbx1_UVGqEODUlQ6bkjKvK0LnD-uH0zk6moVLb7rqfGhHWITFr1e8eOtAGtbtUWHaf9Brw/exec'; 
 
         let calendar;
@@ -227,41 +228,39 @@
                 fixedWeekCount: false,
                 dateClick: (info) => openModal(info.dateStr),
                 eventClick: (info) => openModal(null, info.event),
-                events: fetchEvents
+                events: fetchEvents,
+                // ★ 서버 통신 시 로딩 스피너 작동
+                loading: function(isLoading) {
+                    document.getElementById('loading').style.display = isLoading ? 'flex' : 'none';
+                    calendarEl.style.opacity = isLoading ? '0.2' : '1';
+                }
             });
             calendar.render();
 
-            // ★ 모바일 스와이프 기능
-            let touchStartX = 0;
-            let touchStartY = 0;
-            let touchEndX = 0;
-            let touchEndY = 0;
-
+            // 스와이프 기능
+            let touchStartX = 0; let touchStartY = 0; let touchEndX = 0; let touchEndY = 0;
             calendarEl.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-                touchStartY = e.changedTouches[0].screenY;
+                touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
             }, { passive: true });
-
             calendarEl.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                touchEndY = e.changedTouches[0].screenY;
+                touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY;
                 handleSwipe();
             }, { passive: true });
 
             function handleSwipe() {
-                const deltaX = touchEndX - touchStartX;
-                const deltaY = touchEndY - touchStartY;
-
-                // 세로 스크롤보다 가로 움직임이 크고, 최소 50px 이상 밀었을 때 작동
+                const deltaX = touchEndX - touchStartX; const deltaY = touchEndY - touchStartY;
                 if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-                    if (deltaX < 0) {
-                        calendar.next(); // 왼쪽으로 스와이프 -> 다음 달
-                    } else {
-                        calendar.prev(); // 오른쪽으로 스와이프 -> 이전 달
-                    }
+                    if (deltaX < 0) calendar.next(); else calendar.prev();
                 }
             }
         });
+
+        // 날짜/시간 포맷 정규화 함수 (GAS에서 넘어오는 이상한 형태 방지)
+        function formatTimeStr(val) {
+            if (!val) return '';
+            if (typeof val === 'string' && val.includes('T')) return val.split('T')[1].substring(0, 5);
+            return val;
+        }
 
         async function fetchEvents(info, successCallback) {
             try {
@@ -270,17 +269,23 @@
                 const data = await res.json();
                 
                 if(Array.isArray(data)) {
-                    const events = data.map(item => ({
-                        id: item.ID, 
-                        title: `${item.START_TIME} ${item.CONTENT}`,
-                        start: item.DATE,
-                        extendedProps: { 
-                            start_time: item.START_TIME, 
-                            end_time: item.END_TIME,
-                            content: item.CONTENT, 
-                            author: item.AUTHOR 
-                        }
-                    }));
+                    const events = data.map(item => {
+                        const sTime = formatTimeStr(item.START_TIME);
+                        const eTime = formatTimeStr(item.END_TIME);
+                        
+                        return {
+                            id: item.ID, 
+                            // ★ 캘린더 화면에 노출되는 타이틀: 시작시간~종료시간 | 이벤트명
+                            title: `${sTime}~${eTime} | ${item.CONTENT}`,
+                            start: item.DATE,
+                            extendedProps: { 
+                                start_time: sTime, 
+                                end_time: eTime,
+                                content: item.CONTENT, 
+                                author: item.AUTHOR 
+                            }
+                        };
+                    });
                     successCallback(events);
                 }
             } catch (e) { 
@@ -298,8 +303,8 @@
                 selectedDate = event.startStr;
                 titleText.innerText = "Edit Schedule";
                 document.getElementById('m-id').value = event.id;
-                document.getElementById('m-start').value = event.extendedProps.start_time || '';
-                document.getElementById('m-end').value = event.extendedProps.end_time || '';
+                document.getElementById('m-start').value = event.extendedProps.start_time || '19:00';
+                document.getElementById('m-end').value = event.extendedProps.end_time || '21:00';
                 document.getElementById('m-content').value = event.extendedProps.content || '';
                 document.getElementById('m-author').value = event.extendedProps.author || '';
                 delBtn.style.display = 'block';
@@ -318,7 +323,7 @@
 
         function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
-        // ★ Optimistic UI 적용 (등록 속도 체감 개선)
+        // Optimistic UI: 서버 응답 기다리지 않고 캘린더에 먼저 그림
         async function saveEvent() {
             const payload = {
                 action: 'create',
@@ -329,55 +334,45 @@
                 author: document.getElementById('m-author').value
             };
             
-            // 1. 서버 응답 대기 없이 캘린더 화면에 먼저 그려줌
             const tempId = 'temp-' + Date.now();
             calendar.addEvent({
                 id: tempId,
-                title: `${payload.start_time} ${payload.content}`,
+                // 등록 즉시 화면에 노출되는 텍스트 포맷
+                title: `${payload.start_time}~${payload.end_time} | ${payload.content}`,
                 start: payload.date,
                 allDay: true,
                 extendedProps: { ...payload }
             });
 
-            // 2. 입력창 즉시 닫기
             closeModal();
 
-            // 3. 백그라운드에서 서버와 통신
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                // 통신 성공 시 실제 데이터로 동기화 (임시 이벤트 대체)
-                calendar.refetchEvents();
+                calendar.refetchEvents(); // 통신 성공 시 실제 데이터로 리프레시
             } catch(e) {
                 console.error("Save Error:", e);
-                // 통신 실패 시 화면에 그렸던 임시 이벤트 삭제
                 const tempEvent = calendar.getEventById(tempId);
                 if(tempEvent) tempEvent.remove();
-                alert("일정 저장에 실패했습니다. 네트워크를 확인해주세요.");
             }
         }
 
-        // ★ Optimistic UI 적용 (삭제 속도 체감 개선)
         async function deleteEvent() {
             if(!confirm("이 일정을 삭제하시겠습니까?")) return;
             
             const eventId = document.getElementById('m-id').value;
             const payload = { action: 'delete', id: eventId };
             
-            // 1. 화면에서 즉시 이벤트 삭제
             const eventToRemove = calendar.getEventById(eventId);
             if(eventToRemove) eventToRemove.remove();
             
-            // 2. 입력창 즉시 닫기
             closeModal();
             
-            // 3. 백그라운드에서 서버와 통신
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 calendar.refetchEvents();
             } catch(e) {
                 console.error("Delete Error:", e);
-                alert("삭제 중 오류가 발생했습니다.");
-                calendar.refetchEvents(); // 실패 시 원래 데이터 복구
+                calendar.refetchEvents();
             }
         }
     </script>
