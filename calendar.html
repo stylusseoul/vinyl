@@ -30,7 +30,7 @@
         }
 
         /* ============================================================
-           2. HEADER (기존 list-header 디자인 100% 이식)
+           2. HEADER (기존 디자인 완벽 복구 - 좌측 정렬 및 간격 유지)
            ============================================================ */
         .list-header {
             position: sticky; top: 0; z-index: 50; background: var(--bg);
@@ -38,13 +38,13 @@
             box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 20px rgba(0,0,0,0.6);
         }
         .header-top {
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: flex-start; /* 좌측 정렬 복구 */
             padding: 12px 16px 10px; height: 56px;
         }
         .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
 
         /* ============================================================
-           3. CALENDAR (투박한 표 디자인 제거, 리스트 감성 주입)
+           3. CALENDAR (레이아웃 정렬 완벽 매칭)
            ============================================================ */
         .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; }
 
@@ -52,7 +52,7 @@
         .fc-theme-standard .fc-scrollgrid { border: none !important; }
         .fc-scrollgrid-sync-table { border-collapse: separate; border-spacing: 0; }
 
-        /* 가로선만 얇게 */
+        /* 가로선 유지 */
         .fc td, .fc th { border: none !important; border-bottom: 1px solid var(--border) !important; }
         
         /* 상단 툴바 */
@@ -64,16 +64,22 @@
         }
         .fc .fc-button-primary:active { color: var(--accent) !important; background: transparent !important; }
 
-        /* 요일 헤더 */
+        /* 요일 헤더 - 중앙 정렬 */
         .fc .fc-col-header-cell-cushion { 
+            display: inline-block; width: 100%; text-align: center;
             color: var(--sub) !important; font-size: 11px; font-weight: 500; 
             letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 0 !important; 
         }
 
+        /* 날짜 숫자 상단 영역 - 중앙 정렬 보정 */
+        .fc .fc-daygrid-day-top {
+            display: flex; justify-content: center; /* 요일과 일치하도록 중앙 정렬 */
+        }
+        
         /* 날짜 숫자 */
         .fc .fc-daygrid-day-number { 
             font-size: 14px; font-weight: 400; color: var(--text) !important; 
-            padding: 12px 8px !important; width: 100%; text-align: left; opacity: 0.9;
+            padding: 12px 8px !important; opacity: 0.9; text-decoration: none;
         }
         .fc .fc-day-other .fc-daygrid-day-number { opacity: 0.3; }
 
@@ -87,7 +93,7 @@
             padding: 2px 8px 6px !important; cursor: pointer;
         }
         .fc-event-main { 
-            display: flex; align-items: center; gap: 6px; 
+            display: flex; align-items: center; justify-content: center; gap: 6px; 
             color: var(--sub) !important; font-size: 11px !important; font-weight: 400;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
@@ -99,7 +105,7 @@
         .fc-daygrid-day-events { margin-bottom: 8px !important; }
 
         /* ============================================================
-           4. BOTTOM SHEET MODAL (Request Sheet 완벽 복구)
+           4. BOTTOM SHEET MODAL (입력 항목 수정)
            ============================================================ */
         .request-bottom-sheet {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 100%;
@@ -139,7 +145,6 @@
         .request-sheet-input:focus { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent); }
         .request-sheet-input::placeholder { color: var(--sub); font-weight: 400; }
         
-        /* 시간 입력 필드 전용 다크모드 아이콘 처리 */
         input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; cursor: pointer; }
 
         .input-label { font-size: 11px; font-weight: 500; color: var(--sub); margin-bottom: 6px; display: block; padding-left: 4px; }
@@ -161,7 +166,7 @@
 
     <header class="list-header">
         <div class="header-top">
-            <div class="logo-text">SCHEDULE</div>
+            <div class="logo-text">STYLUS VINYL</div>
         </div>
     </header>
 
@@ -194,13 +199,13 @@
                 </div>
 
                 <div>
-                    <span class="input-label">VINYL / ARTIST</span>
-                    <input type="text" class="request-sheet-input" id="m-content" placeholder="앨범이나 아티스트 입력">
+                    <span class="input-label">EVENT NAME</span>
+                    <input type="text" class="request-sheet-input" id="m-content" placeholder="일정 내용을 입력해주세요">
                 </div>
                 
                 <div>
-                    <span class="input-label">REQUESTED BY</span>
-                    <input type="text" class="request-sheet-input" id="m-author" placeholder="작성자 성함">
+                    <span class="input-label">WRITER</span>
+                    <input type="text" class="request-sheet-input" id="m-author" placeholder="작성자">
                 </div>
             </div>
 
@@ -222,7 +227,7 @@
             const calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                locale: 'en', // 영문 텍스트가 Inter 폰트와 매칭이 잘 됩니다.
+                locale: 'en',
                 headerToolbar: { left: 'prev', center: 'title', right: 'next' },
                 contentHeight: 'auto',
                 fixedWeekCount: false,
