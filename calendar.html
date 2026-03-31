@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
 
     <style>
+        /* ============================================================
+           1. 기존 STYLUS VINYL 변수 및 공통 CSS
+           ============================================================ */
         :root {
             --bg:      #080808;
             --surface: #111;
@@ -27,6 +30,9 @@
             -webkit-font-smoothing: antialiased; overscroll-behavior: none; min-height: 100dvh;
         }
 
+        /* ============================================================
+           2. HEADER & FOOTER
+           ============================================================ */
         .list-header {
             position: sticky; top: 0; z-index: 50; background: var(--bg);
             padding-top: env(safe-area-inset-top, 0);
@@ -36,6 +42,14 @@
         .logo-img { height: 28px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.95; display: block; }
         .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
         
+        .list-footer { padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px); margin-top: 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 1.85; text-align: center; letter-spacing: 0.01em; font-style: italic; }
+        .footer-insta { display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500; letter-spacing: 0.04em; line-height: 1; transition: color 0.15s; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
+        .footer-insta svg { width: 15px; height: 15px; flex-shrink: 0; display: block; }
+
+        /* ============================================================
+           3. CALENDAR CSS
+           ============================================================ */
         .calendar-main { padding: 0 16px 40px; max-width: 800px; margin: 0 auto; min-height: calc(100vh - 200px); position: relative; }
 
         .fc { --fc-border-color: transparent; background: transparent; }
@@ -55,6 +69,9 @@
         .fc-event-main { display: flex; align-items: center; justify-content: flex-start; gap: 6px; color: var(--sub) !important; font-size: 11px !important; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .fc-event-main::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
+        /* ============================================================
+           4. BOTTOM SHEET MODAL CSS
+           ============================================================ */
         .request-bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .request-bottom-sheet.open { opacity: 1; pointer-events: auto; }
         .sheet-content { background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px 28px 0 0; padding: 32px 24px calc(env(safe-area-inset-bottom, 0px) + 24px); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8); transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -70,11 +87,19 @@
         .request-sheet-input:focus { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--accent); }
         .input-label { font-size: 11px; font-weight: 500; color: var(--sub); margin-bottom: 6px; display: block; padding-left: 4px; }
         .request-sheet-submit { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; margin-bottom: 8px; }
-        .request-sheet-delete { width: 100%; background: transparent; color: #ff4d4d; border: 1px solid rgba(255,77,77,0.3); border-radius: 12px; padding: 16px; font-size: 14px; font-weight: 500; cursor: pointer; }
 
-        .list-footer { padding: 14px 24px calc(env(safe-area-inset-bottom, 0px) + 80px); margin-top: 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 1.85; text-align: center; letter-spacing: 0.01em; font-style: italic; }
-        .footer-insta { display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500; letter-spacing: 0.04em; line-height: 1; transition: color 0.15s; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; }
+        /* 조회 팝업 전용 스타일 */
+        .view-details { display: flex; flex-direction: column; gap: 18px; margin-bottom: 30px; }
+        .view-row { display: flex; flex-direction: column; gap: 6px; }
+        .view-label { font-size: 11px; font-weight: 500; color: var(--sub); text-transform: uppercase; letter-spacing: 0.05em; }
+        .view-value { font-size: 16px; color: var(--text); font-weight: 400; line-height: 1.5; word-break: keep-all; }
+        
+        /* 버튼 그룹 (수정 / 삭제 나란히 배치) */
+        .btn-group-row { display: flex; gap: 12px; }
+        .btn-group-row button { flex: 1; margin: 0; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn-edit { background: var(--accent); color: #fff; border: none; }
+        .btn-delete { background: transparent; border: 1px solid rgba(255,77,77,0.3); color: #ff4d4d; }
+        .btn-group-row button:active { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -104,14 +129,46 @@
       </a>
     </footer>
 
-    <div class="request-bottom-sheet" id="modal">
+    <div class="request-bottom-sheet" id="view-modal">
+        <div class="sheet-content">
+            <div class="request-sheet-header">
+                <div>
+                    <div class="request-sheet-subtitle" id="v-date">DATE</div>
+                    <div class="request-sheet-title">Schedule Details</div>
+                </div>
+                <button class="close-btn" onclick="window.closeViewModal()">×</button>
+            </div>
+            
+            <div class="view-details">
+                <div class="view-row">
+                    <span class="view-label">TIME</span>
+                    <span class="view-value" id="v-time"></span>
+                </div>
+                <div class="view-row">
+                    <span class="view-label">EVENT NAME</span>
+                    <span class="view-value" id="v-content"></span>
+                </div>
+                <div class="view-row">
+                    <span class="view-label">WRITER</span>
+                    <span class="view-value" id="v-author"></span>
+                </div>
+            </div>
+
+            <div class="btn-group-row">
+                <button class="btn-edit" onclick="window.goToEdit()">EDIT</button>
+                <button class="btn-delete" id="view-del-btn" onclick="window.deleteFromView()">DELETE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="request-bottom-sheet" id="edit-modal">
         <div class="sheet-content">
             <div class="request-sheet-header">
                 <div>
                     <div class="request-sheet-subtitle" id="m-date">DATE</div>
                     <div class="request-sheet-title" id="m-title-text">Add Schedule</div>
                 </div>
-                <button class="close-btn" onclick="window.closeModal()">×</button>
+                <button class="close-btn" onclick="window.closeEditModal()">×</button>
             </div>
             
             <input type="hidden" id="m-id">
@@ -138,7 +195,6 @@
             </div>
             <div class="request-sheet-footer">
                 <button class="request-sheet-submit" onclick="window.saveEvent()">SAVE</button>
-                <button class="request-sheet-delete" id="del-btn" onclick="window.deleteEvent()" style="display:none">DELETE</button>
             </div>
         </div>
     </div>
@@ -161,7 +217,8 @@
         const colRef = collection(db, "schedules");
 
         let calendar;
-        let selectedDate;
+        window.selectedDate = null;
+        window.currentSelectedEvent = null; // 선택된 이벤트 데이터를 임시 저장하는 전역 변수
 
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
@@ -172,8 +229,13 @@
                 contentHeight: 'auto',
                 fixedWeekCount: false,
                 displayEventTime: false,
-                dateClick: (info) => window.openModal(info.dateStr),
-                eventClick: (info) => window.openModal(null, info.event),
+                
+                // 빈 날짜 클릭 시 -> 바로 등록(Add) 모달 열기
+                dateClick: (info) => window.openAddModal(info.dateStr),
+                
+                // 등록된 이벤트 클릭 시 -> 조회(View) 모달 열기
+                eventClick: (info) => window.openViewModal(info.event),
+                
                 events: async function(info, successCallback, failureCallback) {
                     try {
                         const querySnapshot = await getDocs(colRef);
@@ -206,40 +268,61 @@
             }, { passive: true });
         });
 
-        window.openModal = function(dateStr, event = null) {
-            const modal = document.getElementById('modal');
-            const delBtn = document.getElementById('del-btn');
-            const titleText = document.getElementById('m-title-text');
-            modal.classList.add('open');
-
-            if (event) {
-                selectedDate = event.startStr;
-                titleText.innerText = "Edit Schedule";
-                document.getElementById('m-id').value = event.id;
-                document.getElementById('m-start').value = event.extendedProps.start_time || '19:00';
-                document.getElementById('m-end').value = event.extendedProps.end_time || '21:00';
-                document.getElementById('m-content').value = event.extendedProps.content || '';
-                document.getElementById('m-author').value = event.extendedProps.author || '';
-                delBtn.style.display = 'block';
-            } else {
-                selectedDate = dateStr;
-                titleText.innerText = "Add Schedule";
-                document.getElementById('m-id').value = '';
-                document.getElementById('m-start').value = '19:00';
-                document.getElementById('m-end').value = '21:00';
-                document.getElementById('m-content').value = '';
-                document.getElementById('m-author').value = '';
-                delBtn.style.display = 'none';
-            }
-            document.getElementById('m-date').innerText = selectedDate;
+        // 1. 등록 모달 열기 (빈 날짜 클릭 시)
+        window.openAddModal = function(dateStr) {
+            window.selectedDate = dateStr;
+            document.getElementById('m-title-text').innerText = "Add Schedule";
+            document.getElementById('m-id').value = '';
+            document.getElementById('m-start').value = '19:00';
+            document.getElementById('m-end').value = '21:00';
+            document.getElementById('m-content').value = '';
+            document.getElementById('m-author').value = '';
+            document.getElementById('m-date').innerText = dateStr;
+            
+            document.getElementById('edit-modal').classList.add('open');
         };
 
-        window.closeModal = function() { document.getElementById('modal').classList.remove('open'); };
+        // 2. 조회 모달 열기 (일정 클릭 시)
+        window.openViewModal = function(event) {
+            window.currentSelectedEvent = event; // 수정이나 삭제를 위해 전역 변수에 저장
+            
+            // 팝업 내용 채우기
+            document.getElementById('v-date').innerText = event.startStr.split('T')[0];
+            document.getElementById('v-time').innerText = `${event.extendedProps.start_time} - ${event.extendedProps.end_time}`;
+            document.getElementById('v-content').innerText = event.extendedProps.content;
+            document.getElementById('v-author').innerText = event.extendedProps.author;
+            
+            document.getElementById('view-modal').classList.add('open');
+        };
 
+        // 3. 조회 모달에서 'EDIT' 버튼 클릭 시 작동
+        window.goToEdit = function() {
+            window.closeViewModal(); // 조회 모달 닫기
+            
+            const event = window.currentSelectedEvent;
+            window.selectedDate = event.startStr.split('T')[0];
+            
+            // 수정 모달에 기존 데이터 채우기
+            document.getElementById('m-title-text').innerText = "Edit Schedule";
+            document.getElementById('m-id').value = event.id;
+            document.getElementById('m-start').value = event.extendedProps.start_time;
+            document.getElementById('m-end').value = event.extendedProps.end_time;
+            document.getElementById('m-content').value = event.extendedProps.content;
+            document.getElementById('m-author').value = event.extendedProps.author;
+            document.getElementById('m-date').innerText = window.selectedDate;
+            
+            document.getElementById('edit-modal').classList.add('open'); // 수정 모달 열기
+        };
+
+        // 모달 닫기 함수들
+        window.closeViewModal = function() { document.getElementById('view-modal').classList.remove('open'); };
+        window.closeEditModal = function() { document.getElementById('edit-modal').classList.remove('open'); };
+
+        // 4. 저장 및 수정 처리
         window.saveEvent = async function() {
             const eventId = document.getElementById('m-id').value;
             const payload = {
-                date: selectedDate,
+                date: window.selectedDate,
                 start_time: document.getElementById('m-start').value,
                 end_time: document.getElementById('m-end').value,
                 content: document.getElementById('m-content').value,
@@ -251,15 +334,13 @@
             
             try {
                 if (eventId) {
-                    // ★ 수정 로직: updateDoc 사용
                     const docRef = doc(db, "schedules", eventId);
                     await updateDoc(docRef, payload);
                 } else {
-                    // 등록 로직: addDoc 사용
                     await addDoc(colRef, payload);
                 }
                 calendar.refetchEvents();
-                window.closeModal();
+                window.closeEditModal();
             } catch(e) {
                 console.error("Save Error:", e);
                 alert("처리 중 오류가 발생했습니다.");
@@ -268,15 +349,23 @@
             }
         };
 
-        window.deleteEvent = async function() {
+        // 5. 조회 모달에서 삭제 처리
+        window.deleteFromView = async function() {
             if(!confirm("이 일정을 삭제하시겠습니까?")) return;
-            const eventId = document.getElementById('m-id').value;
+            
+            const eventId = window.currentSelectedEvent.id;
+            const btn = document.getElementById('view-del-btn');
+            btn.innerText = "DELETING...";
+            
             try {
                 await deleteDoc(doc(db, "schedules", eventId));
                 calendar.refetchEvents();
-                window.closeModal();
+                window.closeViewModal();
             } catch(e) {
-                alert("삭제 실패");
+                console.error("Delete Error:", e);
+                alert("삭제 처리 중 문제가 발생했습니다.");
+            } finally {
+                btn.innerText = "DELETE";
             }
         };
     </script>
