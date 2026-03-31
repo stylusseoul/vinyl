@@ -265,3 +265,72 @@
             modal.classList.add('open');
 
             if (event) {
+                selectedDate = event.startStr;
+                titleText.innerText = "Edit Schedule";
+                document.getElementById('m-id').value = event.id;
+                document.getElementById('m-start').value = event.extendedProps.start_time;
+                document.getElementById('m-end').value = event.extendedProps.end_time;
+                document.getElementById('m-content').value = event.extendedProps.content;
+                document.getElementById('m-author').value = event.extendedProps.author;
+                delBtn.style.display = 'block';
+            } else {
+                selectedDate = dateStr;
+                titleText.innerText = "Add Schedule";
+                document.getElementById('m-id').value = '';
+                document.getElementById('m-start').value = '19:00';
+                document.getElementById('m-end').value = '21:00';
+                document.getElementById('m-content').value = '';
+                document.getElementById('m-author').value = '';
+                delBtn.style.display = 'none';
+            }
+            document.getElementById('m-date').innerText = selectedDate;
+        }
+
+        function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+        async function saveEvent() {
+            const payload = {
+                action: 'create',
+                date: selectedDate,
+                start_time: document.getElementById('m-start').value,
+                end_time: document.getElementById('m-end').value,
+                content: document.getElementById('m-content').value,
+                author: document.getElementById('m-author').value
+            };
+            const btn = document.querySelector('.request-sheet-submit');
+            btn.innerText = "SAVING...";
+            
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                calendar.refetchEvents();
+            } catch(e) {
+                console.error("Save Error:", e);
+                alert("저장 중 오류가 발생했습니다.");
+            } finally {
+                btn.innerText = "SAVE";
+                closeModal();
+            }
+        }
+
+        async function deleteEvent() {
+            if(!confirm("이 일정을 삭제하시겠습니까?")) return;
+            const payload = { action: 'delete', id: document.getElementById('m-id').value };
+            
+            const btn = document.getElementById('del-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "DELETING...";
+            
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                calendar.refetchEvents();
+            } catch(e) {
+                console.error("Delete Error:", e);
+                alert("삭제 중 오류가 발생했습니다.");
+            } finally {
+                btn.innerText = originalText;
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
