@@ -5,47 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>STYLUS VINYL — CALENDAR</title>
     
-    <link rel="stylesheet" href="style.css"> <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     
     <style>
-        /* 캘린더 페이지 전용 추가 보정 (기존 CSS와 조화) */
-        .list-main { padding-top: 20px; min-height: 80vh; }
-        #calendar { margin-bottom: 50px; }
+        /* [1] 기존 사이트 변수 복제 */
+        :root {
+            --bg: #080808;
+            --surface: #111;
+            --border: rgba(255,255,255,0.08);
+            --text: #fff;
+            --sub: rgba(255,255,255,0.38);
+            --sub2: rgba(255,255,255,0.18);
+            --accent: #EF7C1C;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* [2] 기본 레이아웃 하드코딩 (배경 하얀색 방지) */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { 
+            background: var(--bg) !important; 
+            color: var(--text); 
+            font-family: var(--font);
+            min-height: 100vh;
+        }
+
+        /* [3] 헤더/푸터 (기존 디자인 복제) */
+        .list-header {
+            position: sticky; top: 0; z-index: 50;
+            background: var(--bg);
+            padding: 12px 16px;
+            height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo-text { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+        .icon-btn { color: #fff; text-decoration: none; width: 32px; height: 32px; display: grid; place-items: center; }
+
+        .calendar-wrapper { max-width: 1000px; margin: 30px auto; padding: 0 16px; }
+
+        /* [4] FullCalendar 강력 오버라이드 (기존 톤앤매너) */
+        .fc { --fc-border-color: var(--border); }
+        .fc-theme-standard td, .fc-theme-standard th { border: 1px solid var(--border) !important; }
+        .fc .fc-toolbar-title { font-size: 15px !important; font-weight: 700; letter-spacing: 0.05em; }
         
-        /* 모달 중앙 정렬을 위한 헬퍼 */
-        #modal.active { display: flex !important; }
+        /* 버튼 스타일 */
+        .fc .fc-button-primary {
+            background: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 8px !important;
+            font-size: 11px !important;
+            text-transform: uppercase;
+            padding: 6px 12px !important;
+        }
+        .fc .fc-button-primary:active { background: var(--accent) !important; }
+
+        /* 날짜 및 요일 */
+        .fc .fc-col-header-cell-cushion { color: var(--sub) !important; font-size: 10px; text-decoration: none; }
+        .fc .fc-daygrid-day-number { color: var(--sub2) !important; font-size: 11px; padding: 8px !important; text-decoration: none; }
+        .fc .fc-day-today { background: rgba(255,255,255,0.03) !important; }
+        .fc .fc-day-today .fc-daygrid-day-number { color: var(--accent) !important; font-weight: 800; }
+
+        /* 이벤트 스타일 (심플 세로선) */
+        .fc-event { background: rgba(239, 124, 28, 0.05) !important; border: none !important; border-left: 2px solid var(--accent) !important; cursor: pointer; margin: 2px 0 !important; }
+        .fc-event-title { color: var(--text) !important; font-size: 11px !important; padding: 2px 4px !important; }
+
+        /* [5] 모달 (Request Sheet 스타일) */
+        #modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        #modal.active { display: flex; }
+        .modal-content {
+            background: var(--surface); border: 1px solid var(--border);
+            width: 90%; max-width: 340px; padding: 30px; border-radius: 24px;
+        }
+        .modal-content h3 { font-size: 16px; margin-bottom: 20px; color: var(--accent); letter-spacing: 0.05em; }
+        .modal-content input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 12px; color: #fff; padding: 14px; margin-bottom: 12px; outline: none;
+        }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-group button { flex: 1; padding: 14px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-save { background: var(--accent); color: #fff; }
+        .btn-del { background: #ff4d4d; color: #fff; }
+        .btn-close { background: var(--sub2); color: #fff; }
     </style>
 </head>
 <body>
 
     <header class="list-header">
-        <div class="header-top">
-            <div class="logo-text">STYLUS VINYL</div>
-            <a href="index.html" class="icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            </a>
-        </div>
+        <div class="logo-text">STYLUS VINYL</div>
+        <a href="index.html" class="icon-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        </a>
     </header>
 
-    <main class="list-main">
-        <div id="calendar-container">
-            <div id="calendar"></div>
-        </div>
-    </main>
-
-    <footer class="list-footer">
-        <p class="footer-desc">Shared Vinyl Listening Schedule</p>
-        <div class="footer-insta">© 2026 STYLUS SEOUL</div>
-    </footer>
+    <div class="calendar-wrapper">
+        <div id="calendar"></div>
+    </div>
 
     <div id="modal">
         <div class="modal-content">
-            <h3 id="modal-date">SELECT DATE</h3>
+            <h3 id="modal-date">DATE</h3>
             <input type="hidden" id="event-id">
             <input type="time" id="event-time" value="19:00">
-            <input type="text" id="event-content" placeholder="무엇을 들을까요?">
-            <input type="text" id="event-author" placeholder="작성자 성함">
-            
+            <input type="text" id="event-content" placeholder="내용 입력">
+            <input type="text" id="event-author" placeholder="작성자">
             <div class="btn-group">
                 <button class="btn-save" onclick="saveEvent()">SAVE</button>
                 <button id="del-btn" class="btn-del" onclick="deleteEvent()" style="display:none;">DEL</button>
@@ -55,7 +121,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxmAQDzoB_apWLmq7YwAZdobLoCLG--SxYRDTD_d0tCFsvx-y7ijBdYf_KDGV9IFIAO2w/exec'; // ★ 중요: 본인의 GAS URL로 교체
+        const API_URL = '여기에_GAS_URL을_넣으세요'; 
         let calendar;
         let selectedDate;
 
@@ -65,35 +131,31 @@
                 initialView: 'dayGridMonth',
                 locale: 'ko',
                 headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
-                // 날짜 클릭 시 (새 일정)
                 dateClick: (info) => openModal(info.dateStr),
-                // 일정 클릭 시 (수정/삭제)
                 eventClick: (info) => openModal(null, info.event),
                 events: fetchEvents
             });
             calendar.render();
         });
 
-        // 데이터 불러오기 (시트의 대문자 컬럼 반영)
         async function fetchEvents(info, successCallback) {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 const events = data.map(item => ({
                     id: item.ID, 
-                    title: `${item.TIME} | ${item.CONTENT} (${item.AUTHOR})`,
+                    title: `${item.TIME} ${item.CONTENT} (${item.AUTHOR})`,
                     start: item.DATE,
                     extendedProps: { time: item.TIME, content: item.CONTENT, author: item.AUTHOR }
                 }));
                 successCallback(events);
-            } catch (e) { console.error("데이터 로드 실패:", e); }
+            } catch (e) { console.error(e); }
         }
 
         function openModal(dateStr, event = null) {
             const modal = document.getElementById('modal');
             const delBtn = document.getElementById('del-btn');
             modal.classList.add('active');
-
             if (event) {
                 selectedDate = event.startStr;
                 document.getElementById('event-id').value = event.id;
@@ -122,21 +184,13 @@
                 content: document.getElementById('event-content').value,
                 author: document.getElementById('event-author').value
             };
-            
-            // 버튼 비활성화 (중복 클릭 방지)
-            const btn = document.querySelector('.btn-save');
-            btn.innerText = "SAVING...";
-            btn.disabled = true;
-
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
             calendar.refetchEvents();
-            btn.innerText = "SAVE";
-            btn.disabled = false;
             closeModal();
         }
 
         async function deleteEvent() {
-            if(!confirm("이 일정을 삭제할까요?")) return;
+            if(!confirm("삭제할까요?")) return;
             const payload = { action: 'delete', id: document.getElementById('event-id').value };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
             calendar.refetchEvents();
