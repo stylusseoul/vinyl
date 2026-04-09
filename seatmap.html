@@ -9,7 +9,7 @@
     <!-- 폰트: Outfit (영문) & Noto Sans KR (국문) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
     <!-- 아이콘: Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -35,9 +35,9 @@
 
         .eng { font-family: 'Outfit', sans-serif; }
 
-        /* HEADER - Tightened spacing (20px) */
+        /* HEADER - Tight Spacing */
         header {
-            padding: 20px 24px 5px; 
+            padding: 30px 24px 10px; 
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -52,17 +52,17 @@
         }
 
         .page-title {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 500;
             color: #FF5F1F;
             letter-spacing: 5px;
             margin-left: 5px;
             text-transform: uppercase;
         }
 
-        /* MAIN CONTENT - Tightened bottom padding (20px) */
+        /* MAIN CONTENT */
         main {
-            padding: 0 20px 20px; 
+            padding: 0 20px 40px; 
             max-width: 500px;
             margin: 0 auto;
             width: 100%;
@@ -71,10 +71,10 @@
             flex-direction: column;
         }
 
-        /* SEAT SECTION - Reduced margins */
+        /* SEAT SECTION */
         .seat-section {
             margin-top: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
             width: 100%;
         }
@@ -84,7 +84,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 60px; /* 좌석과 밑에 사이 여백 3배 확장 유지 */
             width: 100%;
         }
 
@@ -97,8 +97,8 @@
         }
 
         .seat {
-            width: clamp(62px, 18vw, 82px);
-            height: clamp(62px, 18vw, 82px);
+            width: clamp(64px, 18vw, 84px);
+            height: clamp(64px, 18vw, 84px);
             border-radius: 50%;
             border: 1px solid #222;
             display: flex;
@@ -112,14 +112,14 @@
             background-color: transparent;
             overflow: hidden;
             text-align: center;
-            line-height: 1.1;
+            line-height: 1.4; 
             word-break: keep-all; 
-            padding: 6px;
+            padding: 12px; 
         }
 
         @media (max-width: 340px) {
             .seat-row { gap: 8px; }
-            main { padding: 0 15px 20px; }
+            .seat { padding: 10px; }
         }
 
         /* Sweet Spot Style */
@@ -134,7 +134,7 @@
             color: #FFFFFF;
             background-color: #0c0c0c;
             font-size: clamp(11px, 3.2vw, 14px);
-            font-weight: 500;
+            font-weight: 400;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
         }
 
@@ -142,8 +142,8 @@
             background-color: #FF5F1F;
             border-color: #FF5F1F;
             color: #FFFFFF;
-            box-shadow: 0 8px 20px rgba(255, 95, 31, 0.3);
-            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(255, 95, 31, 0.2);
+            font-weight: 500;
         }
 
         /* REFRESH STATUS */
@@ -153,7 +153,7 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .status-header {
@@ -168,7 +168,7 @@
         }
 
         .status-header i {
-            font-size: 9px;
+            font-size: 8px;
             color: #FF5F1F;
             animation: spin 4s linear infinite;
         }
@@ -186,16 +186,17 @@
             letter-spacing: 0.5px;
         }
 
-        /* GUIDE SECTION - Tightened padding (30px) */
+        /* GUIDE SECTION */
         .guide-section {
             border-top: 1px solid #111;
             padding-top: 25px;
             width: 100%;
+            margin-bottom: 40px; /* 푸터가 없으므로 하단 여백 확보 */
         }
 
         .guide-title {
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 500;
             color: #FFFFFF;
             margin-bottom: 12px;
             display: flex;
@@ -210,7 +211,7 @@
         }
 
         .guide-item {
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 300;
             color: #888;
             line-height: 1.6;
@@ -219,50 +220,8 @@
         }
 
         .highlight { color: #AAA; font-weight: 400; }
-        .point-color { color: #FF5F1F; font-weight: 500; }
+        .point-color { color: #FF5F1F; font-weight: 400; }
 
-        /* FOOTER - Normalized spacing (30-40px) */
-        footer {
-            padding: 30px 24px 40px; 
-            text-align: center;
-            border-top: 1px solid #111;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .footer-quote {
-            font-size: 11px;
-            font-weight: 200;
-            color: #333;
-            line-height: 1.5;
-            font-style: italic;
-            max-width: 320px;
-            margin: 0 auto;
-            word-break: keep-all;
-        }
-
-        .footer-links a {
-            color: #555;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 400;
-            letter-spacing: 1.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:active {
-            color: #FF5F1F;
-        }
-
-        .footer-links i {
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
@@ -279,7 +238,7 @@
                 <div class="seat-row" id="row2"></div>
             </div>
 
-            <div class="refresh-status eng" id="refreshStatus">
+            <div class="refresh-status eng">
                 <div class="status-header">
                     <i class="ph ph-circle-notch"></i> Live Connected
                 </div>
@@ -299,17 +258,6 @@
             </ul>
         </section>
     </main>
-
-    <footer>
-        <div class="footer-quote eng">
-            "A small room designed for listening, where sound is free to breathe and time is never in a hurry."
-        </div>
-        <div class="footer-links eng">
-            <a href="https://www.instagram.com/stylus.seoul/" target="_blank">
-                <i class="ph ph-instagram-logo"></i> stylus.seoul
-            </a>
-        </div>
-    </footer>
 
     <script>
         /**
@@ -343,9 +291,9 @@
                     seatDiv.textContent = displayName;
                     
                     if (displayName.length >= 5) {
-                        seatDiv.style.fontSize = 'clamp(10px, 3vw, 12px)';
+                        seatDiv.style.fontSize = 'clamp(10px, 2.8vw, 11px)';
                     } else if (displayName.length >= 3) {
-                        seatDiv.style.fontSize = 'clamp(12px, 3.5vw, 14px)';
+                        seatDiv.style.fontSize = 'clamp(11px, 3.2vw, 13px)';
                     }
                 } else {
                     seatDiv.textContent = seat.no;
