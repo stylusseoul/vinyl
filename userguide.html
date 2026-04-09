@@ -7,7 +7,7 @@
     <!-- 폰트: Outfit (영문) & Noto Sans KR (국문) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- 아이콘: Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -48,9 +48,9 @@
         .delay-2 { animation-delay: 0.4s; }
         .delay-3 { animation-delay: 0.6s; }
 
-        /* Header 영역 */
+        /* Header 영역 (여백 대폭 축소) */
         header {
-            padding: 80px 24px 60px;
+            padding: 30px 24px 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -59,31 +59,31 @@
         }
 
         .logo-img {
-            width: 130px;
+            width: 140px;
             height: auto;
-            margin-bottom: 24px;
+            margin-bottom: 8px;
             display: block;
         }
 
         .page-title {
-            font-size: 11px;
+            font-size: 14px; /* 폰트 크기 증가 (기존 11px) */
             font-weight: 500;
             color: #FF5F1F;
-            letter-spacing: 8px;
-            margin-left: 8px; /* 자간 보정 */
+            letter-spacing: 6px; /* 커진 폰트에 맞춰 자간 미세 조정 */
+            margin-left: 6px;
             text-transform: uppercase;
         }
 
         /* 메인 컨텐츠 영역 */
         main {
-            padding: 0 24px 80px;
+            padding: 0 24px 30px; /* 푸터와 맞닿는 하단 여백 축소 (기존 60px) */
             max-width: 600px; 
             margin: 0 auto;
         }
 
         /* 에디토리얼 섹션 스타일 */
         .chapter {
-            margin-top: 60px;
+            margin-top: 40px; /* 섹션 간격 축소 */
             position: relative;
         }
 
@@ -98,7 +98,7 @@
         }
 
         .chapter-header {
-            padding: 40px 0 20px;
+            padding: 30px 0 16px;
             display: flex;
             align-items: baseline;
             gap: 16px;
@@ -121,7 +121,7 @@
 
         /* 리스트 아이템 스타일 (카드 배제, 미니멀 라인업) */
         .rule-item {
-            padding: 32px 0;
+            padding: 28px 0;
             border-bottom: 1px solid #111;
             display: grid;
             grid-template-columns: 28px 1fr;
@@ -184,16 +184,16 @@
             font-weight: 400;
         }
 
-        /* Footer */
+        /* Footer (여백 대폭 축소) */
         footer {
-            padding: 60px 24px 80px;
+            padding: 24px 24px 36px;
             text-align: center;
             background-color: #000;
             border-top: 1px solid #111;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 16px; /* 텍스트와 링크 사이 간격 축소 */
         }
 
         .footer-quote {
@@ -230,7 +230,7 @@
 <body>
 
     <header class="animate-up">
-        <img src="https://stylusseoul.github.io/vinyl/logo.png" alt="STYLUS Logo" class="logo-img">
+        <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="STYLUS Logo" class="logo-img">
         <div class="page-title eng">User Guide</div>
     </header>
 
