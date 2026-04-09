@@ -37,7 +37,7 @@
 
         /* HEADER */
         header {
-            padding: 50px 24px 20px;
+            padding: 40px 20px 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -45,24 +45,24 @@
         }
 
         .logo-img {
-            width: 130px;
+            width: 120px;
             height: auto;
             margin-bottom: 10px;
             display: block;
         }
 
         .page-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #FF5F1F;
-            letter-spacing: 6px;
-            margin-left: 6px;
+            letter-spacing: 5px;
+            margin-left: 5px;
             text-transform: uppercase;
         }
 
         /* MAIN CONTENT */
         main {
-            padding: 0 24px 40px;
+            padding: 0 16px 40px; /* 모바일 대응을 위해 좌우 여백 축소 */
             max-width: 500px;
             margin: 0 auto;
             width: 100%;
@@ -71,7 +71,7 @@
 
         /* SEAT SECTION */
         .seat-section {
-            margin-top: 30px;
+            margin-top: 20px;
             margin-bottom: 40px;
             text-align: center;
         }
@@ -82,24 +82,26 @@
             flex-direction: column;
             gap: 16px;
             margin-bottom: 35px;
+            align-items: center;
         }
 
         .seat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 14px; /* 간격 미세 조정 */
+            gap: 10px; /* 모바일에서는 간격을 살짝 좁힘 */
             justify-items: center;
+            width: 100%;
         }
 
         .seat {
-            width: 82px; /* 원 크기 확대: 72px -> 82px */
-            height: 82px; /* 원 크기 확대: 72px -> 82px */
+            width: 75px; /* 기본 크기 하향 (가로 폭 확보) */
+            height: 75px;
             border-radius: 50%;
             border: 1.5px solid #222;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px; /* 기본 폰트 크기 상향 */
+            font-size: 16px;
             font-weight: 300;
             color: #555;
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -109,7 +111,32 @@
             text-align: center;
             line-height: 1.2;
             word-break: keep-all; 
-            padding: 10px; /* 내부 여백 상향 */
+            padding: 8px;
+        }
+
+        /* 태블릿/데스크탑 이상에서 크기 키움 */
+        @media (min-width: 400px) {
+            .seat {
+                width: 82px;
+                height: 82px;
+                font-size: 18px;
+            }
+            .seat-row {
+                gap: 14px;
+            }
+        }
+
+        /* 초소형 모바일 대응 (320px 미만 혹은 좁은 화면) */
+        @media (max-width: 360px) {
+            .seat {
+                width: 68px;
+                height: 68px;
+                font-size: 14px;
+                padding: 6px;
+            }
+            main {
+                padding: 0 10px 40px;
+            }
         }
 
         /* Sweet Spot Style (2, 3) */
@@ -123,7 +150,7 @@
             border-color: #444;
             color: #FFFFFF;
             background-color: #0c0c0c;
-            font-size: 13px; /* 점유 시 폰트 크기 조정 */
+            font-size: 14px;
             font-weight: 500;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);
         }
@@ -332,15 +359,15 @@
                     
                     // 이름 길이에 따라 폰트 크기 미세 조정
                     if (displayName.length >= 5) {
-                        seatDiv.style.fontSize = '10px';
-                    } else if (displayName.length >= 3) {
                         seatDiv.style.fontSize = '12px';
+                    } else if (displayName.length >= 3) {
+                        seatDiv.style.fontSize = '13px';
                     } else {
                         seatDiv.style.fontSize = '14px';
                     }
                 } else {
                     seatDiv.textContent = seat.no;
-                    seatDiv.style.fontSize = '16px'; 
+                    // 좌석 크기에 따라 기본 번호 크기 자동 조정은 CSS 미디어 쿼리가 처리
                 }
 
                 if (seat.no <= 4) {
