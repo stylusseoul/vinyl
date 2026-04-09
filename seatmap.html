@@ -87,28 +87,29 @@
         .seat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 14px; /* 간격 미세 조정 */
             justify-items: center;
         }
 
         .seat {
-            width: 72px;
-            height: 72px;
+            width: 82px; /* 원 크기 확대: 72px -> 82px */
+            height: 82px; /* 원 크기 확대: 72px -> 82px */
             border-radius: 50%;
             border: 1.5px solid #222;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 16px; /* 기본 폰트 크기 상향 */
             font-weight: 300;
             color: #555;
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             background-color: transparent;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding: 4px;
+            text-align: center;
+            line-height: 1.2;
+            word-break: keep-all; 
+            padding: 10px; /* 내부 여백 상향 */
         }
 
         /* Sweet Spot Style (2, 3) */
@@ -119,10 +120,10 @@
 
         /* Occupied State */
         .seat.occupied {
-            border-color: #555;
+            border-color: #444;
             color: #FFFFFF;
             background-color: #0c0c0c;
-            font-size: 13px;
+            font-size: 13px; /* 점유 시 폰트 크기 조정 */
             font-weight: 500;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);
         }
@@ -131,37 +132,35 @@
             background-color: #FF5F1F;
             border-color: #FF5F1F;
             color: #FFFFFF;
-            box-shadow: 0 8px 24px rgba(255, 95, 31, 0.5);
+            box-shadow: 0 8px 24px rgba(255, 95, 31, 0.3);
             font-weight: 700;
         }
 
-        /* REFRESH STATUS */
+        /* REFRESH STATUS - SUBTLE VERSION */
         .refresh-status {
-            padding: 20px;
-            background: rgba(255, 95, 31, 0.15);
-            border: 1px solid rgba(255, 95, 31, 0.4);
-            border-radius: 16px;
+            padding: 10px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 4px;
+            opacity: 0.6;
         }
 
         .status-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            font-weight: 800;
-            color: #FFFFFF;
-            letter-spacing: 1px;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 400;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .status-header i {
-            font-size: 18px;
+            font-size: 10px;
             color: #FF5F1F;
-            animation: spin 3s linear infinite;
+            animation: spin 4s linear infinite;
         }
 
         @keyframes spin {
@@ -170,10 +169,10 @@
         }
 
         .last-sync-time {
-            font-size: 14px;
-            color: #FFB38A;
+            font-size: 10px;
+            color: #555;
             font-family: 'Outfit';
-            font-weight: 600;
+            font-weight: 400;
             letter-spacing: 0.5px;
         }
 
@@ -184,7 +183,7 @@
         }
 
         .guide-title {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             color: #FFFFFF;
             margin-bottom: 20px;
@@ -193,23 +192,23 @@
             gap: 10px;
         }
 
-        .guide-title i { color: #FF5F1F; font-size: 22px; }
+        .guide-title i { color: #FF5F1F; font-size: 20px; }
 
         .guide-list {
             list-style: none;
         }
 
         .guide-item {
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 300;
-            color: #999;
+            color: #777;
             line-height: 1.8;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             word-break: keep-all;
         }
 
-        .highlight { color: #FFFFFF; font-weight: 500; }
-        .point-color { color: #FF5F1F; font-weight: 600; }
+        .highlight { color: #AAA; font-weight: 400; }
+        .point-color { color: #FF5F1F; font-weight: 500; }
 
         /* FOOTER */
         footer {
@@ -223,20 +222,20 @@
         }
 
         .footer-quote {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 200;
-            color: #666;
+            color: #444;
             line-height: 1.6;
             font-style: italic;
-            max-width: 360px;
+            max-width: 320px;
             margin: 0 auto;
             word-break: keep-all;
         }
 
         .footer-links a {
-            color: #888;
+            color: #555;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 400;
             letter-spacing: 1px;
             display: flex;
@@ -250,7 +249,7 @@
         }
 
         .footer-links i {
-            font-size: 20px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -264,17 +263,15 @@
     <main>
         <section class="seat-section">
             <div class="seat-grid-container">
-                <!-- 1열: 1, 2, 3, 4번 -->
                 <div class="seat-row" id="row1"></div>
-                <!-- 2열: 5, 6, 7, 8번 -->
                 <div class="seat-row" id="row2"></div>
             </div>
 
             <div class="refresh-status eng" id="refreshStatus">
                 <div class="status-header">
-                    <i class="ph ph-circle-notch"></i> LIVE CONNECTED
+                    <i class="ph ph-circle-notch"></i> Live Connected
                 </div>
-                <div class="last-sync-time" id="lastUpdated">SYNCING...</div>
+                <div class="last-sync-time" id="lastUpdated">Syncing</div>
             </div>
         </section>
 
@@ -285,14 +282,14 @@
                     1. 좌석은 별도의 지정 없이 <span class="highlight">선착순으로 운영</span>됩니다.
                 </li>
                 <li class="guide-item">
-                    2. <span class="point-color">오렌지색</span>으로 표시된 2, 3번 좌석은 음악을 감상하기에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다. 해당 좌석 착석을 추천드립니다.
+                    2. <span class="point-color">오렌지색</span>으로 표시된 2, 3번 좌석은 음악을 감상하기에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.
                 </li>
             </ul>
         </section>
     </main>
 
     <footer>
-        <div class="footer-text eng">
+        <div class="footer-quote eng">
             "A small room designed for listening, where sound is free to breathe and time is never in a hurry."
         </div>
         <div class="footer-links eng">
@@ -309,12 +306,8 @@
         const SWEET_SPOTS = [2, 3];
         const TOTAL_SEATS = 8;
         
-        // 초기 기본 데이터 구조
         let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
 
-        /**
-         * 좌석 렌더링 함수
-         */
         function renderMap() {
             const row1 = document.getElementById('row1');
             const row2 = document.getElementById('row2');
@@ -331,17 +324,25 @@
                     seatDiv.classList.add('sweet-spot');
                 }
 
-                // NAME 표시 로직 (공백 제거 후 값이 있으면 occupied)
                 const displayName = (seat.name || "").toString().trim();
                 
                 if (displayName !== "") {
                     seatDiv.classList.add('occupied');
                     seatDiv.textContent = displayName;
+                    
+                    // 이름 길이에 따라 폰트 크기 미세 조정
+                    if (displayName.length >= 5) {
+                        seatDiv.style.fontSize = '10px';
+                    } else if (displayName.length >= 3) {
+                        seatDiv.style.fontSize = '12px';
+                    } else {
+                        seatDiv.style.fontSize = '14px';
+                    }
                 } else {
                     seatDiv.textContent = seat.no;
+                    seatDiv.style.fontSize = '16px'; 
                 }
 
-                // 1-4번 앞열, 5-8번 뒷열
                 if (seat.no <= 4) {
                     row1.appendChild(seatDiv);
                 } else {
@@ -350,20 +351,15 @@
             });
         }
 
-        /**
-         * 실시간 데이터 업데이트
-         */
         async function updateData() {
             const lastUpdatedEl = document.getElementById('lastUpdated');
             
-            // config.js의 REQUEST_API_URL 참조
             if (typeof REQUEST_API_URL === 'undefined' || !REQUEST_API_URL) {
-                lastUpdatedEl.textContent = "CONFIG ERROR: URL MISSING";
+                lastUpdatedEl.textContent = "URL ERROR";
                 return;
             }
 
             try {
-                // action=read 파라미터를 사용하여 좌석 데이터를 읽어옴
                 const url = `${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Sync failed');
@@ -374,7 +370,6 @@
                     const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     
                     data.forEach(item => {
-                        // code.gs에서 headers[j].toString().toUpperCase().trim()로 처리하므로 대문자 키로 접근
                         const no = parseInt(item.NO || item.no);
                         const name = item.NAME !== undefined && item.NAME !== null ? item.NAME : (item.name || "");
                         
@@ -387,17 +382,14 @@
                     renderMap();
                     
                     const now = new Date();
-                    lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-                } else {
-                    lastUpdatedEl.textContent = "WAITING FOR DATA...";
+                    lastUpdatedEl.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 }
             } catch (error) {
                 console.error("Fetch Error:", error);
-                lastUpdatedEl.textContent = "SYNC DISCONNECTED";
+                lastUpdatedEl.textContent = "Sync Disconnected";
             }
         }
 
-        // 초기 구동 및 자동 갱신 설정 (30초)
         window.onload = function() {
             renderMap();
             updateData();
