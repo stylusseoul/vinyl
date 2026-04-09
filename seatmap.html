@@ -32,7 +32,7 @@
 
         /* HEADER */
         header {
-            padding: 50px 24px 30px;
+            padding: 40px 24px 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -40,14 +40,14 @@
         }
 
         .logo-img {
-            width: 130px;
+            width: 120px;
             height: auto;
             margin-bottom: 8px;
             display: block;
         }
 
         .page-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #FF5F1F;
             letter-spacing: 6px;
@@ -57,52 +57,76 @@
 
         /* MAIN CONTENT */
         main {
-            padding: 0 24px 60px;
+            padding: 0 24px 40px;
             max-width: 500px;
             margin: 0 auto;
         }
 
         /* SEAT MAP SECTION */
         .seat-section {
-            margin-top: 20px;
-            margin-bottom: 60px;
+            margin-top: 10px;
+            margin-bottom: 40px;
             text-align: center;
+            perspective: 1000px;
         }
 
-        /* SOUND SOURCE (Stage) Indicator */
-        .sound-source {
-            width: 140px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #333, #FF5F1F, #333, transparent);
-            margin: 0 auto 40px;
+        /* SPEAKER SYSTEM VISUALIZATION */
+        .speaker-system {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 0 auto 50px;
             position: relative;
         }
 
-        .sound-source::after {
-            content: 'SOUND SOURCE';
+        .speaker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.8;
+        }
+
+        .speaker i {
+            font-size: 32px;
+            color: #333;
+        }
+
+        .speaker.active i {
+            color: #FF5F1F;
+            filter: drop-shadow(0 0 8px rgba(255, 95, 31, 0.4));
+        }
+
+        .speaker-label {
+            font-family: 'Outfit';
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #444;
+        }
+
+        .sound-wave {
             position: absolute;
-            top: -15px;
+            top: 40px;
             left: 50%;
             transform: translateX(-50%);
-            font-family: 'Outfit';
-            font-size: 9px;
-            letter-spacing: 3px;
-            color: #555;
             width: 100%;
+            height: 60px;
+            background: radial-gradient(ellipse at top, rgba(255, 95, 31, 0.05) 0%, transparent 70%);
+            z-index: -1;
         }
 
         /* 4x2 GRID LAYOUT */
         .seat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
+            gap: 16px;
+            margin-bottom: 30px;
             justify-items: center;
         }
 
         .seat {
-            width: 68px;
-            height: 68px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             border: 1px solid #222;
             display: flex;
@@ -111,44 +135,38 @@
             font-size: 14px;
             font-weight: 300;
             color: #555;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             background-color: transparent;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding: 5px;
         }
 
-        /* Sweet Spot Style (2, 3) */
         .seat.sweet-spot {
-            border-color: rgba(255, 95, 31, 0.4);
-            color: rgba(255, 95, 31, 0.6);
+            border-color: rgba(255, 95, 31, 0.3);
+            color: rgba(255, 95, 31, 0.5);
         }
 
-        /* Occupied State */
         .seat.occupied {
             border-color: #444;
             color: #FFFFFF;
             background-color: #0a0a0a;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
         }
 
         .seat.sweet-spot.occupied {
             background-color: #FF5F1F;
             border-color: #FF5F1F;
             color: #FFFFFF;
-            box-shadow: 0 10px 25px rgba(255, 95, 31, 0.4);
+            box-shadow: 0 8px 20px rgba(255, 95, 31, 0.4);
             font-weight: 600;
         }
 
         /* REFRESH STATUS */
         .refresh-status {
-            font-size: 11px;
-            color: #333;
-            letter-spacing: 1.5px;
+            font-size: 10px;
+            color: #222;
+            letter-spacing: 2px;
             margin-top: 10px;
             display: flex;
             flex-direction: column;
@@ -163,8 +181,8 @@
         }
 
         .refresh-status i {
-            font-size: 12px;
-            animation: spin 3s linear infinite;
+            font-size: 10px;
+            animation: spin 4s linear infinite;
         }
 
         @keyframes spin {
@@ -174,25 +192,24 @@
 
         .last-updated {
             font-size: 9px;
-            opacity: 0.6;
+            opacity: 0.5;
             font-family: 'Outfit';
         }
 
         /* GUIDE SECTION */
         .guide-section {
             border-top: 1px solid #111;
-            padding-top: 40px;
+            padding-top: 30px;
         }
 
         .guide-title {
             font-size: 16px;
             font-weight: 500;
             color: #FFFFFF;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-            letter-spacing: -0.5px;
         }
 
         .guide-title i { color: #FF5F1F; font-size: 20px; }
@@ -202,33 +219,57 @@
         }
 
         .guide-item {
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 300;
             color: #888;
-            line-height: 1.8;
-            margin-bottom: 18px;
+            line-height: 1.7;
+            margin-bottom: 12px;
             word-break: keep-all;
         }
 
         .highlight { color: #FFFFFF; font-weight: 400; }
         .point-color { color: #FF5F1F; font-weight: 500; }
 
-        /* FOOTER */
+        /* FOOTER - 콤팩트하게 수정 */
         footer {
-            padding: 60px 24px 80px;
+            padding: 30px 24px 40px;
             text-align: center;
             border-top: 1px solid #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
         }
 
-        .footer-quote {
-            font-size: 14px;
+        .footer-text {
+            font-size: 13px;
             font-weight: 200;
             color: #555;
-            line-height: 1.6;
+            line-height: 1.5;
             font-style: italic;
-            max-width: 300px;
+            max-width: 340px;
             margin: 0 auto;
             word-break: keep-all;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:active {
+            color: #FF5F1F;
+        }
+
+        .footer-links i {
+            font-size: 18px;
         }
 
     </style>
@@ -243,15 +284,25 @@
     <main>
         <!-- Seat Map Area -->
         <section class="seat-section">
-            <div class="sound-source"></div>
+            <div class="speaker-system">
+                <div class="speaker active">
+                    <i class="ph ph-speaker-hifi"></i>
+                    <span class="speaker-label">LEFT</span>
+                </div>
+                <div class="speaker active">
+                    <i class="ph ph-speaker-hifi"></i>
+                    <span class="speaker-label">RIGHT</span>
+                </div>
+                <div class="sound-wave"></div>
+            </div>
             
             <div class="seat-grid" id="seatGrid">
-                <!-- Seats 1-8 will be rendered here -->
+                <!-- JS handles seat rendering -->
             </div>
 
             <div class="refresh-status eng" id="refreshStatus">
                 <div class="indicator">
-                    <i class="ph ph-circle-notch"></i> LIVE UPDATING
+                    <i class="ph ph-circle-notch"></i> LIVE CONNECTED
                 </div>
                 <div class="last-updated" id="lastUpdated">Initializing...</div>
             </div>
@@ -272,9 +323,14 @@
     </main>
 
     <footer>
-        <p class="footer-quote eng">
+        <div class="footer-text eng">
             A small room designed for listening, where sound is free to breathe and time is never in a hurry.
-        </p>
+        </div>
+        <div class="footer-links eng">
+            <a href="https://www.instagram.com/stylus.seoul/" target="_blank">
+                <i class="ph ph-instagram-logo"></i> stylus.seoul
+            </a>
+        </div>
     </footer>
 
     <script>
@@ -282,10 +338,8 @@
         const SWEET_SPOTS = [2, 3];
         const TOTAL_SEATS = 8;
 
-        // 초기 좌석 상태 (1~8)
         let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
 
-        // UI 렌더링 함수
         function renderMap() {
             const grid = document.getElementById('seatGrid');
             if (!grid) return;
@@ -295,12 +349,10 @@
                 const seatDiv = document.createElement('div');
                 seatDiv.className = 'seat';
                 
-                // 스위트 스팟 적용 (2, 3번)
                 if (SWEET_SPOTS.includes(seat.no)) {
                     seatDiv.classList.add('sweet-spot');
                 }
 
-                // 점유 상태 확인
                 const displayName = seat.name ? seat.name.trim() : "";
                 if (displayName !== "") {
                     seatDiv.classList.add('occupied');
@@ -313,18 +365,15 @@
             });
         }
 
-        // 데이터 업데이트 함수
         async function updateData() {
             const statusEl = document.getElementById('refreshStatus');
             const lastUpdatedEl = document.getElementById('lastUpdated');
             statusEl.style.opacity = "1";
 
             try {
-                // 캐시 방지를 위한 타임스탬프 추가
                 const fetchUrl = `${API_URL}?sheet=${encodeURIComponent('Seat Map')}&t=${new Date().getTime()}`;
-                
                 const response = await fetch(fetchUrl);
-                if (!response.ok) throw new Error('Network error');
+                if (!response.ok) throw new Error('Sync error');
                 
                 const rawData = await response.json();
                 const data = Array.isArray(rawData) ? rawData : (rawData.data || []);
@@ -352,19 +401,17 @@
                 }
             } catch (error) {
                 console.error("Refresh failed:", error);
-                lastUpdatedEl.textContent = "SYNC INTERRUPTED";
+                lastUpdatedEl.textContent = "SYNC RETRYING...";
             } finally {
                 setTimeout(() => {
                     statusEl.style.opacity = "0.3";
-                }, 1200);
+                }, 1500);
             }
         }
 
-        // 초기 구동
         document.addEventListener('DOMContentLoaded', () => {
             renderMap();
             updateData();
-            // 30초마다 자동 새로고침
             setInterval(updateData, 30000);
         });
     </script>
