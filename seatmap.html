@@ -19,7 +19,7 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-            --seat-size: clamp(76px, 22vw, 96px); /* 크기를 미세하게 상향 */
+            --seat-size: clamp(76px, 22vw, 96px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -47,7 +47,7 @@
         .seat {
             width: var(--seat-size);
             height: var(--seat-size);
-            border-radius: 20px; /* 라운드 값 최적화 */
+            border-radius: 20px;
             border: 1px solid var(--border);
             background: var(--surface);
             display: flex; align-items: center; justify-content: center;
@@ -55,25 +55,40 @@
             font-weight: 300; color: var(--sub);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center; 
-            line-height: 1.2; 
-            word-break: keep-all; 
-            padding: 10px; /* 패딩을 늘려 글자가 테두리에 붙지 않게 방어 */
+            line-height: 1.25; 
+            word-break: break-all; 
+            padding: 10px;
             overflow: hidden;
         }
 
         .seat.sweet-spot { border-color: var(--accent); color: var(--accent); }
         
-        /* 점유된 좌석: 2줄 자동 줄바꿈 및 중앙 정렬 */
+        /* 점유된 좌석: 최대 3줄 표시 및 말줄임 처리 */
         .seat.occupied { 
             border-color: var(--sub2); 
             color: var(--text); 
             background-color: #1a1a1a; 
             font-weight: 400;
-            display: flex;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* 최대 3줄 */
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+            /* Flex 느낌의 중앙 정렬을 위한 설정 */
+            -webkit-box-pack: center;
+            -webkit-box-align: center;
+            display: flex; /* 하위 브라우저 호환성 및 중앙 정렬 유지 */
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            word-break: break-all; /* 긴 단어 강제 줄바꿈으로 넘침 방지 */
+        }
+
+        /* 말줄임을 위한 컨테이너 스타일 (3줄 제한 실제 적용) */
+        .seat-name-label {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
         }
         
         .seat.sweet-spot.occupied { 
@@ -159,13 +174,19 @@
                 if (SWEET_SPOTS.includes(s.no)) d.classList.add('sweet-spot');
                 const n = (s.name || "").trim();
                 if (n !== "") { 
-                    d.classList.add('occupied'); d.textContent = n; 
+                    d.classList.add('occupied');
                     
-                    // 글자 길이에 따른 폰트 사이즈 조절 로직 강화
-                    if (n.length >= 8) d.style.fontSize = 'clamp(9px, 2.6vw, 11px)'; 
-                    else if (n.length >= 5) d.style.fontSize = 'clamp(11px, 3.2vw, 13px)'; 
-                    else if (n.length >= 3) d.style.fontSize = 'clamp(13px, 3.8vw, 15px)';
-                    else d.style.fontSize = 'clamp(15px, 4.2vw, 18px)';
+                    // 3줄 말줄임을 위한 내부 스팬 추가
+                    const label = document.createElement('span');
+                    label.className = 'seat-name-label';
+                    label.textContent = n;
+                    d.appendChild(label);
+                    
+                    // 폰트 크기 하한선을 높여 가독성 확보 (최소 11px)
+                    if (n.length >= 10) d.style.fontSize = 'clamp(11px, 2.8vw, 12px)'; 
+                    else if (n.length >= 6) d.style.fontSize = 'clamp(12px, 3.2vw, 14px)'; 
+                    else if (n.length >= 4) d.style.fontSize = 'clamp(14px, 3.8vw, 16px)';
+                    else d.style.fontSize = 'clamp(16px, 4.2vw, 18px)';
                 } else {
                     d.textContent = s.no;
                     d.style.fontSize = ''; 
