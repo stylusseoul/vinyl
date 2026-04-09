@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>STYLUS | Guide</title>
-    <!-- 외부 설정 및 폰트/아이콘 로드 -->
-    <script src="config.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@200;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        /* style.css 디자인 시스템 적용 */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>STYLUS | Seat Map</title>
+<!-- 외부 설정 파일 로드 -->
+<script src="config.js"></script>
+    <!-- 폰트: Outfit (영문) & Noto Sans KR (국문) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- 아이콘: Phosphor Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@200;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+        /* CORE SETUP */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        /* style.css 변수 및 디자인 시스템 적용 */
         :root {
             --bg:      #080808;
             --surface: #111;
@@ -21,42 +30,75 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-        }
+}
 
+        body {
+            background-color: #000000;
+            color: #E0E0E0;
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: var(--font); 
-            line-height: 1.7; 
-            -webkit-font-smoothing: antialiased; 
-            overflow-x: hidden;
-        }
+            background: var(--bg); color: var(--text); font-family: var(--font); 
+            line-height: 1.6; -webkit-font-smoothing: antialiased; 
+            min-height: 100vh; display: flex; flex-direction: column; 
+}
 
-        .eng { font-family: 'Outfit', sans-serif; }
+.eng { font-family: 'Outfit', sans-serif; }
 
-        /* Animations */
-        @keyframes fadeUp { 
-            from { opacity: 0; transform: translateY(15px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        .animate-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-
-        /* Header - 정적 배치 */
-        header { 
-            position: relative;
-            background: var(--bg);
-            padding: 40px 24px 10px; 
-            text-align: center; 
-            display: flex; 
-            flex-direction: column; 
+        /* HEADER - Tight Spacing */
+        header {
+            padding: 30px 24px 10px; 
+            text-align: center;
+            display: flex;
+            flex-direction: column;
             align-items: center;
         }
+
+        .logo-img {
+            width: 110px;
+            height: auto;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .page-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: #FF5F1F;
+            letter-spacing: 5px;
+            margin-left: 5px;
+            text-transform: uppercase;
+        }
+
+        /* MAIN CONTENT */
+        main {
+            padding: 0 20px 40px; 
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        /* Header - 정적 레이아웃 */
+        header { 
+            position: relative; background: var(--bg);
+            padding: 40px 24px 10px; 
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+}
+
+        /* SEAT SECTION */
+        .seat-section {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
         .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); opacity: 0.95; }
         .page-title { 
             font-size: 11px; 
@@ -64,287 +106,276 @@
             color: var(--accent); 
             letter-spacing: 0.18em; 
             text-transform: uppercase; 
-        }
+}
 
-        /* Main Content */
-        main { 
-            padding: 0 24px 40px; 
-            max-width: 600px; 
-            margin: 0 auto; 
-        }
-        
-        .chapter { margin-top: 30px; position: relative; }
-        .chapter::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: var(--border); }
-        
-        .chapter-header { padding: 24px 0 10px; display: flex; align-items: baseline; gap: 12px; }
-        .chapter-num { font-size: 26px; font-weight: 200; color: var(--accent); line-height: 1; }
-        .chapter-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: 0.05em; text-transform: uppercase; }
-
-        /* SEAT MAP STYLES */
-        .seat-map-wrapper {
-            padding: 20px 0 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
+        /* GRID LAYOUT */
         .seat-grid-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 60px; /* 좌석과 밑에 사이 여백 3배 확장 유지 */
             width: 100%;
-            max-width: 340px;
-        }
+        /* Main Content */
+        main { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; }
+        
+        /* 좌석 영역 */
+        .seat-section { margin-top: 15px; text-align: center; }
+        
+        .seat-grid-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-bottom: 30px; /* 여백 정리: 상태바와의 간격 조정 */
+            width: 100%; 
+}
+
         .seat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             justify-items: center;
             width: 100%;
-        }
-        .seat {
-            width: clamp(62px, 16vw, 78px);
-            height: clamp(62px, 16vw, 78px);
-            border-radius: 50%;
+        
+        .seat-row { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            justify-items: center; 
+            width: 100%; 
+}
+
+.seat {
+width: clamp(64px, 18vw, 84px);
+height: clamp(64px, 18vw, 84px);
+border-radius: 50%;
+            border: 1px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: 1px solid var(--border);
             background: var(--surface);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(12px, 3.5vw, 15px);
-            font-weight: 400;
-            color: var(--sub);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            text-align: center;
-            line-height: 1.3;
-            word-break: keep-all;
-            padding: 10px;
-        }
-
-        /* 2, 3번 스위트 스팟 디자인 - 배경색 유지, 라인만 주황색 */
-        .seat.sweet-spot { 
-            border-color: var(--accent); 
-            color: var(--accent); 
-        }
-        .seat.occupied { 
-            border-color: var(--sub2); 
-            color: var(--text); 
-            background-color: #1a1a1a; 
-        }
-        .seat.sweet-spot.occupied { 
-            background-color: #1a1a1a; 
-            border-color: var(--accent); 
-            color: var(--text); 
-            box-shadow: 0 0 15px rgba(239, 124, 28, 0.15);
-        }
-
-        /* Sync Status */
-        .refresh-status {
-            padding-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            opacity: 0.5;
-        }
-        .status-header { display: flex; align-items: center; gap: 6px; font-size: 9px; color: var(--sub); letter-spacing: 2px; text-transform: uppercase; }
-        .status-header i { font-size: 8px; color: var(--accent); animation: spin 4s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .last-sync-time { font-size: 8px; color: var(--sub2); letter-spacing: 0.5px; }
-
-        /* Rule Items */
-        .rule-item { padding: 22px 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 28px 1fr; gap: 16px; align-items: start; }
-        .rule-item:last-child { border-bottom: none; }
-        .rule-icon { font-size: 20px; color: var(--sub); margin-top: 4px; }
-        .rule-text-box { display: flex; flex-direction: column; gap: 6px; }
-        .rule-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-        .rule-desc { font-size: 13px; font-weight: 400; color: var(--sub); line-height: 1.65; word-break: keep-all; }
-        
-        .highlight { color: var(--text); font-weight: 500; }
-        .point-color { color: var(--accent); font-weight: 600; }
-
-        /* Footer - index.html & style.css 100% 일치 */
-        .list-footer {
-            padding: 40px 24px 60px; 
-            margin-top: 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            text-align: center;
-        }
-        .footer-desc {
-            font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+font-size: clamp(14px, 4vw, 18px);
             font-weight: 300;
-            color: var(--sub);
-            line-height: 1.85;
-            letter-spacing: 0.01em;
-            font-style: italic;
-            max-width: 320px;
+            color: #555;
+            font-weight: 300; color: var(--sub);
+transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            background-color: transparent;
+            overflow: hidden;
+            text-align: center;
+            line-height: 1.4; 
+            word-break: keep-all; 
+            padding: 12px; 
         }
-        .footer-insta {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            text-decoration: none;
-            color: var(--sub);
-            font-size: 12px;
+
+        @media (max-width: 340px) {
+            .seat-row { gap: 8px; }
+            .seat { padding: 10px; }
+            text-align: center; line-height: 1.4; word-break: keep-all; padding: 12px; 
+}
+
+        /* Sweet Spot Style */
+        .seat.sweet-spot {
+            border-color: rgba(255, 95, 31, 0.5);
+            color: rgba(255, 95, 31, 0.7);
+        .seat.sweet-spot { border-color: rgba(239, 124, 28, 0.3); color: var(--accent); }
+        .seat.occupied { border-color: var(--sub2); color: var(--text); background-color: #1a1a1a; font-weight: 400; }
+        .seat.sweet-spot.occupied { 
+            background-color: var(--accent); 
+            border-color: var(--accent); 
+            color: #FFF; 
+            box-shadow: 0 8px 20px rgba(239, 124, 28, 0.2); 
+            font-weight: 500; 
+}
+
+        /* Occupied State */
+        .seat.occupied {
+            border-color: #444;
+            color: #FFFFFF;
+            background-color: #0c0c0c;
+            font-size: clamp(11px, 3.2vw, 14px);
+            font-weight: 400;
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
+        /* [수정] Refresh Status - 더 선명하고 정돈된 여백 */
+        .refresh-status { 
+            margin: 0 auto 40px; /* 상단 좌석과 30px, 하단 안내선과 40px 여백 */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 4px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03); /* 아주 살짝 배경을 주어 영역 분리 */
+            border-radius: 20px;
+            width: fit-content;
+}
+
+        .seat.sweet-spot.occupied {
+            background-color: #FF5F1F;
+            border-color: #FF5F1F;
+            color: #FFFFFF;
+            box-shadow: 0 8px 20px rgba(255, 95, 31, 0.2);
             font-weight: 500;
-            letter-spacing: 0.04em;
-            line-height: 1;
-            transition: color 0.15s;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            padding: 8px 14px;
         }
-        .footer-insta svg {
-            width: 15px;
-            height: 15px;
-            flex-shrink: 0;
-            display: block;
+
+        /* REFRESH STATUS */
+        .refresh-status {
+            padding: 5px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            opacity: 0.4;
         }
-        .footer-insta:active {
-            color: var(--text);
-            border-color: var(--sub);
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            font-weight: 400;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
-    </style>
+
+        .status-header i {
+            font-size: 8px;
+            color: #FF5F1F;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .last-sync-time {
+            font-size: 8px;
+            color: #444;
+            font-family: 'Outfit';
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        
+        .status-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 7px; 
+            font-size: 10px; 
+            font-weight: 600; 
+            color: var(--text); /* 텍스트 더 밝게 */
+            letter-spacing: 0.1em; 
+            text-transform: uppercase; 
+}
+
+        /* GUIDE SECTION */
+        .guide-section {
+            border-top: 1px solid #111;
+            padding-top: 25px;
+            width: 100%;
+            margin-bottom: 40px; /* 푸터가 없으므로 하단 여백 확보 */
+        
+        .status-header i { 
+            font-size: 11px; 
+            color: var(--accent); 
+            animation: spin 3s linear infinite; 
+}
+
+        .guide-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .last-sync-time { 
+            font-size: 9px; 
+            color: var(--sub); 
+            font-family: 'Outfit'; 
+            letter-spacing: 0.5px; 
+}
+
+        .guide-title i { color: #FF5F1F; font-size: 18px; }
+
+        .guide-list {
+            list-style: none;
+        /* Guide Section */
+        .guide-section { border-top: 1px solid var(--border); padding-top: 25px; width: 100%; }
+        .guide-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .guide-title i { color: var(--accent); font-size: 18px; }
+        .guide-item { font-size: 13px; color: var(--sub); margin-bottom: 10px; word-break: keep-all; list-style: none; }
+        .highlight { color: #BBB; }
+        .point-color { color: var(--accent); }
+
+        /* Footer - index.html 스타일 완전 일치 */
+        .list-footer {
+            padding: 40px 24px calc(env(safe-area-inset-bottom, 0px) + 60px); 
+            border-top: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+}
+
+        .guide-item {
+            font-size: 13px;
+            font-weight: 300;
+            color: #888;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            word-break: keep-all;
+        .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 1.85; letter-spacing: 0.01em; font-style: italic; max-width: 320px; }
+        .footer-insta {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500;
+            letter-spacing: 0.04em; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
+            transition: all 0.15s;
+}
+
+        .highlight { color: #AAA; font-weight: 400; }
+        .point-color { color: #FF5F1F; font-weight: 400; }
+
+        .footer-insta svg { width: 15px; height: 15px; display: block; }
+        .footer-insta:active { color: var(--text); border-color: var(--sub); }
+</style>
 </head>
 <body>
-    <header class="animate-up">
+
+<header>
+        <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="STYLUS Logo" class="logo-img">
+        <div class="page-title eng">Seat Map</div>
         <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img">
-        <div class="page-title">User Guide</div>
-    </header>
+        <div class="page-title">Seat Map</div>
+</header>
 
-    <main>
-        <!-- Chapter 01: Seat Map -->
-        <section class="chapter animate-up delay-1">
-            <div class="chapter-header">
-                <div class="chapter-num eng">01</div>
-                <h2 class="chapter-title">Seat Map</h2>
-            </div>
+<main>
+@@ -237,7 +169,8 @@
+<div class="seat-row" id="row1"></div>
+<div class="seat-row" id="row2"></div>
+</div>
 
-            <div class="seat-map-wrapper">
-                <div class="seat-grid-container">
-                    <div class="seat-row" id="row1"></div>
-                    <div class="seat-row" id="row2"></div>
-                </div>
-                <div class="refresh-status eng">
-                    <div class="status-header">
-                        <i class="ph ph-circle-notch"></i> Live Connected
-                    </div>
-                    <div class="last-sync-time" id="lastUpdated">Syncing</div>
-                </div>
-            </div>
+            
+            <!-- 상태 표시줄: 여백 및 가시성 개선 -->
+<div class="refresh-status eng">
+<div class="status-header">
+<i class="ph ph-circle-notch"></i> Live Connected
+@@ -248,107 +181,84 @@
 
-            <div class="rule-item">
-                <i class="ph ph-info rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">좌석 안내</h3>
-                    <div class="rule-desc">
-                        <p>1. 모든 좌석은 별도의 예약 없이 <span class="highlight">선착순으로 운영</span>됩니다.</p>
-                        <p>2. <span class="point-color">오렌지색 라인</span>의 2, 3번 좌석은 사운드가 가장 완벽하게 전달되는 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chapter 02: Welcome -->
-        <section class="chapter animate-up delay-2">
-            <div class="chapter-header">
-                <div class="chapter-num eng">02</div>
-                <h2 class="chapter-title eng">Welcome</h2>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-door rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">입장 및 출입문</h3>
-                    <div class="rule-desc"><p>방음 처리로 인해 <span class="highlight">문이 다소 무거울 수 있습니다.</span> 당황하지 마시고 <span class="highlight">조금 세게 밀어주시면</span> 열립니다.</p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-sneaker rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">실내화 착용</h3>
-                    <div class="rule-desc"><p>쾌적한 환경을 위해 입장 시 입구에 준비된 <span class="highlight">슬리퍼로 갈아신고</span> 이용해 주시기 바랍니다.</p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-coat-hanger rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">외투 및 소지품</h3>
-                    <div class="rule-desc"><p>겉옷은 벽면에 비치된 <span class="highlight">옷걸이에 걸어두실 수 있으며</span>, 가방 등은 각자 자리에서 보관해 주세요.</p></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chapter 03: For the Sound -->
-        <section class="chapter animate-up delay-3">
-            <div class="chapter-header">
-                <div class="chapter-num eng">03</div>
-                <h2 class="chapter-title eng">For the Sound</h2>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-ear rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">감상 중 대화</h3>
-                    <div class="rule-desc"><p>음악이 흐르는 동안 <span class="highlight">대화는 필요한 만큼만, 작은 목소리로</span> 부탁드립니다. 공간의 소리에 방해되지 않도록 <span class="highlight">배려해 주세요.</span></p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-vinyl-record rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">바이닐(LP) 취급</h3>
-                    <div class="rule-desc"><p>레코드는 예민하므로 <span class="highlight">직접 다루는 것은 삼가주시고</span>, 궁금한 앨범은 스태프에게 말씀해 주세요.</p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-device-mobile-camera rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">휴대전화 및 촬영</h3>
-                    <div class="rule-desc"><p>휴대전화는 <span class="highlight">무음으로 유지</span>해 주세요. 촬영 시 타인의 얼굴이 포함되지 않도록 주의 부탁드립니다.</p></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chapter 04: Amenities & Safety -->
-        <section class="chapter animate-up delay-4">
-            <div class="chapter-header">
-                <div class="chapter-num eng">04</div>
-                <h2 class="chapter-title eng">Amenities</h2>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-coffee rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">음료 및 간식 취식</h3>
-                    <div class="rule-desc"><p>자유롭게 즐기실 수 있으나, <span class="highlight">장비 근처에서의 취식은 절대 삼가</span> 주시면 감사하겠습니다.</p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-toilet rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">화장실 이용</h3>
-                    <div class="rule-desc"><p>남녀 공용입니다. 비치된 <span class="point-color">오렌지색 트레이</span>를 통째로 가져가 사용하신 후 <span class="highlight">제자리에</span> 두시면 됩니다.</p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-cigarette rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">흡연 구역</h3>
-                    <div class="rule-desc"><p>공간 내부는 금연이며, 흡연은 <span class="highlight">건물 옥상에서만 가능</span>합니다.</p></div>
-                </div>
-            </div>
-            <div class="rule-item">
-                <i class="ph ph-video-camera rule-icon"></i>
-                <div class="rule-text-box">
-                    <h3 class="rule-title">보안 및 CCTV</h3>
-                    <div class="rule-desc"><p>도난 및 사고 방지를 위해 <span class="highlight">CCTV가 상시 녹화 중</span>입니다.</p></div>
-                </div>
-            </div>
-        </section>
-    </main>
+<section class="guide-section">
+<h3 class="guide-title"><i class="ph ph-info"></i> 좌석 안내</h3>
+            <ul class="guide-list">
+                <li class="guide-item">
+                    1. 좌석은 별도의 지정 없이 <span class="highlight">선착순으로 운영</span>됩니다.
+                </li>
+                <li class="guide-item">
+                    2. <span class="point-color">오렌지색</span>으로 표시된 2, 3번 좌석은 음악을 감상하기에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.
+                </li>
+            </ul>
+            <div class="guide-item">1. 좌석은 별도의 지정 없이 <span class="highlight">선착순으로 운영</span>됩니다.</div>
+            <div class="guide-item">2. <span class="point-color">오렌지색</span> 좌석은 음악 감상에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.</div>
+</section>
+</main>
 
     <footer class="list-footer">
         <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
@@ -358,15 +389,16 @@
         </a>
     </footer>
 
-    <script>
+<script>
         /**
          * STYLUS SEAT MAP LOGIC
          */
-        const SWEET_SPOTS = [2, 3];
-        const TOTAL_SEATS = 8;
-        let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
+const SWEET_SPOTS = [2, 3];
+const TOTAL_SEATS = 8;
+        
+let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
 
-        function renderMap() {
+function renderMap() {
             const row1 = document.getElementById('row1');
             const row2 = document.getElementById('row2');
             if (!row1 || !row2) return;
@@ -383,7 +415,18 @@
                 }
 
                 const displayName = (seat.name || "").toString().trim();
-                
+            const r1 = document.getElementById('row1'); 
+            const r2 = document.getElementById('row2');
+            if (!r1 || !r2) return;
+            
+            r1.innerHTML = ''; 
+            r2.innerHTML = '';
+            
+            seats.forEach((s) => {
+                const d = document.createElement('div'); 
+                d.className = 'seat';
+                if (SWEET_SPOTS.includes(s.no)) d.classList.add('sweet-spot');
+
                 if (displayName !== "") {
                     seatDiv.classList.add('occupied');
                     seatDiv.textContent = displayName;
@@ -393,7 +436,13 @@
                     } else if (displayName.length >= 3) {
                         seatDiv.style.fontSize = 'clamp(11px, 3.2vw, 13px)';
                     }
-                } else {
+                const n = (s.name || "").trim();
+                if (n !== "") { 
+                    d.classList.add('occupied'); 
+                    d.textContent = n; 
+                    if (n.length >= 5) d.style.fontSize = 'clamp(10px, 2.8vw, 11px)'; 
+                    else if (n.length >= 3) d.style.fontSize = 'clamp(11px, 3.2vw, 13px)'; 
+} else {
                     seatDiv.textContent = seat.no;
                 }
 
@@ -401,22 +450,34 @@
                     row1.appendChild(seatDiv);
                 } else {
                     row2.appendChild(seatDiv);
-                }
-            });
-        }
+                    d.textContent = s.no;
+}
+                
+                if (s.no <= 4) r1.appendChild(d); 
+                else r2.appendChild(d);
+});
+}
 
-        async function updateData() {
+async function updateData() {
             const lastUpdatedEl = document.getElementById('lastUpdated');
+            const el = document.getElementById('lastUpdated'); 
             if (typeof REQUEST_API_URL === 'undefined') return;
 
-            try {
+            if (typeof REQUEST_API_URL === 'undefined' || !REQUEST_API_URL) {
+                lastUpdatedEl.textContent = "URL ERROR";
+                return;
+            }
+
+try {
                 const url = `${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Sync failed');
                 
                 const data = await response.json();
-                
-                if (data && Array.isArray(data)) {
+                const res = await fetch(`${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`);
+                const data = await res.json();
+
+if (data && Array.isArray(data)) {
                     const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     
                     data.forEach(item => {
@@ -426,25 +487,36 @@
                         if (!isNaN(no) && no >= 1 && no <= TOTAL_SEATS) {
                             newSeats[no - 1].name = name;
                         }
-                    });
+                    const ns = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
+                    data.forEach(item => { 
+                        const no = parseInt(item.NO || item.no); 
+                        const name = item.NAME || item.name || ""; 
+                        if (no >= 1 && no <= TOTAL_SEATS) ns[no - 1].name = name; 
+});
 
                     seats = newSeats;
-                    renderMap();
+                    seats = ns; 
+renderMap();
                     
                     const now = new Date();
-                    lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-                }
+                    lastUpdatedEl.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    const now = new Date(); 
+                    el.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+}
             } catch (error) {
                 console.error("Fetch Error:", error);
-                lastUpdatedEl.textContent = "Sync Error";
-            }
-        }
+                lastUpdatedEl.textContent = "Sync Disconnected";
+            } catch (e) { 
+                el.textContent = "Sync Error"; 
+}
+}
 
         window.onload = function() {
             renderMap();
             updateData();
-            setInterval(updateData, 30000); // 30초 주기 갱신
-        };
-    </script>
-</body>
-</html>
+        window.onload = () => { 
+            renderMap(); 
+            updateData(); 
+setInterval(updateData, 30000); 
+};
+</script>
