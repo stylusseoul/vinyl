@@ -85,15 +85,17 @@
 
         .seat.sweet-spot { border-color: rgba(239, 124, 28, 0.3); color: var(--accent); }
         .seat.occupied { border-color: var(--sub2); color: var(--text); background-color: #1a1a1a; font-weight: 400; }
+        
+        /* [수정됨] 스위트 스팟 점유 시: 배경색은 일반 점유와 동일하게 유지하고 아웃라인/폰트만 주황색 */
         .seat.sweet-spot.occupied { 
-            background-color: var(--accent); 
+            background-color: #1a1a1a; 
             border-color: var(--accent); 
-            color: #FFF; 
+            color: var(--accent); 
             box-shadow: 0 8px 20px rgba(239, 124, 28, 0.2); 
             font-weight: 500; 
         }
 
-        /* [수정] Refresh Status - 더 선명하고 정돈된 여백 */
+        /* Refresh Status - 더 선명하고 정돈된 여백 */
         .refresh-status { 
             margin: 0 auto 40px; /* 상단 좌석과 30px, 하단 안내선과 40px 여백 */
             display: flex; 
