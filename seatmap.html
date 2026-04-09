@@ -35,9 +35,9 @@
 
         .eng { font-family: 'Outfit', sans-serif; }
 
-        /* HEADER */
+        /* HEADER - Reference site style spacing */
         header {
-            padding: 40px 20px 20px;
+            padding: 80px 24px 40px; /* 여백 확장 */
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -45,24 +45,24 @@
         }
 
         .logo-img {
-            width: 120px;
+            width: 130px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: block;
         }
 
         .page-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             color: #FF5F1F;
-            letter-spacing: 5px;
-            margin-left: 5px;
+            letter-spacing: 6px;
+            margin-left: 6px;
             text-transform: uppercase;
         }
 
-        /* MAIN CONTENT */
+        /* MAIN CONTENT - Reference site style spacing */
         main {
-            padding: 0 16px 40px; /* 모바일 대응을 위해 좌우 여백 축소 */
+            padding: 0 24px 100px; /* 하단 여백 대폭 확장 */
             max-width: 500px;
             margin: 0 auto;
             width: 100%;
@@ -72,7 +72,7 @@
         /* SEAT SECTION */
         .seat-section {
             margin-top: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
             text-align: center;
         }
 
@@ -81,23 +81,23 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
             align-items: center;
         }
 
         .seat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px; /* 모바일에서는 간격을 살짝 좁힘 */
+            gap: 10px;
             justify-items: center;
             width: 100%;
         }
 
         .seat {
-            width: 75px; /* 기본 크기 하향 (가로 폭 확보) */
+            width: 75px;
             height: 75px;
             border-radius: 50%;
-            border: 1.5px solid #222;
+            border: 1px solid #222;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -114,7 +114,6 @@
             padding: 8px;
         }
 
-        /* 태블릿/데스크탑 이상에서 크기 키움 */
         @media (min-width: 400px) {
             .seat {
                 width: 82px;
@@ -126,7 +125,6 @@
             }
         }
 
-        /* 초소형 모바일 대응 (320px 미만 혹은 좁은 화면) */
         @media (max-width: 360px) {
             .seat {
                 width: 68px;
@@ -135,11 +133,11 @@
                 padding: 6px;
             }
             main {
-                padding: 0 10px 40px;
+                padding: 0 10px 80px;
             }
         }
 
-        /* Sweet Spot Style (2, 3) */
+        /* Sweet Spot Style */
         .seat.sweet-spot {
             border-color: rgba(255, 95, 31, 0.5);
             color: rgba(255, 95, 31, 0.7);
@@ -163,23 +161,23 @@
             font-weight: 700;
         }
 
-        /* REFRESH STATUS - SUBTLE VERSION */
+        /* REFRESH STATUS - Subtle & Minimal */
         .refresh-status {
             padding: 10px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .status-header {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 400;
-            color: #888;
+            color: #666;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
@@ -196,8 +194,8 @@
         }
 
         .last-sync-time {
-            font-size: 10px;
-            color: #555;
+            font-size: 9px;
+            color: #444;
             font-family: 'Outfit';
             font-weight: 400;
             letter-spacing: 0.5px;
@@ -206,14 +204,14 @@
         /* GUIDE SECTION */
         .guide-section {
             border-top: 1px solid #111;
-            padding-top: 30px;
+            padding-top: 40px;
         }
 
         .guide-title {
             font-size: 16px;
             font-weight: 600;
             color: #FFFFFF;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -226,32 +224,32 @@
         }
 
         .guide-item {
-            font-size: 14px;
+            font-size: 14.5px;
             font-weight: 300;
-            color: #777;
+            color: #888;
             line-height: 1.8;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             word-break: keep-all;
         }
 
         .highlight { color: #AAA; font-weight: 400; }
         .point-color { color: #FF5F1F; font-weight: 500; }
 
-        /* FOOTER */
+        /* FOOTER - Matched with reference site exactly */
         footer {
-            padding: 40px 24px 50px;
+            padding: 100px 24px 120px; /* 여백 대폭 확장 */
             text-align: center;
             border-top: 1px solid #111;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .footer-quote {
-            font-size: 13px;
+            font-size: 12px; /* 폰트 크기 하향 */
             font-weight: 200;
-            color: #444;
+            color: #333; /* 더 어둡게 */
             line-height: 1.6;
             font-style: italic;
             max-width: 320px;
@@ -260,18 +258,18 @@
         }
 
         .footer-links a {
-            color: #555;
+            color: #555; /* SNS 링크 컬러 조정 */
             text-decoration: none;
             font-size: 12px;
             font-weight: 400;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: color 0.3s ease;
         }
 
-        .footer-links a:hover, .footer-links a:active {
+        .footer-links a:active {
             color: #FF5F1F;
         }
 
@@ -357,7 +355,6 @@
                     seatDiv.classList.add('occupied');
                     seatDiv.textContent = displayName;
                     
-                    // 이름 길이에 따라 폰트 크기 미세 조정
                     if (displayName.length >= 5) {
                         seatDiv.style.fontSize = '12px';
                     } else if (displayName.length >= 3) {
@@ -367,7 +364,6 @@
                     }
                 } else {
                     seatDiv.textContent = seat.no;
-                    // 좌석 크기에 따라 기본 번호 크기 자동 조정은 CSS 미디어 쿼리가 처리
                 }
 
                 if (seat.no <= 4) {
