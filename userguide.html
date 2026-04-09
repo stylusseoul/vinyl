@@ -2,375 +2,214 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stylus User Guide</title>
-    <!-- 폰트: Outfit (영문) & Noto Sans KR (국문) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>STYLUS | Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- 아이콘: Phosphor Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* CSS Reset & Base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* 터치 시 깜빡임 제거 */
+        :root {
+            --bg: #080808;
+            --surface: #111;
+            --border: rgba(255,255,255,0.05);
+            --text: #fff;
+            --sub: rgba(255,255,255,0.38);
+            --sub2: rgba(255,255,255,0.18);
+            --accent: #EF7C1C;
+            --font: 'Inter', 'Outfit', 'Noto Sans KR', sans-serif;
         }
 
-        body {
-            background-color: #000000; /* 완전한 블랙 */
-            color: #E0E0E0;
-            font-family: 'Noto Sans KR', sans-serif;
-            line-height: 1.7;
-            -webkit-font-smoothing: antialiased;
+        /* 기본 스타일 및 여백 최적화 */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: var(--font); 
+            line-height: 1.7; 
+            -webkit-font-smoothing: antialiased; 
+            overflow-x: hidden;
         }
 
-        /* Typography */
         .eng { font-family: 'Outfit', sans-serif; }
 
         /* Animations */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeUp { 
+            from { opacity: 0; transform: translateY(15px); } 
+            to { opacity: 1; transform: translateY(0); } 
         }
-
-        .animate-up {
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-        }
-        
+        .animate-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
         .delay-3 { animation-delay: 0.3s; }
 
-        /* Header 영역 (여백 대폭 축소) */
-        header {
-            padding: 30px 24px 10px; /* 상단 여백 줄임 */
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .logo-img {
-            width: 130px;
-            height: auto;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .page-title {
-            font-size: 13px;
-            font-weight: 500;
-            color: #FF5F1F;
-            letter-spacing: 6px;
-            margin-left: 6px;
-            text-transform: uppercase;
-        }
-
-        /* 메인 컨텐츠 영역 */
-        main {
-            padding: 0 24px 20px; /* 하단 여백 줄임 */
-            max-width: 600px; 
-            margin: 0 auto;
-        }
-
-        /* 에디토리얼 섹션 스타일 (라인 복구 및 여백 조정) */
-        .chapter {
-            margin-top: 30px; /* 섹션 간격 축소 */
+        /* Header - 정적 배치 */
+        header { 
             position: relative;
+            background: var(--bg);
+            padding: 30px 24px 10px; 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
         }
+        .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); }
+        .page-title { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; }
 
-        .chapter::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #222; /* 구분선 다시 살림 */
-        }
-
-        .chapter-header {
-            padding: 24px 0 10px; /* 상단 여백 축소 */
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
-        }
-
-        .chapter-num {
-            font-size: 28px;
-            font-weight: 200;
-            color: #FF5F1F;
-            line-height: 1;
-        }
-
-        .chapter-title {
-            font-size: 18px;
-            font-weight: 400;
-            color: #FFFFFF;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* 리스트 아이템 스타일 */
-        .rule-item {
-            padding: 24px 0;
-            border-bottom: 1px solid #111;
-            display: grid;
-            grid-template-columns: 28px 1fr;
-            gap: 16px;
-            align-items: start;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .rule-item:last-child {
-            border-bottom: none;
-        }
-
-        /* 모바일 터치 피드백 */
-        .rule-item:active {
-            opacity: 0.6;
-            transform: scale(0.99);
-        }
-
-        .rule-icon {
-            font-size: 22px;
-            color: #555; 
-            margin-top: 3px;
-        }
-
-        .rule-text-box {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .rule-title {
-            font-size: 15px;
-            font-weight: 500;
-            color: #FFFFFF;
-            letter-spacing: -0.3px;
-        }
-
-        .rule-desc {
-            font-size: 14px;
-            font-weight: 300;
-            color: #888888;
-            line-height: 1.6;
-            word-break: keep-all;
-        }
-
-        .rule-desc p {
-            margin-bottom: 8px;
+        /* Main Content */
+        main { 
+            padding: 0 24px 40px; 
+            max-width: 600px; 
+            margin: 0 auto; 
         }
         
-        .rule-desc p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* 텍스트 강조 스타일 */
-        .highlight {
-            color: #CCCCCC;
-            font-weight: 400;
-        }
+        .chapter { margin-top: 30px; position: relative; }
+        .chapter::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: var(--border); }
         
-        .point-color {
-            color: #FF5F1F;
-            font-weight: 400;
-        }
+        .chapter-header { padding: 24px 0 10px; display: flex; align-items: baseline; gap: 12px; }
+        .chapter-num { font-size: 26px; font-weight: 200; color: var(--accent); line-height: 1; }
+        .chapter-title { font-size: 16px; font-weight: 500; color: var(--text); letter-spacing: 0.05em; text-transform: uppercase; }
 
-        /* Footer (여백 대폭 축소) */
+        .rule-item { padding: 22px 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 28px 1fr; gap: 16px; align-items: start; }
+        .rule-item:last-child { border-bottom: none; }
+        .rule-icon { font-size: 20px; color: var(--sub); margin-top: 4px; }
+        .rule-text-box { display: flex; flex-direction: column; gap: 6px; }
+        .rule-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+        .rule-desc { font-size: 14px; font-weight: 300; color: var(--sub); line-height: 1.65; word-break: keep-all; }
+        
+        .highlight { color: var(--text); font-weight: 400; }
+        .point-color { color: var(--accent); font-weight: 500; }
+
+        /* Footer - 정적 레이아웃 */
         footer {
-            padding: 20px 24px 40px;
-            text-align: center;
-            background-color: #000;
-            border-top: 1px solid #111;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 40px 24px 60px;
+            text-align: center; 
+            border-top: 1px solid var(--border);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
             gap: 16px;
         }
-
-        .footer-quote {
-            font-size: 13px;
-            font-weight: 200;
-            color: #444;
-            line-height: 1.5;
-            font-style: italic;
-            max-width: 280px;
+        .footer-quote { font-size: 11px; font-weight: 300; color: var(--sub); line-height: 1.8; font-style: italic; max-width: 300px; }
+        .footer-insta {
+            display: inline-flex; align-items: center; justify-content: center;
+            text-decoration: none; color: var(--sub); font-size: 11px; font-weight: 500;
+            letter-spacing: 0.04em; border: 1px solid var(--border); border-radius: 999px; padding: 8px 16px;
+            transition: all 0.2s;
         }
-
-        .footer-links a {
-            color: #666;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 400;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: color 0.2s ease;
-        }
-
-        .footer-links a:active {
-            color: #FF5F1F;
-        }
-
-        .footer-links i {
-            font-size: 16px;
-        }
-
+        .footer-insta:active { color: var(--text); border-color: var(--sub); }
     </style>
 </head>
 <body>
-
     <header class="animate-up">
         <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="STYLUS Logo" class="logo-img">
         <div class="page-title eng">User Guide</div>
     </header>
 
     <main>
-        <!-- Section 1: Welcome -->
+        <!-- Chapter 01: Welcome -->
         <section class="chapter animate-up delay-1">
             <div class="chapter-header">
                 <div class="chapter-num eng">01</div>
                 <h2 class="chapter-title eng">Welcome</h2>
             </div>
-            
             <div class="rule-item">
                 <i class="ph ph-door rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">입장 및 출입문</h3>
-                    <div class="rule-desc">
-                        <p>입장 시 방음 처리로 인해 <span class="highlight">문이 다소 무거울 수 있습니다.</span></p>
-                        <p>잘 열리지 않을 때는 당황하지 마시고, <span class="highlight">조금 많이 세게 밀어주시면</span> 열립니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>방음 처리로 인해 <span class="highlight">문이 다소 무거울 수 있습니다.</span> 잘 열리지 않을 땐 당황하지 마시고 <span class="highlight">조금 세게 밀어주시면</span> 열립니다.</p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-sneaker rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">실내화 착용</h3>
-                    <div class="rule-desc">
-                        <p>쾌적한 환경을 위해 입장 시 입구에 준비된 <span class="highlight">슬리퍼로 갈아신고</span> 이용해 주시기 바랍니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>쾌적한 환경을 위해 입장 시 입구에 준비된 <span class="highlight">슬리퍼로 갈아신고</span> 이용해 주시기 바랍니다.</p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-coat-hanger rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">외투 및 소지품</h3>
-                    <div class="rule-desc">
-                        <p>겉옷은 벽면에 비치된 <span class="highlight">옷걸이에 걸어두실 수 있으며</span>, 가방 등은 각자 자리에서 보관해 주세요.</p>
-                    </div>
+                    <div class="rule-desc"><p>겉옷은 벽면에 비치된 <span class="highlight">옷걸이에 걸어두실 수 있으며</span>, 가방 등은 각자 자리에서 보관해 주세요.</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: For the Sound -->
+        <!-- Chapter 02: For the Sound -->
         <section class="chapter animate-up delay-2">
             <div class="chapter-header">
                 <div class="chapter-num eng">02</div>
                 <h2 class="chapter-title eng">For the Sound</h2>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-ear rule-icon"></i>
                 <div class="rule-text-box">
-                    <h3 class="rule-title">감상 중 대화 및 이동</h3>
-                    <div class="rule-desc">
-                        <p>음악이 흐르는 동안 <span class="highlight">대화는 필요한 만큼만</span>, 작은 목소리로 부탁드립니다.</p>
-                        <p>이동이나 정리 시에도 공간의 소리에 방해되지 않도록 <span class="highlight">배려해 주세요.</span></p>
-                    </div>
+                    <h3 class="rule-title">감상 중 대화</h3>
+                    <div class="rule-desc"><p>음악이 흐르는 동안 <span class="highlight">대화는 필요한 만큼만, 작은 목소리로</span> 부탁드립니다. 공간의 소리에 방해되지 않도록 <span class="highlight">배려해 주세요.</span></p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-vinyl-record rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">바이닐(LP) 취급</h3>
-                    <div class="rule-desc">
-                        <p>레코드는 매우 예민합니다. <span class="highlight">직접 다루는 것은 삼가주시고</span>, 궁금한 앨범이 있다면 스태프에게 말씀해 주세요.</p>
-                    </div>
+                    <div class="rule-desc"><p>레코드는 매우 예민하므로 <span class="highlight">직접 다루는 것은 삼가주시고</span>, 궁금한 앨범은 스태프에게 말씀해 주세요.</p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-device-mobile-camera rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">휴대전화 및 촬영</h3>
-                    <div class="rule-desc">
-                        <p>휴대전화는 <span class="highlight">무음으로 유지</span>해 주세요. 촬영 시 타인의 얼굴이 포함되지 않도록 주의 부탁드립니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>휴대전화는 <span class="highlight">무음으로 유지</span>해 주세요. 촬영 시 타인의 얼굴이 포함되지 않도록 주의 부탁드립니다.</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 3: Amenities & Safety -->
+        <!-- Chapter 03: Amenities & Safety -->
         <section class="chapter animate-up delay-3">
             <div class="chapter-header">
                 <div class="chapter-num eng">03</div>
                 <h2 class="chapter-title eng">Amenities</h2>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-coffee rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">음료 및 간식 취식</h3>
-                    <div class="rule-desc">
-                        <p>자유롭게 즐기실 수 있으나, <span class="highlight">장비 근처에서의 취식은 절대 삼가 주시면</span> 감사하겠습니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>자유롭게 즐기실 수 있으나, <span class="highlight">장비 근처에서의 취식은 절대 삼가</span> 주시면 감사하겠습니다.</p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-toilet rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">화장실 이용</h3>
-                    <div class="rule-desc">
-                        <p>남녀 공용입니다. 전용 슬리퍼나 본인의 신발로 갈아 신고 이동해 주세요.</p>
-                        <p>비치된 <span class="point-color">오렌지색 트레이</span>를 <span class="highlight">트레이째로 가져가 사용 후 제자리에</span> 두시면 됩니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>비치된 <span class="point-color">오렌지색 트레이</span>를 통째로 가져가 사용하신 후 <span class="highlight">제자리에</span> 두시면 됩니다.</p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-cigarette rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">흡연 구역</h3>
-                    <div class="rule-desc">
-                        <p>공간 내부는 금연이며, 흡연은 <span class="highlight">옥상에서만 가능</span>합니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>공간 내부는 금연이며, 흡연은 <span class="highlight">건물 옥상에서만 가능</span>합니다.</p></div>
                 </div>
             </div>
-
             <div class="rule-item">
                 <i class="ph ph-video-camera rule-icon"></i>
                 <div class="rule-text-box">
                     <h3 class="rule-title">보안 및 CCTV</h3>
-                    <div class="rule-desc">
-                        <p>도난 및 사고 방지를 위해 <span class="highlight">CCTV가 상시 녹화 중</span>입니다.</p>
-                    </div>
+                    <div class="rule-desc"><p>도난 및 사고 방지를 위해 <span class="highlight">CCTV가 상시 녹화 중</span>입니다.</p></div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="animate-up delay-3">
+    <footer>
         <div class="footer-quote eng">
             "A small room designed for listening, where sound is free to breathe and time is never in a hurry."
         </div>
         <div class="footer-links eng">
-            <a href="https://www.instagram.com/stylus.seoul/" target="_blank">
-                <i class="ph ph-instagram-logo"></i> stylus.seoul
-            </a>
+            <a href="https://www.instagram.com/stylus.seoul/" target="_blank" class="footer-insta">stylus.seoul</a>
         </div>
     </footer>
-
 </body>
 </html>
