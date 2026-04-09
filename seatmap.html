@@ -128,26 +128,32 @@
             font-weight: 600;
         }
 
-        /* REFRESH STATUS (가시성 개선) */
+        /* REFRESH STATUS (가시성 대폭 개선) */
         .refresh-status {
-            font-size: 11px;
-            color: #666; /* 더 밝게 조정 */
+            font-size: 12px;
+            color: #999; /* 훨씬 밝게 조정 */
             letter-spacing: 2px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
         }
 
         .refresh-status .indicator {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            font-weight: 600;
+            color: #ccc;
         }
 
         .refresh-status i {
-            font-size: 10px;
-            animation: spin 4s linear infinite;
+            font-size: 12px;
+            animation: spin 3s linear infinite;
+            color: #FF5F1F;
         }
 
         @keyframes spin {
@@ -156,10 +162,10 @@
         }
 
         .last-updated {
-            font-size: 9px;
-            color: #555; /* 더 밝게 조정 */
-            opacity: 1; /* 투명도 제거 */
+            font-size: 11px;
+            color: #777;
             font-family: 'Outfit';
+            font-weight: 400;
         }
 
         /* GUIDE SECTION */
@@ -331,29 +337,39 @@
         async function updateData() {
             const statusEl = document.getElementById('refreshStatus');
             const lastUpdatedEl = document.getElementById('lastUpdated');
-            statusEl.style.opacity = "1";
-
+            
             try {
+                // 캐시 방지 타임스탬프와 시트 이름 명시
                 const fetchUrl = `${API_URL}?sheet=${encodeURIComponent('Seat Map')}&t=${new Date().getTime()}`;
                 const response = await fetch(fetchUrl);
                 
-                if (!response.ok) throw new Error('Sync failed');
+                if (!response.ok) throw new Error('Network response error');
                 
                 const rawData = await response.json();
                 
-                // 데이터 배열 추출 (배열 자체이거나, .data 속성에 담겨있을 경우 대응)
-                const dataArray = Array.isArray(rawData) ? rawData : (rawData.data || rawData.records || []);
+                // GAS에서 올 수 있는 모든 형태의 데이터 추출 시도
+                let dataArray = [];
+                if (Array.isArray(rawData)) {
+                    dataArray = rawData;
+                } else if (rawData.data && Array.isArray(rawData.data)) {
+                    dataArray = rawData.data;
+                } else if (rawData.records && Array.isArray(rawData.records)) {
+                    dataArray = rawData.records;
+                } else if (rawData.rows && Array.isArray(rawData.rows)) {
+                    dataArray = rawData.rows;
+                }
                 
+                // 데이터가 존재할 경우 파싱 로직 실행
                 if (dataArray && dataArray.length > 0) {
                     const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     
                     dataArray.forEach(row => {
-                        // 키 값을 대소문자 구분 없이 찾기 위해 모든 키를 소문자로 변환하여 검색
                         let rowNo, rowName;
+                        // 키 값을 대소문자와 공백 무시하고 찾기
                         for (let key in row) {
-                            const lowerKey = key.toLowerCase().trim();
-                            if (lowerKey === 'no') rowNo = row[key];
-                            if (lowerKey === 'name') rowName = row[key];
+                            const k = key.toLowerCase().replace(/\s/g, '');
+                            if (k === 'no') rowNo = row[key];
+                            if (k === 'name') rowName = row[key];
                         }
                         
                         const no = parseInt(rowNo);
@@ -368,23 +384,21 @@
                     renderMap();
                     
                     const now = new Date();
-                    lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 } else {
-                    lastUpdatedEl.textContent = "SYNCED (EMPTY DATA)";
+                    // 데이터가 실제로 비어있는 경우
+                    lastUpdatedEl.textContent = "SYNCED (NO DATA FOUND)";
                 }
             } catch (error) {
                 console.error("Fetch Error:", error);
-                lastUpdatedEl.textContent = "SYNC RETRYING...";
-            } finally {
-                setTimeout(() => {
-                    statusEl.style.opacity = "0.7"; /* 기존 0.3에서 가독성을 위해 높임 */
-                }, 1000);
+                lastUpdatedEl.textContent = "CONNECTION ERROR - RETRYING...";
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             renderMap();
             updateData();
+            // 자동 새로고침 30초
             setInterval(updateData, 30000);
         });
     </script>
