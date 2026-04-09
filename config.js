@@ -4,4 +4,4 @@ const COVER_PLACEHOLDER = "images/logo.png";
 
 // 🔥 신청곡 기능
 const REQUESTS_GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Requests`;
-const REQUEST_API_URL = "https://script.google.com/macros/s/AKfycbxb_8ftQXfYtAqyPITwLdOwMShOXNGNGWfCvxTAFtSW9OrYTWIXRe6bWUImyOcxl6AoLw/exec";
+const REQUEST_API_URL = "https://script.google.com/macros/s/AKfycbyG2SlBfpwz3XdsOZ_DRRFOifTTM61PsjdoZ45JsG5M4674-QkxuYm7F9LB-QFoOfYXYQ/exec";
