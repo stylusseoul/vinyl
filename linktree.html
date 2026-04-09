@@ -20,8 +20,8 @@
             --accent:  #EF7C1C; 
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
             
-            /* 프로필 썸네일 기준점: body padding-top(60px) + 썸네일 반지름(90px) = 150px */
-            --center-y: 150px; 
+            /* 프로필 썸네일 기준점: body padding-top(60px) + 썸네일 반지름(63px) = 123px */
+            --center-y: 123px; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -41,41 +41,41 @@
             overflow-x: hidden;
         }
 
-        /* 바이닐 그루브 & 광택 배경 */
+        /* 바이닐 그루브 & 광택 배경 - 시인성 대폭 강화 */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0; 
             z-index: -2;
             background: 
-                /* 소리골 패턴 */
+                /* 소리골 패턴: 채도와 투명도를 높여 더 선명하게 노출 */
                 repeating-radial-gradient(
                     circle at 50% var(--center-y),
                     transparent 0,
                     transparent 2px,
-                    rgba(239, 124, 28, 0.03) 3px,
-                    rgba(239, 124, 28, 0.03) 4px
+                    rgba(239, 124, 28, 0.08) 3px,
+                    rgba(239, 124, 28, 0.08) 4px
                 ),
-                /* 광택: 썸네일과 일치하도록 각도 조절 */
+                /* 광택: 조도를 높여 바이닐 질감을 강조 */
                 conic-gradient(
                     from 20deg at 50% var(--center-y),
                     transparent 0deg,
-                    rgba(255, 255, 255, 0.025) 40deg,
+                    rgba(255, 255, 255, 0.07) 40deg,
                     transparent 80deg,
                     transparent 180deg,
-                    rgba(255, 255, 255, 0.025) 220deg,
+                    rgba(255, 255, 255, 0.07) 220deg,
                     transparent 260deg,
                     transparent 360deg
                 );
             pointer-events: none;
         }
 
-        /* 앰비언트 글로우 */
+        /* 앰비언트 글로우 - 광량 상향 */
         body::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 50% var(--center-y), rgba(239, 124, 28, 0.05) 0%, transparent 60%);
+            background: radial-gradient(circle at 50% var(--center-y), rgba(239, 124, 28, 0.1) 0%, transparent 65%);
             z-index: -1;
             pointer-events: none;
         }
@@ -104,10 +104,10 @@
             max-width: 440px;
         }
 
-        /* 썸네일: 일체감 있는 바이닐 코어 디자인 */
+        /* 썸네일: 30% 축소 (180px -> 126px) 및 일체감 유지 */
         .vinyl-record {
-            width: 180px; 
-            height: 180px;
+            width: 126px; 
+            height: 126px;
             border-radius: 50%;
             background: #000;
             display: flex;
@@ -115,11 +115,10 @@
             justify-content: center;
             margin-bottom: 24px;
             position: relative;
-            /* 썸네일 외곽에 배경 소리골과 이어지는 미세한 링 추가 */
             box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.03), /* 미세한 경계선 */
-                0 15px 50px rgba(0, 0, 0, 0.9),      /* 하단 그림자 */
-                inset 0 0 0 2px rgba(0,0,0,0.5);    /* 안쪽 단차 */
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 12px 40px rgba(0, 0, 0, 0.9),
+                inset 0 0 0 2px rgba(0,0,0,0.5);
         }
 
         .vinyl-record img {
@@ -127,11 +126,10 @@
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
-            /* 이미지를 감싸는 아주 얇은 테두리로 라벨 느낌 강조 */
             box-shadow: 0 0 0 2px #000;
         }
 
-        /* 라벨 바로 위 광택 효과 동기화 */
+        /* 광택 효과 동기화 */
         .vinyl-record::before {
             content: '';
             position: absolute;
@@ -140,10 +138,10 @@
             background: conic-gradient(
                 from 20deg at center,
                 transparent 0deg,
-                rgba(255, 255, 255, 0.04) 40deg,
+                rgba(255, 255, 255, 0.06) 40deg,
                 transparent 80deg,
                 transparent 180deg,
-                rgba(255, 255, 255, 0.04) 220deg,
+                rgba(255, 255, 255, 0.06) 220deg,
                 transparent 260deg,
                 transparent 360deg
             );
@@ -155,8 +153,8 @@
         .vinyl-record::after {
             content: '';
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: #030303;
             border-radius: 50%;
             border: 1px solid rgba(255, 255, 255, 0.2);
