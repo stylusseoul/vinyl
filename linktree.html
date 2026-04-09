@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>STYLUS | Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <style>
+        :root {
+            --bg:      #050505;
+            --surface: rgba(25, 25, 25, 0.4); 
+            --surface-active: rgba(40, 40, 40, 0.7);
+            --border:  rgba(255, 255, 255, 0.08);
+            --border-active: rgba(239, 124, 28, 0.4);
+            --text:    #ffffff;
+            --sub:     rgba(255, 255, 255, 0.5);
+            --accent:  #EF7C1C;
+            --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+            
+            /* 프로필 썸네일 기준점: body padding-top(50px) + 썸네일 반지름(50px) = 100px */
+            --center-y: 100px; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: var(--font); 
+            line-height: 1.6; 
+            -webkit-font-smoothing: antialiased; 
+            min-height: 100dvh; /* 모바일 브라우저 주소창 고려한 동적 높이 */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            padding: 50px 20px 40px; /* 모바일에 맞게 여백 최적화 */
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 바이닐 그루브 & 광택 배경 (썸네일 스크롤에 맞춰 동기화) */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0; 
+            z-index: -2;
+            background: 
+                repeating-radial-gradient(
+                    circle at 50% var(--center-y),
+                    transparent 0,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.02) 3px,
+                    rgba(255, 255, 255, 0.02) 4px
+                ),
+                conic-gradient(
+                    from 15deg at 50% var(--center-y),
+                    transparent 0deg,
+                    rgba(255, 255, 255, 0.04) 45deg,
+                    transparent 90deg,
+                    transparent 180deg,
+                    rgba(255, 255, 255, 0.04) 225deg,
+                    transparent 270deg,
+                    transparent 360deg
+                );
+            pointer-events: none;
+        }
+
+        /* 앰비언트 글로우 */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% var(--center-y), rgba(239, 124, 28, 0.08) 0%, transparent 60%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .eng { font-family: 'Outfit', sans-serif; }
+
+        /* Animations */
+        @keyframes fadeUp { 
+            from { opacity: 0; transform: translateY(15px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes spin { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+        }
+        .animate-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.15s; }
+        .delay-3 { animation-delay: 0.2s; }
+        .delay-4 { animation-delay: 0.25s; }
+
+        /* Profile Hero Section */
+        .hero-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 36px;
+            text-align: center;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .vinyl-record {
+            width: 100px; 
+            height: 100px;
+            border-radius: 50%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative;
+            animation: spin 10s linear infinite;
+            will-change: transform; /* 모바일 애니메이션 최적화 */
+        }
+
+        .vinyl-record img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* LP판 중앙 구멍 */
+        .vinyl-record::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #050505;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-title {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .hero-desc {
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--sub);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Bento Grid UI - Mobile Optimized */
+        .bento-grid {
+            width: 100%;
+            max-width: 440px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px; /* 모바일 화면에 맞게 간격 축소 */
+        }
+
+        .bento-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px; /* 반경 축소 */
+            padding: 20px; /* 패딩 축소 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 아이콘은 위, 텍스트는 아래로 완벽 분리 */
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, border-color 0.2s;
+        }
+
+        /* 모바일에서는 호버 대신 액티브(터치) 피드백이 중요함 */
+        .bento-card:active {
+            transform: scale(0.96); /* 터치 시 쫀득하게 눌리는 효과 */
+            background: var(--surface-active);
+            border-color: var(--border-active);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .card-icon {
+            font-size: 28px;
+            color: var(--text);
+        }
+
+        /* 모바일에서는 화살표를 기본적으로 노출 */
+        .card-arrow {
+            font-size: 20px;
+            color: var(--sub);
+        }
+
+        .bento-card:active .card-icon,
+        .bento-card:active .card-arrow {
+            color: var(--accent);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+            line-height: 1.3;
+            word-break: keep-all;
+            margin-top: 24px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--sub);
+            letter-spacing: 0.02em;
+        }
+
+        /* 레이아웃 제어 */
+        .span-2 { grid-column: span 2; }
+        
+        /* 반쪽짜리 카드는 무조건 정사각형 유지 (모바일 UI 밸런스) */
+        .bento-card:not(.span-2) {
+            aspect-ratio: 1 / 1;
+        }
+        
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(239, 124, 28, 0.15);
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .live-dot {
+            width: 6px; height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0% { box-shadow: 0 0 0 0 rgba(239, 124, 28, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(239, 124, 28, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 124, 28, 0); }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto; /* 화면 하단으로 밀어내기 */
+            padding-top: 40px; /* body의 하단 패딩(40px)과 대칭을 이루도록 상단 여백 부여 */
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--sub);
+            letter-spacing: 0.05em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <div class="hero-container animate-up">
+        <div class="vinyl-record">
+            <img src="https://images.unsplash.com/photo-1599687351724-dfa3c4ff81b1?q=80&w=300&auto=format&fit=crop" alt="Label">
+        </div>
+        <h1 class="hero-title eng">Welcome to Stylus</h1>
+        <p class="hero-desc eng">Sound · Space · Serenity</p>
+    </div>
+
+    <!-- Bento Grid Menu -->
+    <div class="bento-grid">
+        
+        <!-- 1. Seat Map (Wide) -->
+        <a href="stylus_seatmap.html" class="bento-card span-2 animate-up delay-1">
+            <div class="card-header">
+                <div class="live-badge eng"><div class="live-dot"></div>LIVE</div>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">실시간 좌석 확인</h2>
+                <p class="card-subtitle eng">Live Seat Map</p>
+            </div>
+        </a>
+
+        <!-- 2. Directions (Square) -->
+        <a href="#" class="bento-card animate-up delay-2">
+            <div class="card-header">
+                <i class="ph-fill ph-map-pin card-icon"></i>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">오시는 길</h2>
+                <p class="card-subtitle eng">Directions</p>
+            </div>
+        </a>
+
+        <!-- 3. User Guide (Square) -->
+        <a href="stylus_guide.html" class="bento-card animate-up delay-3">
+            <div class="card-header">
+                <i class="ph-fill ph-book-open-text card-icon"></i>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">이용 안내</h2>
+                <p class="card-subtitle eng">User Guide</p>
+            </div>
+        </a>
+
+        <!-- 4. Vinyl Explorer (Wide) -->
+        <a href="#" class="bento-card span-2 animate-up delay-4">
+            <div class="card-header">
+                <i class="ph-fill ph-vinyl-record card-icon"></i>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">바이닐 검색기</h2>
+                <p class="card-subtitle eng">Vinyl Explorer</p>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer animate-up delay-4 eng">
+        © Stylus Seoul. All rights reserved.
+    </div>
+
+</body>
+</html>
