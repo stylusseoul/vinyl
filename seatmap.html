@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Stylus Seat Map</title>
+    <title>STYLUS | Seat Map</title>
     <!-- 외부 설정 파일 로드 -->
     <script src="config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +22,7 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+            --seat-size: clamp(64px, 18vw, 84px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -59,11 +60,11 @@
             display: flex; 
             flex-direction: column; 
             gap: 12px; 
-            margin-bottom: 30px; /* 여백 정리: 상태바와의 간격 조정 */
+            margin-bottom: 30px; 
             width: 100%; 
         }
         
-        /* 입구 표시 영역 (3번 좌석 위) */
+        /* 입구 표시 영역 */
         .entrance-row {
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -72,7 +73,7 @@
             margin-bottom: 2px;
         }
         .entrance-marker {
-            grid-column: 3; /* 3번 좌석 위치와 정확히 정렬 */
+            grid-column: 3; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -99,8 +100,8 @@
         }
 
         .seat {
-            width: clamp(64px, 18vw, 84px);
-            height: clamp(64px, 18vw, 84px);
+            width: var(--seat-size);
+            height: var(--seat-size);
             border-radius: 50%;
             border: 1px solid var(--border);
             background: var(--surface);
@@ -108,13 +109,26 @@
             font-size: clamp(14px, 4vw, 18px);
             font-weight: 300; color: var(--sub);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            text-align: center; line-height: 1.4; word-break: keep-all; padding: 12px; 
+            text-align: center; 
+            overflow: hidden; /* 텍스트가 원형 밖으로 나가는 것 방지 */
+            padding: 4px;
         }
 
         .seat.sweet-spot { border-color: rgba(239, 124, 28, 0.3); color: var(--accent); }
-        .seat.occupied { border-color: var(--sub2); color: var(--text); background-color: #1a1a1a; font-weight: 400; }
         
-        /* [수정됨] 스위트 스팟 점유 시: 배경색은 일반 점유와 동일하게 유지하고 아웃라인/폰트만 주황색 */
+        /* 점유된 좌석: 말줄임표 및 한 줄 처리 */
+        .seat.occupied { 
+            display: block; /* Ellipsis 활성화를 위해 블록 레이아웃 사용 */
+            line-height: calc(var(--seat-size) - 2px); /* 수직 중앙 정렬 */
+            white-space: nowrap; 
+            text-overflow: ellipsis; 
+            border-color: var(--sub2); 
+            color: var(--text); 
+            background-color: #1a1a1a; 
+            font-weight: 400; 
+            padding: 0 10px; /* 좌우 여백 확보 */
+        }
+        
         .seat.sweet-spot.occupied { 
             background-color: #1a1a1a; 
             border-color: var(--accent); 
@@ -123,15 +137,15 @@
             font-weight: 500; 
         }
 
-        /* Refresh Status - 더 선명하고 정돈된 여백 */
+        /* Refresh Status */
         .refresh-status { 
-            margin: 0 auto 40px; /* 상단 좌석과 30px, 하단 안내선과 40px 여백 */
+            margin: 0 auto 40px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             gap: 4px;
             padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.03); /* 아주 살짝 배경을 주어 영역 분리 */
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 20px;
             width: fit-content;
         }
@@ -142,7 +156,7 @@
             gap: 7px; 
             font-size: 10px; 
             font-weight: 600; 
-            color: var(--text); /* 텍스트 더 밝게 */
+            color: var(--text);
             letter-spacing: 0.1em; 
             text-transform: uppercase; 
         }
@@ -170,7 +184,7 @@
         .highlight { color: #BBB; }
         .point-color { color: var(--accent); }
 
-        /* Footer - index.html 스타일 완전 일치 */
+        /* Footer */
         .list-footer {
             padding: 40px 24px calc(env(safe-area-inset-bottom, 0px) + 60px); 
             border-top: 1px solid var(--border);
@@ -196,7 +210,6 @@
     <main>
         <section class="seat-section">
             <div class="seat-grid-container">
-                <!-- 입구(문) 표시 영역 추가 -->
                 <div class="entrance-row">
                     <div class="entrance-marker">
                         <i class="ph ph-door"></i>
@@ -207,7 +220,6 @@
                 <div class="seat-row" id="row2"></div>
             </div>
             
-            <!-- 상태 표시줄: 여백 및 가시성 개선 -->
             <div class="refresh-status eng">
                 <div class="status-header">
                     <i class="ph ph-circle-notch"></i> Live Connected
@@ -257,10 +269,15 @@
                 if (n !== "") { 
                     d.classList.add('occupied'); 
                     d.textContent = n; 
-                    if (n.length >= 5) d.style.fontSize = 'clamp(10px, 2.8vw, 11px)'; 
-                    else if (n.length >= 3) d.style.fontSize = 'clamp(11px, 3.2vw, 13px)'; 
+                    d.title = n; // 마우스 호버 시 전체 이름 표시
+                    
+                    // 글자 수에 따른 폰트 사이즈 유동적 조절
+                    if (n.length >= 6) d.style.fontSize = 'clamp(10px, 2.5vw, 11px)'; 
+                    else if (n.length >= 4) d.style.fontSize = 'clamp(11px, 3vw, 13px)'; 
+                    else d.style.fontSize = 'clamp(13px, 3.5vw, 15px)';
                 } else {
                     d.textContent = s.no;
+                    d.style.fontSize = ''; // 기본 폰트 사이즈 복구
                 }
                 
                 if (s.no <= 4) r1.appendChild(d); 
@@ -296,7 +313,6 @@
             }
         }
 
-        // window.onload 대신 DOMContentLoaded를 사용하여 HTML 로드 즉시 실행
         document.addEventListener('DOMContentLoaded', () => { 
             renderMap(); 
             updateData(); 
