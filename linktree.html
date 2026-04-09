@@ -10,14 +10,14 @@
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     <style>
         :root {
-            --bg:      #030303; /* 더욱 깊어진 순수 블랙 */
+            --bg:      #030303; 
             --surface: rgba(255, 255, 255, 0.04); 
             --surface-active: rgba(255, 255, 255, 0.08);
             --border:  rgba(255, 255, 255, 0.08);
             --border-active: rgba(239, 124, 28, 0.5);
             --text:    #ffffff;
             --sub:     rgba(255, 255, 255, 0.5);
-            --accent:  #EF7C1C; /* 브랜드 오렌지 */
+            --accent:  #EF7C1C; 
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
             
             /* 프로필 썸네일 기준점: body padding-top(60px) + 썸네일 반지름(90px) = 150px */
@@ -41,14 +41,14 @@
             overflow-x: hidden;
         }
 
-        /* 바이닐 그루브 & 광택 배경 - 갈색 톤을 제거한 선명한 오렌지/화이트 믹스 */
+        /* 바이닐 그루브 & 광택 배경 */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0; 
             z-index: -2;
             background: 
-                /* 소리골 패턴: 오렌지 채도를 살짝 높이고 투명도를 조절하여 탁함 방지 */
+                /* 소리골 패턴 */
                 repeating-radial-gradient(
                     circle at 50% var(--center-y),
                     transparent 0,
@@ -56,26 +56,26 @@
                     rgba(239, 124, 28, 0.03) 3px,
                     rgba(239, 124, 28, 0.03) 4px
                 ),
-                /* 광택: 갈색 느낌이 나지 않도록 순수 화이트 광택 위주로 배치 */
+                /* 광택: 썸네일과 일치하도록 각도 조절 */
                 conic-gradient(
                     from 20deg at 50% var(--center-y),
                     transparent 0deg,
-                    rgba(255, 255, 255, 0.03) 40deg,
+                    rgba(255, 255, 255, 0.025) 40deg,
                     transparent 80deg,
                     transparent 180deg,
-                    rgba(255, 255, 255, 0.03) 220deg,
+                    rgba(255, 255, 255, 0.025) 220deg,
                     transparent 260deg,
                     transparent 360deg
                 );
             pointer-events: none;
         }
 
-        /* 앰비언트 글로우 - 맑은 오렌지 톤으로 포인트 */
+        /* 앰비언트 글로우 */
         body::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 50% var(--center-y), rgba(239, 124, 28, 0.06) 0%, transparent 65%);
+            background: radial-gradient(circle at 50% var(--center-y), rgba(239, 124, 28, 0.05) 0%, transparent 60%);
             z-index: -1;
             pointer-events: none;
         }
@@ -104,7 +104,7 @@
             max-width: 440px;
         }
 
-        /* 썸네일: 배경과 자연스럽게 묻히도록 오렌지 림 라이트(Rim light) 추가 */
+        /* 썸네일: 일체감 있는 바이닐 코어 디자인 */
         .vinyl-record {
             width: 180px; 
             height: 180px;
@@ -114,13 +114,12 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 24px;
-            /* 갈색 그림자를 배제한 딥 블랙 쉐도우 + 미세한 오렌지 광선 */
-            box-shadow: 
-                0 25px 60px rgba(0, 0, 0, 0.9), 
-                0 0 0 1px rgba(255, 255, 255, 0.05),
-                0 0 15px rgba(239, 124, 28, 0.1);
             position: relative;
-            will-change: transform;
+            /* 썸네일 외곽에 배경 소리골과 이어지는 미세한 링 추가 */
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.03), /* 미세한 경계선 */
+                0 15px 50px rgba(0, 0, 0, 0.9),      /* 하단 그림자 */
+                inset 0 0 0 2px rgba(0,0,0,0.5);    /* 안쪽 단차 */
         }
 
         .vinyl-record img {
@@ -128,9 +127,31 @@
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
+            /* 이미지를 감싸는 아주 얇은 테두리로 라벨 느낌 강조 */
+            box-shadow: 0 0 0 2px #000;
         }
 
-        /* LP판 중앙 구멍: 핀 역할을 하는 스핀들 홀 */
+        /* 라벨 바로 위 광택 효과 동기화 */
+        .vinyl-record::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 20deg at center,
+                transparent 0deg,
+                rgba(255, 255, 255, 0.04) 40deg,
+                transparent 80deg,
+                transparent 180deg,
+                rgba(255, 255, 255, 0.04) 220deg,
+                transparent 260deg,
+                transparent 360deg
+            );
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* LP판 중앙 구멍 */
         .vinyl-record::after {
             content: '';
             position: absolute;
@@ -140,6 +161,7 @@
             border-radius: 50%;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+            z-index: 2;
         }
 
         .hero-title {
