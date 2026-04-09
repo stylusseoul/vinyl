@@ -10,13 +10,13 @@
     <meta property="og:url" content="https://stylusseoul.github.io/vinyl/linktree.html">
     <meta property="og:title" content="Stylus Linktree">
     <meta property="og:description" content="Sound · Space · Serenity">
-    <meta property="og:image" content="https://stylusseoul.github.io/vinyl/images/linktree_thumbnail.jpg">
+    <meta property="og:image" content="https://stylusseoul.github.io/vinyl/images/linktree_OG.jpg">
     
     <!-- Twitter 카드 태그 -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Stylus Linktree">
     <meta name="twitter:description" content="Sound · Space · Serenity">
-    <meta name="twitter:image" content="https://stylusseoul.github.io/vinyl/images/linktree_thumbnail.jpg">
+    <meta name="twitter:image" content="https://stylusseoul.github.io/vinyl/images/linktree_OG.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     <style>
         :root {
-            --bg:      #000000; /* 완전한 블랙으로 기조 변경 */
+            --bg:      #000000; 
             --surface: rgba(255, 255, 255, 0.05); 
             --surface-active: rgba(255, 255, 255, 0.1);
             --border:  rgba(255, 255, 255, 0.1);
@@ -62,7 +62,7 @@
             top: 0; left: 0; right: 0; bottom: 0; 
             z-index: -2;
             background: 
-                /* 소리골 패턴: 주황색을 빼고 아주 미세한 화이트/그레이로 변경하여 갈색 느낌 제거 */
+                /* 소리골 패턴 */
                 repeating-radial-gradient(
                     circle at 50% var(--center-y),
                     transparent 0,
@@ -70,7 +70,7 @@
                     rgba(255, 255, 255, 0.025) 3px,
                     rgba(255, 255, 255, 0.025) 4px
                 ),
-                /* 광택: 선명한 화이트와 브랜드 주황색을 교차시켜 생동감 부여 */
+                /* 광택: 선명한 화이트와 브랜드 주황색 교차 */
                 conic-gradient(
                     from 20deg at 50% var(--center-y),
                     transparent 0deg,
@@ -86,7 +86,7 @@
             pointer-events: none;
         }
 
-        /* 앰비언트 글로우 - 탁하지 않게 범위를 좁히고 선명도 유지 */
+        /* 앰비언트 글로우 */
         body::after {
             content: '';
             position: absolute;
@@ -120,7 +120,7 @@
             max-width: 440px;
         }
 
-        /* 썸네일: 일체감 유지하되 블랙 대비 강조 */
+        /* 썸네일: 일체감 유지 */
         .vinyl-record {
             width: 126px; 
             height: 126px;
@@ -145,7 +145,7 @@
             box-shadow: 0 0 0 2px #000;
         }
 
-        /* 광택 효과 동기화 */
+        /* 광택 효과 */
         .vinyl-record::before {
             content: '';
             position: absolute;
