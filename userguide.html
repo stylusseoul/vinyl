@@ -16,22 +16,20 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* 터치 시 깜빡임 제거 */
         }
 
         body {
-            background-color: #000000; /* 완전한 블랙 (OLED 최적화 및 몰입감 극대화) */
+            background-color: #000000; /* 완전한 블랙 */
             color: #E0E0E0;
             font-family: 'Noto Sans KR', sans-serif;
             line-height: 1.7;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            /* 스크롤 오류를 유발했던 overflow-x: hidden 제거 */
         }
 
         /* Typography */
         .eng { font-family: 'Outfit', sans-serif; }
-        
-        .accent-color { color: #FF5F1F; }
 
         /* Animations */
         @keyframes fadeUp {
@@ -40,22 +38,28 @@
         }
 
         .animate-up {
-            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
         }
         
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
 
-        /* Header 영역 (여백 대폭 축소) */
+        /* Header 영역 (Glassmorphism & Sticky) */
         header {
             padding: 30px 24px 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background:  rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo-img {
@@ -66,24 +70,24 @@
         }
 
         .page-title {
-            font-size: 14px; /* 폰트 크기 증가 (기존 11px) */
+            font-size: 14px;
             font-weight: 500;
             color: #FF5F1F;
-            letter-spacing: 6px; /* 커진 폰트에 맞춰 자간 미세 조정 */
+            letter-spacing: 6px;
             margin-left: 6px;
             text-transform: uppercase;
         }
 
         /* 메인 컨텐츠 영역 */
         main {
-            padding: 0 24px 30px; /* 푸터와 맞닿는 하단 여백 축소 (기존 60px) */
+            padding: 0 24px 40px;
             max-width: 600px; 
             margin: 0 auto;
         }
 
-        /* 에디토리얼 섹션 스타일 */
+        /* 에디토리얼 섹션 스타일 (여백 복구) */
         .chapter {
-            margin-top: 40px; /* 섹션 간격 축소 */
+            margin-top: 40px;
             position: relative;
         }
 
@@ -119,7 +123,7 @@
             text-transform: uppercase;
         }
 
-        /* 리스트 아이템 스타일 (카드 배제, 미니멀 라인업) */
+        /* 리스트 아이템 스타일 (매거진 라인업 디자인) */
         .rule-item {
             padding: 28px 0;
             border-bottom: 1px solid #111;
@@ -127,21 +131,23 @@
             grid-template-columns: 28px 1fr;
             gap: 20px;
             align-items: start;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
         .rule-item:last-child {
             border-bottom: none;
         }
 
-        .rule-icon {
-            font-size: 24px;
-            color: #555; /* 아이콘 톤을 낮춰 텍스트에 집중 */
-            margin-top: 2px;
-            transition: color 0.3s ease;
+        /* 모바일 터치 시 미세한 피드백 (눌리는 느낌) */
+        .rule-item:active {
+            opacity: 0.6;
+            transform: scale(0.98);
         }
 
-        .rule-item:hover .rule-icon {
-            color: #FF5F1F;
+        .rule-icon {
+            font-size: 24px;
+            color: #555; 
+            margin-top: 2px;
         }
 
         .rule-text-box {
@@ -160,7 +166,7 @@
         .rule-desc {
             font-size: 14.5px;
             font-weight: 300;
-            color: #888888; /* 텍스트 명도를 낮춰 눈을 편안하게 */
+            color: #888888;
             line-height: 1.7;
             word-break: keep-all;
         }
@@ -184,16 +190,16 @@
             font-weight: 400;
         }
 
-        /* Footer (여백 대폭 축소) */
+        /* Footer */
         footer {
-            padding: 24px 24px 36px;
+            padding: 40px 24px 60px;
             text-align: center;
             background-color: #000;
             border-top: 1px solid #111;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px; /* 텍스트와 링크 사이 간격 축소 */
+            gap: 20px;
         }
 
         .footer-quote {
@@ -208,21 +214,21 @@
         .footer-links a {
             color: #666;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 400;
             letter-spacing: 1px;
-            transition: color 0.3s ease;
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: color 0.2s ease;
         }
 
-        .footer-links a:hover {
+        .footer-links a:active {
             color: #FF5F1F;
         }
 
         .footer-links i {
-            font-size: 16px;
+            font-size: 18px;
         }
 
     </style>
