@@ -33,9 +33,7 @@
             --sub:     rgba(255, 255, 255, 0.55);
             --accent:  #EF7C1C; 
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-            
-            /* 상단 여백 축소에 따른 중심점 조정 */
-            --center-y: 103px; 
+            --center-y: 87px; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -50,12 +48,12 @@
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            padding: 40px 20px 30px; 
+            padding: 24px 20px 30px; 
             position: relative;
             overflow-x: hidden;
         }
 
-        /* 바이닐 그루브 & 광택 배경 */
+        /* 바이닐 배경 */
         body::before {
             content: '';
             position: absolute;
@@ -84,7 +82,6 @@
             pointer-events: none;
         }
 
-        /* 앰비언트 글로우 */
         body::after {
             content: '';
             position: absolute;
@@ -107,7 +104,6 @@
         .delay-3 { animation-delay: 0.2s; }
         .delay-4 { animation-delay: 0.25s; }
 
-        /* Profile Hero Section */
         .hero-container {
             display: flex;
             flex-direction: column;
@@ -143,37 +139,6 @@
             box-shadow: 0 0 0 2px #000;
         }
 
-        .vinyl-record::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: conic-gradient(
-                from 20deg at center,
-                transparent 0deg,
-                rgba(255, 255, 255, 0.1) 40deg,
-                transparent 80deg,
-                transparent 180deg,
-                rgba(255, 255, 255, 0.1) 220deg,
-                transparent 260deg,
-                transparent 360deg
-            );
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .vinyl-record::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #000;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
-            z-index: 2;
-        }
-
         .hero-title {
             font-size: 26px;
             font-weight: 700;
@@ -190,12 +155,12 @@
             letter-spacing: 0.05em;
         }
 
-        /* Bento Grid UI */
         .bento-grid {
             width: 100%;
             max-width: 440px;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 1fr; /* [수정] 모든 카드가 동일한 행 높이를 공유하여 '맞춤' 상태 유지 */
             gap: 12px;
         }
 
@@ -206,7 +171,8 @@
             padding: 24px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start; 
+            gap: 8px; /* [수정] 아이콘과 텍스트 사이 간격 미세 조정 */
             text-decoration: none;
             position: relative;
             overflow: hidden;
@@ -225,13 +191,27 @@
         .card-header {
             display: flex;
             justify-content: space-between;
-            /* [수정] 아이콘과 배지의 수직 중앙 정렬 맞춤 */
             align-items: center; 
             width: 100%;
+            height: 28px; /* [수정] 헤더 높이 명시적 지정으로 모든 카드 정렬 기준 통일 */
         }
 
-        .card-icon { font-size: 28px; color: var(--text); }
-        .card-arrow { font-size: 20px; color: var(--sub); }
+        .card-icon { 
+            font-size: 28px; 
+            color: var(--text); 
+            display: flex;
+            align-items: center;
+            height: 100%;
+            line-height: 1; 
+        }
+        .card-arrow { 
+            font-size: 20px; 
+            color: var(--sub); 
+            display: flex;
+            align-items: center;
+            height: 100%;
+            line-height: 1; 
+        }
 
         .bento-card:active .card-icon,
         .bento-card:active .card-arrow {
@@ -242,11 +222,10 @@
             font-size: 16px;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             line-height: 1.3;
             word-break: keep-all;
-            /* [수정] 상단 아이콘과의 여백 축소 (32px -> 20px) */
-            margin-top: 20px;
+            margin-top: 0; 
         }
 
         .card-subtitle {
@@ -257,20 +236,23 @@
         }
 
         .span-2 { grid-column: span 2; }
-        .bento-card:not(.span-2) { aspect-ratio: 1 / 1; }
+        /* [수정] aspect-ratio 제거하여 그리드 auto-rows에 맞춰 높이가 자동 정렬되도록 함 */
         
         .live-badge {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             background: rgba(239, 124, 28, 0.18);
-            padding: 5px 12px;
+            padding: 0 12px;
             border-radius: 999px;
             font-size: 11px;
             font-weight: 700;
             color: var(--accent);
             letter-spacing: 0.08em;
             text-transform: uppercase;
+            height: 24px; 
+            /* [수정] 배지가 헤더 중앙에 오도록 함 */
         }
         .live-dot {
             width: 6px; height: 6px;
@@ -284,7 +266,6 @@
             100% { box-shadow: 0 0 0 0 rgba(239, 124, 28, 0); }
         }
 
-        /* Footer */
         .footer {
             margin-top: auto;
             padding-top: 40px;
@@ -299,7 +280,6 @@
 </head>
 <body>
 
-    <!-- Hero Section -->
     <div class="hero-container animate-up">
         <div class="vinyl-record">
             <img src="https://stylusseoul.github.io/vinyl/images/linktree_thumbnail.jpg" alt="Stylus Logo Label">
@@ -308,10 +288,7 @@
         <p class="hero-desc eng">Sound · Space · Serenity</p>
     </div>
 
-    <!-- Bento Grid Menu -->
     <div class="bento-grid">
-        
-        <!-- 1. Seat Map (Wide) -->
         <a href="https://stylusseoul.github.io/vinyl/seatmap.html" class="bento-card span-2 animate-up delay-1">
             <div class="card-header">
                 <div class="live-badge eng"><div class="live-dot"></div>Live</div>
@@ -323,7 +300,6 @@
             </div>
         </a>
 
-        <!-- 2. Directions (Square) -->
         <a href="https://www.notion.so/2be59aa3ab6180519edef1d72baac966" target="_blank" class="bento-card animate-up delay-2">
             <div class="card-header">
                 <i class="ph-fill ph-map-pin card-icon"></i>
@@ -335,7 +311,6 @@
             </div>
         </a>
 
-        <!-- 3. User Guide (Square) -->
         <a href="https://stylusseoul.github.io/vinyl/userguide.html" class="bento-card animate-up delay-3">
             <div class="card-header">
                 <i class="ph-fill ph-book-open-text card-icon"></i>
@@ -347,7 +322,6 @@
             </div>
         </a>
 
-        <!-- 4. Vinyl Explorer (Wide) -->
         <a href="https://stylusseoul.github.io/vinyl/" class="bento-card span-2 animate-up delay-4">
             <div class="card-header">
                 <i class="ph-fill ph-vinyl-record card-icon"></i>
@@ -358,10 +332,8 @@
                 <p class="card-subtitle eng">Vinyl Explorer</p>
             </div>
         </a>
-
     </div>
 
-    <!-- Footer -->
     <div class="footer animate-up delay-4 eng">
         © Stylus Seoul. All rights reserved.
     </div>
