@@ -21,7 +21,7 @@
 
         body {
             background-color: #000000;
-            color: #FFFFFF;
+            color: #E0E0E0;
             font-family: 'Noto Sans KR', sans-serif;
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
@@ -32,7 +32,7 @@
 
         /* HEADER */
         header {
-            padding: 40px 24px 20px;
+            padding: 50px 24px 30px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -40,14 +40,14 @@
         }
 
         .logo-img {
-            width: 120px;
+            width: 130px;
             height: auto;
             margin-bottom: 8px;
             display: block;
         }
 
         .page-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
             color: #FF5F1F;
             letter-spacing: 6px;
@@ -57,24 +57,38 @@
 
         /* MAIN CONTENT */
         main {
-            padding: 20px 24px 60px;
+            padding: 0 24px 60px;
             max-width: 500px;
             margin: 0 auto;
         }
 
         /* SEAT MAP SECTION */
         .seat-section {
-            margin-bottom: 50px;
+            margin-top: 20px;
+            margin-bottom: 60px;
             text-align: center;
         }
 
-        .section-label {
-            font-size: 18px;
-            font-weight: 400;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
-            color: #FFFFFF;
-            text-transform: uppercase;
+        /* SOUND SOURCE (Stage) Indicator */
+        .sound-source {
+            width: 140px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #333, #FF5F1F, #333, transparent);
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .sound-source::after {
+            content: 'SOUND SOURCE';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Outfit';
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: #555;
+            width: 100%;
         }
 
         /* 4x2 GRID LAYOUT */
@@ -87,57 +101,70 @@
         }
 
         .seat {
-            width: 65px;
-            height: 65px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
-            border: 1px solid #333;
+            border: 1px solid #222;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            font-weight: 400;
-            color: #666;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            font-weight: 300;
+            color: #555;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             background-color: transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 5px;
         }
 
         /* Sweet Spot Style (2, 3) */
         .seat.sweet-spot {
-            border-color: #FF5F1F;
-            color: #FF5F1F;
+            border-color: rgba(255, 95, 31, 0.4);
+            color: rgba(255, 95, 31, 0.6);
         }
 
         /* Occupied State */
         .seat.occupied {
-            border-color: #555;
+            border-color: #444;
             color: #FFFFFF;
-            background-color: #111;
+            background-color: #0a0a0a;
             font-size: 13px;
             font-weight: 500;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
         }
 
         .seat.sweet-spot.occupied {
             background-color: #FF5F1F;
             border-color: #FF5F1F;
             color: #FFFFFF;
-            box-shadow: 0 0 15px rgba(255, 95, 31, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 95, 31, 0.4);
+            font-weight: 600;
         }
 
-        /* LOADING INDICATOR */
+        /* REFRESH STATUS */
         .refresh-status {
             font-size: 11px;
-            color: #444;
-            letter-spacing: 1px;
+            color: #333;
+            letter-spacing: 1.5px;
             margin-top: 10px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
+        }
+
+        .refresh-status .indicator {
+            display: flex;
+            align-items: center;
             gap: 6px;
         }
 
         .refresh-status i {
-            animation: spin 2s linear infinite;
+            font-size: 12px;
+            animation: spin 3s linear infinite;
         }
 
         @keyframes spin {
@@ -145,34 +172,41 @@
             to { transform: rotate(360deg); }
         }
 
+        .last-updated {
+            font-size: 9px;
+            opacity: 0.6;
+            font-family: 'Outfit';
+        }
+
         /* GUIDE SECTION */
         .guide-section {
-            border-top: 1px solid #222;
-            padding-top: 30px;
+            border-top: 1px solid #111;
+            padding-top: 40px;
         }
 
         .guide-title {
             font-size: 16px;
             font-weight: 500;
             color: #FFFFFF;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: -0.5px;
         }
 
-        .guide-title i { color: #FF5F1F; }
+        .guide-title i { color: #FF5F1F; font-size: 20px; }
 
         .guide-list {
             list-style: none;
         }
 
         .guide-item {
-            font-size: 14px;
+            font-size: 14.5px;
             font-weight: 300;
             color: #888;
             line-height: 1.8;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             word-break: keep-all;
         }
 
@@ -181,19 +215,20 @@
 
         /* FOOTER */
         footer {
-            padding: 40px 24px;
+            padding: 60px 24px 80px;
             text-align: center;
             border-top: 1px solid #111;
         }
 
         .footer-quote {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 200;
-            color: #444;
-            line-height: 1.5;
+            color: #555;
+            line-height: 1.6;
             font-style: italic;
-            max-width: 280px;
+            max-width: 300px;
             margin: 0 auto;
+            word-break: keep-all;
         }
 
     </style>
@@ -208,14 +243,17 @@
     <main>
         <!-- Seat Map Area -->
         <section class="seat-section">
-            <h2 class="section-label eng">Now Listening</h2>
+            <div class="sound-source"></div>
             
             <div class="seat-grid" id="seatGrid">
                 <!-- Seats 1-8 will be rendered here -->
             </div>
 
             <div class="refresh-status eng" id="refreshStatus">
-                <i class="ph ph-circle-notch"></i> LIVE UPDATING
+                <div class="indicator">
+                    <i class="ph ph-circle-notch"></i> LIVE UPDATING
+                </div>
+                <div class="last-updated" id="lastUpdated">Initializing...</div>
             </div>
         </section>
 
@@ -235,7 +273,7 @@
 
     <footer>
         <p class="footer-quote eng">
-            "A small room designed for listening, where sound is free to breathe and time is never in a hurry."
+            A small room designed for listening, where sound is free to breathe and time is never in a hurry.
         </p>
     </footer>
 
@@ -250,6 +288,7 @@
         // UI 렌더링 함수
         function renderMap() {
             const grid = document.getElementById('seatGrid');
+            if (!grid) return;
             grid.innerHTML = '';
 
             seats.forEach(seat => {
@@ -262,11 +301,12 @@
                 }
 
                 // 점유 상태 확인
-                if (seat.name && seat.name.trim() !== "") {
+                const displayName = seat.name ? seat.name.trim() : "";
+                if (displayName !== "") {
                     seatDiv.classList.add('occupied');
-                    seatDiv.textContent = seat.name; // NAME이 있으면 이름 표시
+                    seatDiv.textContent = displayName;
                 } else {
-                    seatDiv.textContent = seat.no; // 비어 있으면 번호 표시
+                    seatDiv.textContent = seat.no;
                 }
 
                 grid.appendChild(seatDiv);
@@ -276,38 +316,47 @@
         // 데이터 업데이트 함수
         async function updateData() {
             const statusEl = document.getElementById('refreshStatus');
+            const lastUpdatedEl = document.getElementById('lastUpdated');
             statusEl.style.opacity = "1";
 
             try {
-                // Seat Map 시트 데이터 요청
-                const response = await fetch(`${API_URL}?sheet=Seat Map`);
+                // 캐시 방지를 위한 타임스탬프 추가
+                const fetchUrl = `${API_URL}?sheet=${encodeURIComponent('Seat Map')}&t=${new Date().getTime()}`;
+                
+                const response = await fetch(fetchUrl);
                 if (!response.ok) throw new Error('Network error');
                 
-                const data = await response.json();
+                const rawData = await response.json();
+                const data = Array.isArray(rawData) ? rawData : (rawData.data || []);
                 
                 if (data && Array.isArray(data)) {
-                    // 데이터 매핑
                     const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     
                     data.forEach(row => {
-                        const no = parseInt(row.NO || row.no);
-                        const name = (row.NAME || row.name || "").toString();
+                        const noVal = row.NO !== undefined ? row.NO : row.no;
+                        const nameVal = row.NAME !== undefined ? row.NAME : row.name;
                         
-                        if (no >= 1 && no <= TOTAL_SEATS) {
+                        const no = parseInt(noVal);
+                        const name = nameVal ? nameVal.toString() : "";
+                        
+                        if (!isNaN(no) && no >= 1 && no <= TOTAL_SEATS) {
                             newSeats[no - 1].name = name;
                         }
                     });
 
                     seats = newSeats;
                     renderMap();
+                    
+                    const now = new Date();
+                    lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 }
             } catch (error) {
                 console.error("Refresh failed:", error);
+                lastUpdatedEl.textContent = "SYNC INTERRUPTED";
             } finally {
-                // 잠시 후 업데이트 표시 숨김 (부드럽게)
                 setTimeout(() => {
                     statusEl.style.opacity = "0.3";
-                }, 1000);
+                }, 1200);
             }
         }
 
