@@ -63,6 +63,33 @@
             width: 100%; 
         }
         
+        /* 입구 표시 영역 (3번 좌석 위) */
+        .entrance-row {
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            width: 100%; 
+            margin-bottom: 2px;
+        }
+        .entrance-marker {
+            grid-column: 3; /* 3번 좌석 위치와 정확히 정렬 */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            opacity: 0.5;
+        }
+        .entrance-marker i {
+            font-size: 16px; 
+            color: var(--text); 
+            margin-bottom: 4px;
+        }
+        .entrance-marker span {
+            font-size: 8px; 
+            font-weight: 600;
+            letter-spacing: 0.15em; 
+            text-transform: uppercase; 
+        }
+
         .seat-row { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -169,6 +196,13 @@
     <main>
         <section class="seat-section">
             <div class="seat-grid-container">
+                <!-- 입구(문) 표시 영역 추가 -->
+                <div class="entrance-row">
+                    <div class="entrance-marker">
+                        <i class="ph ph-door"></i>
+                        <span class="eng">Entrance</span>
+                    </div>
+                </div>
                 <div class="seat-row" id="row1"></div>
                 <div class="seat-row" id="row2"></div>
             </div>
