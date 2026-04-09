@@ -128,10 +128,10 @@
             font-weight: 600;
         }
 
-        /* REFRESH STATUS */
+        /* REFRESH STATUS (가시성 개선) */
         .refresh-status {
-            font-size: 10px;
-            color: #222;
+            font-size: 11px;
+            color: #666; /* 더 밝게 조정 */
             letter-spacing: 2px;
             display: flex;
             flex-direction: column;
@@ -157,7 +157,8 @@
 
         .last-updated {
             font-size: 9px;
-            opacity: 0.5;
+            color: #555; /* 더 밝게 조정 */
+            opacity: 1; /* 투명도 제거 */
             font-family: 'Outfit';
         }
 
@@ -250,9 +251,7 @@
         <!-- Seat Map Area -->
         <section class="seat-section">
             <div class="seat-grid-container" id="seatGridContainer">
-                <!-- Row 1: 1 2 3 4 -->
                 <div class="seat-row" id="row1"></div>
-                <!-- Row 2: 5 6 7 8 -->
                 <div class="seat-row" id="row2"></div>
             </div>
 
@@ -294,7 +293,6 @@
         const SWEET_SPOTS = [2, 3];
         const TOTAL_SEATS = 8;
 
-        // Seat 데이터 관리
         let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
 
         function renderMap() {
@@ -305,7 +303,7 @@
             row1.innerHTML = '';
             row2.innerHTML = '';
 
-            seats.forEach((seat, index) => {
+            seats.forEach((seat) => {
                 const seatDiv = document.createElement('div');
                 seatDiv.className = 'seat';
                 
@@ -313,7 +311,6 @@
                     seatDiv.classList.add('sweet-spot');
                 }
 
-                // NAME 표시 로직
                 const displayName = (seat.name || "").toString().trim();
                 
                 if (displayName !== "") {
@@ -343,17 +340,24 @@
                 if (!response.ok) throw new Error('Sync failed');
                 
                 const rawData = await response.json();
-                const dataArray = Array.isArray(rawData) ? rawData : (rawData.data || []);
                 
-                if (dataArray) {
+                // 데이터 배열 추출 (배열 자체이거나, .data 속성에 담겨있을 경우 대응)
+                const dataArray = Array.isArray(rawData) ? rawData : (rawData.data || rawData.records || []);
+                
+                if (dataArray && dataArray.length > 0) {
                     const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     
                     dataArray.forEach(row => {
-                        const rowNo = row.NO !== undefined ? row.NO : row.no;
-                        const rowName = row.NAME !== undefined ? row.NAME : row.name;
+                        // 키 값을 대소문자 구분 없이 찾기 위해 모든 키를 소문자로 변환하여 검색
+                        let rowNo, rowName;
+                        for (let key in row) {
+                            const lowerKey = key.toLowerCase().trim();
+                            if (lowerKey === 'no') rowNo = row[key];
+                            if (lowerKey === 'name') rowName = row[key];
+                        }
                         
                         const no = parseInt(rowNo);
-                        const name = rowName !== undefined && rowName !== null ? rowName.toString() : "";
+                        const name = (rowName !== undefined && rowName !== null) ? rowName.toString() : "";
                         
                         if (!isNaN(no) && no >= 1 && no <= TOTAL_SEATS) {
                             newSeats[no - 1].name = name;
@@ -365,13 +369,15 @@
                     
                     const now = new Date();
                     lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                } else {
+                    lastUpdatedEl.textContent = "SYNCED (EMPTY DATA)";
                 }
             } catch (error) {
                 console.error("Fetch Error:", error);
                 lastUpdatedEl.textContent = "SYNC RETRYING...";
             } finally {
                 setTimeout(() => {
-                    statusEl.style.opacity = "0.3";
+                    statusEl.style.opacity = "0.7"; /* 기존 0.3에서 가독성을 위해 높임 */
                 }, 1000);
             }
         }
