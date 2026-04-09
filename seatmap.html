@@ -32,7 +32,7 @@
 
         /* HEADER */
         header {
-            padding: 40px 24px 20px;
+            padding: 40px 24px 10px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -57,76 +57,36 @@
 
         /* MAIN CONTENT */
         main {
-            padding: 0 24px 40px;
+            padding: 0 24px 30px;
             max-width: 500px;
             margin: 0 auto;
         }
 
         /* SEAT MAP SECTION */
         .seat-section {
-            margin-top: 10px;
+            margin-top: 20px;
             margin-bottom: 40px;
             text-align: center;
-            perspective: 1000px;
-        }
-
-        /* SPEAKER SYSTEM VISUALIZATION */
-        .speaker-system {
-            display: flex;
-            justify-content: space-between;
-            width: 80%;
-            margin: 0 auto 50px;
-            position: relative;
-        }
-
-        .speaker {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            opacity: 0.8;
-        }
-
-        .speaker i {
-            font-size: 32px;
-            color: #333;
-        }
-
-        .speaker.active i {
-            color: #FF5F1F;
-            filter: drop-shadow(0 0 8px rgba(255, 95, 31, 0.4));
-        }
-
-        .speaker-label {
-            font-family: 'Outfit';
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: #444;
-        }
-
-        .sound-wave {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 60px;
-            background: radial-gradient(ellipse at top, rgba(255, 95, 31, 0.05) 0%, transparent 70%);
-            z-index: -1;
         }
 
         /* 4x2 GRID LAYOUT */
-        .seat-grid {
+        .seat-grid-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .seat-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 30px;
+            gap: 12px;
             justify-items: center;
         }
 
         .seat {
-            width: 64px;
-            height: 64px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
             border: 1px solid #222;
             display: flex;
@@ -135,20 +95,26 @@
             font-size: 14px;
             font-weight: 300;
             color: #555;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             background-color: transparent;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 4px;
         }
 
+        /* Sweet Spot Style (2, 3) */
         .seat.sweet-spot {
-            border-color: rgba(255, 95, 31, 0.3);
-            color: rgba(255, 95, 31, 0.5);
+            border-color: rgba(255, 95, 31, 0.4);
+            color: rgba(255, 95, 31, 0.6);
         }
 
+        /* Occupied State */
         .seat.occupied {
             border-color: #444;
             color: #FFFFFF;
-            background-color: #0a0a0a;
+            background-color: #0c0c0c;
             font-size: 12px;
             font-weight: 500;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
@@ -167,7 +133,6 @@
             font-size: 10px;
             color: #222;
             letter-spacing: 2px;
-            margin-top: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -199,14 +164,14 @@
         /* GUIDE SECTION */
         .guide-section {
             border-top: 1px solid #111;
-            padding-top: 30px;
+            padding-top: 25px;
         }
 
         .guide-title {
             font-size: 16px;
             font-weight: 500;
             color: #FFFFFF;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -223,22 +188,22 @@
             font-weight: 300;
             color: #888;
             line-height: 1.7;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             word-break: keep-all;
         }
 
         .highlight { color: #FFFFFF; font-weight: 400; }
         .point-color { color: #FF5F1F; font-weight: 500; }
 
-        /* FOOTER - 콤팩트하게 수정 */
+        /* FOOTER */
         footer {
-            padding: 30px 24px 40px;
+            padding: 20px 24px 30px;
             text-align: center;
             border-top: 1px solid #111;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .footer-text {
@@ -284,20 +249,11 @@
     <main>
         <!-- Seat Map Area -->
         <section class="seat-section">
-            <div class="speaker-system">
-                <div class="speaker active">
-                    <i class="ph ph-speaker-hifi"></i>
-                    <span class="speaker-label">LEFT</span>
-                </div>
-                <div class="speaker active">
-                    <i class="ph ph-speaker-hifi"></i>
-                    <span class="speaker-label">RIGHT</span>
-                </div>
-                <div class="sound-wave"></div>
-            </div>
-            
-            <div class="seat-grid" id="seatGrid">
-                <!-- JS handles seat rendering -->
+            <div class="seat-grid-container" id="seatGridContainer">
+                <!-- Row 1: 1 2 3 4 -->
+                <div class="seat-row" id="row1"></div>
+                <!-- Row 2: 5 6 7 8 -->
+                <div class="seat-row" id="row2"></div>
             </div>
 
             <div class="refresh-status eng" id="refreshStatus">
@@ -338,14 +294,18 @@
         const SWEET_SPOTS = [2, 3];
         const TOTAL_SEATS = 8;
 
+        // Seat 데이터 관리
         let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
 
         function renderMap() {
-            const grid = document.getElementById('seatGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
+            const row1 = document.getElementById('row1');
+            const row2 = document.getElementById('row2');
+            if (!row1 || !row2) return;
 
-            seats.forEach(seat => {
+            row1.innerHTML = '';
+            row2.innerHTML = '';
+
+            seats.forEach((seat, index) => {
                 const seatDiv = document.createElement('div');
                 seatDiv.className = 'seat';
                 
@@ -353,7 +313,9 @@
                     seatDiv.classList.add('sweet-spot');
                 }
 
-                const displayName = seat.name ? seat.name.trim() : "";
+                // NAME 표시 로직
+                const displayName = (seat.name || "").toString().trim();
+                
                 if (displayName !== "") {
                     seatDiv.classList.add('occupied');
                     seatDiv.textContent = displayName;
@@ -361,7 +323,11 @@
                     seatDiv.textContent = seat.no;
                 }
 
-                grid.appendChild(seatDiv);
+                if (seat.no <= 4) {
+                    row1.appendChild(seatDiv);
+                } else {
+                    row2.appendChild(seatDiv);
+                }
             });
         }
 
@@ -373,20 +339,21 @@
             try {
                 const fetchUrl = `${API_URL}?sheet=${encodeURIComponent('Seat Map')}&t=${new Date().getTime()}`;
                 const response = await fetch(fetchUrl);
-                if (!response.ok) throw new Error('Sync error');
+                
+                if (!response.ok) throw new Error('Sync failed');
                 
                 const rawData = await response.json();
-                const data = Array.isArray(rawData) ? rawData : (rawData.data || []);
+                const dataArray = Array.isArray(rawData) ? rawData : (rawData.data || []);
                 
-                if (data && Array.isArray(data)) {
+                if (dataArray) {
                     const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     
-                    data.forEach(row => {
-                        const noVal = row.NO !== undefined ? row.NO : row.no;
-                        const nameVal = row.NAME !== undefined ? row.NAME : row.name;
+                    dataArray.forEach(row => {
+                        const rowNo = row.NO !== undefined ? row.NO : row.no;
+                        const rowName = row.NAME !== undefined ? row.NAME : row.name;
                         
-                        const no = parseInt(noVal);
-                        const name = nameVal ? nameVal.toString() : "";
+                        const no = parseInt(rowNo);
+                        const name = rowName !== undefined && rowName !== null ? rowName.toString() : "";
                         
                         if (!isNaN(no) && no >= 1 && no <= TOTAL_SEATS) {
                             newSeats[no - 1].name = name;
@@ -400,12 +367,12 @@
                     lastUpdatedEl.textContent = `LAST SYNC: ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 }
             } catch (error) {
-                console.error("Refresh failed:", error);
+                console.error("Fetch Error:", error);
                 lastUpdatedEl.textContent = "SYNC RETRYING...";
             } finally {
                 setTimeout(() => {
                     statusEl.style.opacity = "0.3";
-                }, 1500);
+                }, 1000);
             }
         }
 
