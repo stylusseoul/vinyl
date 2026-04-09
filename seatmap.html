@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>STYLUS | Seat Map</title>
-    <!-- 외부 설정 파일 로드 -->
     <script src="config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@200;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- 화면 렌더링 차단을 막기 위해 defer 속성 추가 -->
-    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* style.css 변수 및 디자인 시스템 적용 */
         :root {
             --bg:      #080808;
             --surface: #111;
@@ -22,88 +19,36 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-            /* 좌석 크기 확대 */
             --seat-size: clamp(74px, 21vw, 94px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body { 
             background: var(--bg); color: var(--text); font-family: var(--font); 
             line-height: 1.6; -webkit-font-smoothing: antialiased; 
             min-height: 100vh; display: flex; flex-direction: column; 
         }
-
         .eng { font-family: 'Outfit', sans-serif; }
 
-        /* Header - 정적 레이아웃 */
         header { 
             position: relative; background: var(--bg);
             padding: 40px 24px 10px; 
             text-align: center; display: flex; flex-direction: column; align-items: center;
         }
         .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); opacity: 0.95; }
-        .page-title { 
-            font-size: 11px; 
-            font-weight: 800; 
-            color: var(--accent); 
-            letter-spacing: 0.18em; 
-            text-transform: uppercase; 
-        }
+        .page-title { font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; }
 
-        /* Main Content */
         main { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; }
         
-        /* 좌석 영역 */
         .seat-section { margin-top: 15px; text-align: center; }
-        
-        .seat-grid-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-            margin-bottom: 30px; 
-            width: 100%; 
-        }
-        
-        /* 입구 표시 영역 */
-        .entrance-row {
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 10px; 
-            width: 100%; 
-            margin-bottom: 2px;
-        }
-        .entrance-marker {
-            grid-column: 3; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            opacity: 0.5;
-        }
-        .entrance-marker i {
-            font-size: 16px; 
-            color: var(--text); 
-            margin-bottom: 4px;
-        }
-        .entrance-marker span {
-            font-size: 8px; 
-            font-weight: 600;
-            letter-spacing: 0.15em; 
-            text-transform: uppercase; 
-        }
-
-        .seat-row { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 12px; 
-            justify-items: center; 
-            width: 100%; 
-        }
+        .seat-grid-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; width: 100%; }
+        .seat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; width: 100%; }
 
         .seat {
             width: var(--seat-size);
             height: var(--seat-size);
-            border-radius: 50%;
+            /* 원형에서 라운드 렉탱글로 변경 */
+            border-radius: 18px;
             border: 1px solid var(--border);
             background: var(--surface);
             display: flex; align-items: center; justify-content: center;
@@ -111,79 +56,49 @@
             font-weight: 300; color: var(--sub);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center; 
-            overflow: hidden; 
+            line-height: 1.25; 
+            word-break: keep-all; 
             padding: 8px;
+            overflow: hidden;
         }
 
-        .seat.sweet-spot { border-color: rgba(239, 124, 28, 0.3); color: var(--accent); }
+        .seat.sweet-spot { border-color: var(--accent); color: var(--accent); }
         
-        /* 점유된 좌석: 최대 2줄 표시 및 말줄임 처리 */
+        /* 점유된 좌석: 2줄 노출 및 중앙 정렬 최적화 */
         .seat.occupied { 
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* 최대 2줄 */
-            -webkit-box-orient: vertical;
-            white-space: normal; /* 한 줄 고정 해제 */
-            word-break: keep-all;
-            line-height: 1.3;
             border-color: var(--sub2); 
             color: var(--text); 
             background-color: #1a1a1a; 
             font-weight: 400;
-            /* 수직 중앙 정렬 보정 */
-            padding: 0 8px;
-            display: -webkit-box;
-            -webkit-box-pack: center;
-            -webkit-box-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .seat.sweet-spot.occupied { 
             background-color: #1a1a1a; 
             border-color: var(--accent); 
-            color: var(--accent); 
-            box-shadow: 0 8px 20px rgba(239, 124, 28, 0.2); 
-            font-weight: 500; 
+            color: var(--text); 
+            box-shadow: 0 0 15px rgba(239, 124, 28, 0.15);
         }
 
-        /* Refresh Status */
         .refresh-status { 
-            margin: 0 auto 40px;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 4px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
+            margin: 0 auto 40px; 
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.03); 
+            border-radius: 24px;
             width: fit-content;
         }
-        
         .status-header { 
-            display: flex; 
-            align-items: center; 
-            gap: 7px; 
-            font-size: 10px; 
-            font-weight: 600; 
-            color: var(--text);
-            letter-spacing: 0.1em; 
-            text-transform: uppercase; 
+            display: flex; align-items: center; gap: 7px; 
+            font-size: 10px; font-weight: 700; color: var(--text); 
+            letter-spacing: 0.1em; text-transform: uppercase; 
         }
-        
-        .status-header i { 
-            font-size: 11px; 
-            color: var(--accent); 
-            animation: spin 3s linear infinite; 
-        }
-        
+        .status-header i { font-size: 11px; color: var(--accent); animation: spin 3s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        .last-sync-time { 
-            font-size: 9px; 
-            color: var(--sub); 
-            font-family: 'Outfit'; 
-            letter-spacing: 0.5px; 
-        }
+        .last-sync-time { font-size: 9px; color: var(--sub); letter-spacing: 0.5px; }
 
-        /* Guide Section */
         .guide-section { border-top: 1px solid var(--border); padding-top: 25px; width: 100%; }
         .guide-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
         .guide-title i { color: var(--accent); font-size: 18px; }
@@ -191,9 +106,8 @@
         .highlight { color: #BBB; }
         .point-color { color: var(--accent); }
 
-        /* Footer */
         .list-footer {
-            padding: 40px 24px calc(env(safe-area-inset-bottom, 0px) + 60px); 
+            padding: 40px 24px 60px; 
             border-top: 1px solid var(--border);
             display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
         }
@@ -213,118 +127,60 @@
         <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img">
         <div class="page-title">Seat Map</div>
     </header>
-
     <main>
         <section class="seat-section">
-            <div class="seat-grid-container">
-                <div class="entrance-row">
-                    <div class="entrance-marker">
-                        <i class="ph ph-door"></i>
-                        <span class="eng">Entrance</span>
-                    </div>
-                </div>
-                <div class="seat-row" id="row1"></div>
-                <div class="seat-row" id="row2"></div>
-            </div>
-            
-            <div class="refresh-status eng">
-                <div class="status-header">
-                    <i class="ph ph-circle-notch"></i> Live Connected
-                </div>
-                <div class="last-sync-time" id="lastUpdated">Syncing...</div>
-            </div>
+            <div class="seat-grid-container"><div class="seat-row" id="row1"></div><div class="seat-row" id="row2"></div></div>
+            <div class="refresh-status eng"><div class="status-header"><i class="ph ph-circle-notch"></i> Live Connected</div><div class="last-sync-time" id="lastUpdated">Syncing</div></div>
         </section>
-
         <section class="guide-section">
             <h3 class="guide-title"><i class="ph ph-info"></i> 좌석 안내</h3>
             <div class="guide-item">1. 좌석은 별도의 지정 없이 <span class="highlight">선착순으로 운영</span>됩니다.</div>
-            <div class="guide-item">2. <span class="point-color">오렌지색</span> 좌석은 음악 감상에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.</div>
+            <div class="guide-item">2. <span class="point-color">오렌지색 라인</span> 좌석은 음악 감상에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.</div>
         </section>
     </main>
-
     <footer class="list-footer">
         <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
-        <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                <circle cx="12" cy="12" r="4.5"/>
-                <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
-            </svg>
+        <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg>
             <span>stylus.seoul</span>
         </a>
     </footer>
-
     <script>
         const SWEET_SPOTS = [2, 3];
         const TOTAL_SEATS = 8;
         let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
-
+        
         function renderMap() {
-            const r1 = document.getElementById('row1'); 
-            const r2 = document.getElementById('row2');
-            if (!r1 || !r2) return;
-            
-            r1.innerHTML = ''; 
-            r2.innerHTML = '';
-            
+            const r1 = document.getElementById('row1'); const r2 = document.getElementById('row2');
+            r1.innerHTML = ''; r2.innerHTML = '';
             seats.forEach((s) => {
-                const d = document.createElement('div'); 
-                d.className = 'seat';
+                const d = document.createElement('div'); d.className = 'seat';
                 if (SWEET_SPOTS.includes(s.no)) d.classList.add('sweet-spot');
-                
                 const n = (s.name || "").trim();
                 if (n !== "") { 
-                    d.classList.add('occupied'); 
-                    d.textContent = n; 
-                    d.title = n; // 마우스 호버 시 전체 이름 표시
-                    
-                    // 글자 수에 따른 폰트 사이즈 유동적 조절 (2줄 노출 최적화)
-                    if (n.length >= 8) d.style.fontSize = 'clamp(10px, 3vw, 12px)'; 
-                    else if (n.length >= 5) d.style.fontSize = 'clamp(12px, 3.5vw, 14px)'; 
-                    else d.style.fontSize = 'clamp(14px, 4vw, 16px)';
-                } else {
-                    d.textContent = s.no;
-                    d.style.fontSize = ''; // 기본 폰트 사이즈 복구
-                }
-                
-                if (s.no <= 4) r1.appendChild(d); 
-                else r2.appendChild(d);
+                    d.classList.add('occupied'); d.textContent = n; 
+                    // 글자 길이에 따른 폰트 사이즈 유동적 조절
+                    if (n.length >= 7) d.style.fontSize = 'clamp(10px, 2.8vw, 12px)'; 
+                    else if (n.length >= 4) d.style.fontSize = 'clamp(12px, 3.2vw, 14px)'; 
+                } else d.textContent = s.no;
+                if (s.no <= 4) r1.appendChild(d); else r2.appendChild(d);
             });
         }
 
         async function updateData() {
-            const el = document.getElementById('lastUpdated'); 
-            if (typeof REQUEST_API_URL === 'undefined') {
-                el.textContent = "Offline Mode"; 
-                return;
-            }
-            
+            const el = document.getElementById('lastUpdated'); if (typeof REQUEST_API_URL === 'undefined') return;
             try {
                 const res = await fetch(`${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`);
                 const data = await res.json();
-                
                 if (data && Array.isArray(data)) {
                     const ns = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
-                    data.forEach(item => { 
-                        const no = parseInt(item.NO || item.no); 
-                        const name = item.NAME || item.name || ""; 
-                        if (no >= 1 && no <= TOTAL_SEATS) ns[no - 1].name = name; 
-                    });
-                    seats = ns; 
-                    renderMap();
-                    const now = new Date(); 
-                    el.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    data.forEach(item => { const no = parseInt(item.NO || item.no); const name = item.NAME || item.name || ""; if (no >= 1 && no <= TOTAL_SEATS) ns[no - 1].name = name; });
+                    seats = ns; renderMap();
+                    const now = new Date(); el.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 }
-            } catch (e) { 
-                el.textContent = "Sync Error"; 
-            }
+            } catch (e) { el.textContent = "Sync Error"; }
         }
-
-        document.addEventListener('DOMContentLoaded', () => { 
-            renderMap(); 
-            updateData(); 
-            setInterval(updateData, 30000); 
-        });
+        window.onload = () => { renderMap(); updateData(); setInterval(updateData, 30000); };
     </script>
 </body>
 </html>
