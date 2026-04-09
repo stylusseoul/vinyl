@@ -34,8 +34,8 @@
             --accent:  #EF7C1C; 
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
             
-            /* 프로필 썸네일 기준점: body padding-top(60px) + 썸네일 반지름(63px) = 123px */
-            --center-y: 123px; 
+            /* [수정] 상단 여백 축소에 따른 중심점 조정: body padding-top(40px) + 썸네일 반지름(63px) = 103px */
+            --center-y: 103px; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -50,19 +50,19 @@
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            padding: 60px 20px 40px; 
+            /* [수정] 상단 여백 60px -> 40px로 축소 */
+            padding: 40px 20px 30px; 
             position: relative;
             overflow-x: hidden;
         }
 
-        /* 바이닐 그루브 & 광택 배경 - 선명도 및 조도 강화 */
+        /* 바이닐 그루브 & 광택 배경 */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0; 
             z-index: -2;
             background: 
-                /* 소리골 패턴: 더 선명하게 노출 */
                 repeating-radial-gradient(
                     circle at 50% var(--center-y),
                     transparent 0,
@@ -70,7 +70,6 @@
                     rgba(255, 255, 255, 0.035) 3px,
                     rgba(255, 255, 255, 0.035) 4px
                 ),
-                /* 광택: 오렌지색 하이라이트 강도를 높여 '컬러 바이닐' 느낌 강조 */
                 conic-gradient(
                     from 20deg at 50% var(--center-y),
                     transparent 0deg,
@@ -86,7 +85,7 @@
             pointer-events: none;
         }
 
-        /* 앰비언트 글로우 - 오렌지 투과광 범위를 넓히고 밝기 상향 */
+        /* 앰비언트 글로우 */
         body::after {
             content: '';
             position: absolute;
@@ -114,13 +113,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 40px;
+            /* [수정] 하단 여백 40px -> 24px로 축소 */
+            margin-bottom: 24px;
             text-align: center;
             width: 100%;
             max-width: 440px;
         }
 
-        /* 썸네일: 오렌지 림 라이트를 추가하여 배경과 분리되지 않으면서 화사하게 배치 */
         .vinyl-record {
             width: 126px; 
             height: 126px;
@@ -129,12 +128,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 24px;
+            /* [수정] 이미지 하단 여백 24px -> 16px로 축소 */
+            margin-bottom: 16px;
             position: relative;
             box-shadow: 
                 0 0 0 1px rgba(255, 255, 255, 0.08),
                 0 15px 45px rgba(0, 0, 0, 1),
-                0 0 20px rgba(239, 124, 28, 0.2), /* 외곽 오렌지 글로우 */
+                0 0 20px rgba(239, 124, 28, 0.2), 
                 inset 0 0 0 2px rgba(0,0,0,0.6);
         }
 
@@ -146,7 +146,6 @@
             box-shadow: 0 0 0 2px #000;
         }
 
-        /* 광택 효과 동기화 */
         .vinyl-record::before {
             content: '';
             position: absolute;
@@ -166,7 +165,6 @@
             pointer-events: none;
         }
 
-        /* LP판 중앙 구멍 */
         .vinyl-record::after {
             content: '';
             position: absolute;
@@ -183,7 +181,7 @@
             font-size: 26px;
             font-weight: 700;
             letter-spacing: 0.01em;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--text);
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
@@ -290,7 +288,7 @@
         /* Footer */
         .footer {
             margin-top: auto;
-            padding-top: 50px;
+            padding-top: 40px;
             padding-bottom: 20px;
             font-size: 12px;
             font-weight: 400;
