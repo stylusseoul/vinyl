@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@200;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- 화면 렌더링 차단을 막기 위해 defer 속성 추가 -->
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     <style>
         /* style.css 변수 및 디자인 시스템 적용 */
         :root {
@@ -177,7 +178,7 @@
                 <div class="status-header">
                     <i class="ph ph-circle-notch"></i> Live Connected
                 </div>
-                <div class="last-sync-time" id="lastUpdated">Syncing</div>
+                <div class="last-sync-time" id="lastUpdated">Syncing...</div>
             </div>
         </section>
 
@@ -235,7 +236,10 @@
 
         async function updateData() {
             const el = document.getElementById('lastUpdated'); 
-            if (typeof REQUEST_API_URL === 'undefined') return;
+            if (typeof REQUEST_API_URL === 'undefined') {
+                el.textContent = "Offline Mode"; 
+                return;
+            }
             
             try {
                 const res = await fetch(`${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`);
@@ -258,11 +262,12 @@
             }
         }
 
-        window.onload = () => { 
+        // window.onload 대신 DOMContentLoaded를 사용하여 HTML 로드 즉시 실행
+        document.addEventListener('DOMContentLoaded', () => { 
             renderMap(); 
             updateData(); 
             setInterval(updateData, 30000); 
-        };
+        });
     </script>
 </body>
 </html>
