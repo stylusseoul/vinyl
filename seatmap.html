@@ -1,25 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>STYLUS | Seat Map</title>
-<!-- 외부 설정 파일 로드 -->
-<script src="config.js"></script>
-    <!-- 폰트: Outfit (영문) & Noto Sans KR (국문) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- 아이콘: Phosphor Icons -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>STYLUS | Seat Map</title>
+    <!-- 외부 설정 파일 로드 -->
+    <script src="config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@200;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
-<style>
-        /* CORE SETUP */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
         /* style.css 변수 및 디자인 시스템 적용 */
         :root {
             --bg:      #080808;
@@ -30,75 +21,24 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-}
+        }
 
-        body {
-            background-color: #000000;
-            color: #E0E0E0;
-            font-family: 'Noto Sans KR', sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: var(--bg); color: var(--text); font-family: var(--font); 
             line-height: 1.6; -webkit-font-smoothing: antialiased; 
             min-height: 100vh; display: flex; flex-direction: column; 
-}
-
-.eng { font-family: 'Outfit', sans-serif; }
-
-        /* HEADER - Tight Spacing */
-        header {
-            padding: 30px 24px 10px; 
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
-        .logo-img {
-            width: 110px;
-            height: auto;
-            margin-bottom: 6px;
-            display: block;
-        }
+        .eng { font-family: 'Outfit', sans-serif; }
 
-        .page-title {
-            font-size: 11px;
-            font-weight: 500;
-            color: #FF5F1F;
-            letter-spacing: 5px;
-            margin-left: 5px;
-            text-transform: uppercase;
-        }
-
-        /* MAIN CONTENT */
-        main {
-            padding: 0 20px 40px; 
-            max-width: 500px;
-            margin: 0 auto;
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
         /* Header - 정적 레이아웃 */
         header { 
             position: relative; background: var(--bg);
             padding: 40px 24px 10px; 
             text-align: center; display: flex; flex-direction: column; align-items: center;
-}
-
-        /* SEAT SECTION */
-        .seat-section {
-            margin-top: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            width: 100%;
+        }
         .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); opacity: 0.95; }
         .page-title { 
             font-size: 11px; 
@@ -106,15 +46,8 @@
             color: var(--accent); 
             letter-spacing: 0.18em; 
             text-transform: uppercase; 
-}
+        }
 
-        /* GRID LAYOUT */
-        .seat-grid-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 60px; /* 좌석과 밑에 사이 여백 3배 확장 유지 */
-            width: 100%;
         /* Main Content */
         main { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; }
         
@@ -127,14 +60,7 @@
             gap: 12px; 
             margin-bottom: 30px; /* 여백 정리: 상태바와의 간격 조정 */
             width: 100%; 
-}
-
-        .seat-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            justify-items: center;
-            width: 100%;
+        }
         
         .seat-row { 
             display: grid; 
@@ -142,43 +68,21 @@
             gap: 10px; 
             justify-items: center; 
             width: 100%; 
-}
+        }
 
-.seat {
-width: clamp(64px, 18vw, 84px);
-height: clamp(64px, 18vw, 84px);
-border-radius: 50%;
-            border: 1px solid #222;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .seat {
+            width: clamp(64px, 18vw, 84px);
+            height: clamp(64px, 18vw, 84px);
+            border-radius: 50%;
             border: 1px solid var(--border);
             background: var(--surface);
             display: flex; align-items: center; justify-content: center;
-font-size: clamp(14px, 4vw, 18px);
-            font-weight: 300;
-            color: #555;
+            font-size: clamp(14px, 4vw, 18px);
             font-weight: 300; color: var(--sub);
-transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            background-color: transparent;
-            overflow: hidden;
-            text-align: center;
-            line-height: 1.4; 
-            word-break: keep-all; 
-            padding: 12px; 
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center; line-height: 1.4; word-break: keep-all; padding: 12px; 
         }
 
-        @media (max-width: 340px) {
-            .seat-row { gap: 8px; }
-            .seat { padding: 10px; }
-            text-align: center; line-height: 1.4; word-break: keep-all; padding: 12px; 
-}
-
-        /* Sweet Spot Style */
-        .seat.sweet-spot {
-            border-color: rgba(255, 95, 31, 0.5);
-            color: rgba(255, 95, 31, 0.7);
         .seat.sweet-spot { border-color: rgba(239, 124, 28, 0.3); color: var(--accent); }
         .seat.occupied { border-color: var(--sub2); color: var(--text); background-color: #1a1a1a; font-weight: 400; }
         .seat.sweet-spot.occupied { 
@@ -187,16 +91,8 @@ transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             color: #FFF; 
             box-shadow: 0 8px 20px rgba(239, 124, 28, 0.2); 
             font-weight: 500; 
-}
+        }
 
-        /* Occupied State */
-        .seat.occupied {
-            border-color: #444;
-            color: #FFFFFF;
-            background-color: #0c0c0c;
-            font-size: clamp(11px, 3.2vw, 14px);
-            font-weight: 400;
-            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
         /* [수정] Refresh Status - 더 선명하고 정돈된 여백 */
         .refresh-status { 
             margin: 0 auto 40px; /* 상단 좌석과 30px, 하단 안내선과 40px 여백 */
@@ -208,54 +104,7 @@ transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             background: rgba(255, 255, 255, 0.03); /* 아주 살짝 배경을 주어 영역 분리 */
             border-radius: 20px;
             width: fit-content;
-}
-
-        .seat.sweet-spot.occupied {
-            background-color: #FF5F1F;
-            border-color: #FF5F1F;
-            color: #FFFFFF;
-            box-shadow: 0 8px 20px rgba(255, 95, 31, 0.2);
-            font-weight: 500;
         }
-
-        /* REFRESH STATUS */
-        .refresh-status {
-            padding: 5px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            opacity: 0.4;
-        }
-
-        .status-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 9px;
-            font-weight: 400;
-            color: #666;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .status-header i {
-            font-size: 8px;
-            color: #FF5F1F;
-            animation: spin 4s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .last-sync-time {
-            font-size: 8px;
-            color: #444;
-            font-family: 'Outfit';
-            font-weight: 400;
-            letter-spacing: 0.5px;
         
         .status-header { 
             display: flex; 
@@ -266,29 +115,13 @@ transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             color: var(--text); /* 텍스트 더 밝게 */
             letter-spacing: 0.1em; 
             text-transform: uppercase; 
-}
-
-        /* GUIDE SECTION */
-        .guide-section {
-            border-top: 1px solid #111;
-            padding-top: 25px;
-            width: 100%;
-            margin-bottom: 40px; /* 푸터가 없으므로 하단 여백 확보 */
+        }
         
         .status-header i { 
             font-size: 11px; 
             color: var(--accent); 
             animation: spin 3s linear infinite; 
-}
-
-        .guide-title {
-            font-size: 15px;
-            font-weight: 500;
-            color: #FFFFFF;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        }
         
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
@@ -297,12 +130,8 @@ transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             color: var(--sub); 
             font-family: 'Outfit'; 
             letter-spacing: 0.5px; 
-}
+        }
 
-        .guide-title i { color: #FF5F1F; font-size: 18px; }
-
-        .guide-list {
-            list-style: none;
         /* Guide Section */
         .guide-section { border-top: 1px solid var(--border); padding-top: 25px; width: 100%; }
         .guide-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
@@ -316,66 +145,46 @@ transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             padding: 40px 24px calc(env(safe-area-inset-bottom, 0px) + 60px); 
             border-top: 1px solid var(--border);
             display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
-}
-
-        .guide-item {
-            font-size: 13px;
-            font-weight: 300;
-            color: #888;
-            line-height: 1.6;
-            margin-bottom: 10px;
-            word-break: keep-all;
+        }
         .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 1.85; letter-spacing: 0.01em; font-style: italic; max-width: 320px; }
         .footer-insta {
             display: inline-flex; align-items: center; justify-content: center; gap: 6px;
             text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500;
             letter-spacing: 0.04em; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
             transition: all 0.15s;
-}
-
-        .highlight { color: #AAA; font-weight: 400; }
-        .point-color { color: #FF5F1F; font-weight: 400; }
-
+        }
         .footer-insta svg { width: 15px; height: 15px; display: block; }
         .footer-insta:active { color: var(--text); border-color: var(--sub); }
-</style>
+    </style>
 </head>
 <body>
-
-<header>
-        <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="STYLUS Logo" class="logo-img">
-        <div class="page-title eng">Seat Map</div>
+    <header>
         <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img">
         <div class="page-title">Seat Map</div>
-</header>
+    </header>
 
-<main>
-@@ -237,7 +169,8 @@
-<div class="seat-row" id="row1"></div>
-<div class="seat-row" id="row2"></div>
-</div>
-
+    <main>
+        <section class="seat-section">
+            <div class="seat-grid-container">
+                <div class="seat-row" id="row1"></div>
+                <div class="seat-row" id="row2"></div>
+            </div>
             
             <!-- 상태 표시줄: 여백 및 가시성 개선 -->
-<div class="refresh-status eng">
-<div class="status-header">
-<i class="ph ph-circle-notch"></i> Live Connected
-@@ -248,107 +181,84 @@
+            <div class="refresh-status eng">
+                <div class="status-header">
+                    <i class="ph ph-circle-notch"></i> Live Connected
+                </div>
+                <div class="last-sync-time" id="lastUpdated">Syncing</div>
+            </div>
+        </section>
 
-<section class="guide-section">
-<h3 class="guide-title"><i class="ph ph-info"></i> 좌석 안내</h3>
-            <ul class="guide-list">
-                <li class="guide-item">
-                    1. 좌석은 별도의 지정 없이 <span class="highlight">선착순으로 운영</span>됩니다.
-                </li>
-                <li class="guide-item">
-                    2. <span class="point-color">오렌지색</span>으로 표시된 2, 3번 좌석은 음악을 감상하기에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.
-                </li>
-            </ul>
+        <section class="guide-section">
+            <h3 class="guide-title"><i class="ph ph-info"></i> 좌석 안내</h3>
             <div class="guide-item">1. 좌석은 별도의 지정 없이 <span class="highlight">선착순으로 운영</span>됩니다.</div>
             <div class="guide-item">2. <span class="point-color">오렌지색</span> 좌석은 음악 감상에 가장 적합한 <span class="highlight">스위트 스팟(Sweet Spot)</span>입니다.</div>
-</section>
-</main>
+        </section>
+    </main>
 
     <footer class="list-footer">
         <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
@@ -389,32 +198,12 @@ transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         </a>
     </footer>
 
-<script>
-        /**
-         * STYLUS SEAT MAP LOGIC
-         */
-const SWEET_SPOTS = [2, 3];
-const TOTAL_SEATS = 8;
-        
-let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
+    <script>
+        const SWEET_SPOTS = [2, 3];
+        const TOTAL_SEATS = 8;
+        let seats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
 
-function renderMap() {
-            const row1 = document.getElementById('row1');
-            const row2 = document.getElementById('row2');
-            if (!row1 || !row2) return;
-
-            row1.innerHTML = ''; 
-            row2.innerHTML = '';
-
-            seats.forEach((seat) => {
-                const seatDiv = document.createElement('div');
-                seatDiv.className = 'seat';
-                
-                if (SWEET_SPOTS.includes(seat.no)) {
-                    seatDiv.classList.add('sweet-spot');
-                }
-
-                const displayName = (seat.name || "").toString().trim();
+        function renderMap() {
             const r1 = document.getElementById('row1'); 
             const r2 = document.getElementById('row2');
             if (!r1 || !r2) return;
@@ -426,97 +215,52 @@ function renderMap() {
                 const d = document.createElement('div'); 
                 d.className = 'seat';
                 if (SWEET_SPOTS.includes(s.no)) d.classList.add('sweet-spot');
-
-                if (displayName !== "") {
-                    seatDiv.classList.add('occupied');
-                    seatDiv.textContent = displayName;
-                    
-                    if (displayName.length >= 5) {
-                        seatDiv.style.fontSize = 'clamp(10px, 2.8vw, 11px)';
-                    } else if (displayName.length >= 3) {
-                        seatDiv.style.fontSize = 'clamp(11px, 3.2vw, 13px)';
-                    }
+                
                 const n = (s.name || "").trim();
                 if (n !== "") { 
                     d.classList.add('occupied'); 
                     d.textContent = n; 
                     if (n.length >= 5) d.style.fontSize = 'clamp(10px, 2.8vw, 11px)'; 
                     else if (n.length >= 3) d.style.fontSize = 'clamp(11px, 3.2vw, 13px)'; 
-} else {
-                    seatDiv.textContent = seat.no;
-                }
-
-                if (seat.no <= 4) {
-                    row1.appendChild(seatDiv);
                 } else {
-                    row2.appendChild(seatDiv);
                     d.textContent = s.no;
-}
+                }
                 
                 if (s.no <= 4) r1.appendChild(d); 
                 else r2.appendChild(d);
-});
-}
+            });
+        }
 
-async function updateData() {
-            const lastUpdatedEl = document.getElementById('lastUpdated');
+        async function updateData() {
             const el = document.getElementById('lastUpdated'); 
             if (typeof REQUEST_API_URL === 'undefined') return;
-
-            if (typeof REQUEST_API_URL === 'undefined' || !REQUEST_API_URL) {
-                lastUpdatedEl.textContent = "URL ERROR";
-                return;
-            }
-
-try {
-                const url = `${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`;
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Sync failed');
-                
-                const data = await response.json();
+            
+            try {
                 const res = await fetch(`${REQUEST_API_URL}?action=read&sheet=Seat Map&t=${Date.now()}`);
                 const data = await res.json();
-
-if (data && Array.isArray(data)) {
-                    const newSeats = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
-                    
-                    data.forEach(item => {
-                        const no = parseInt(item.NO || item.no);
-                        const name = item.NAME !== undefined && item.NAME !== null ? item.NAME : (item.name || "");
-                        
-                        if (!isNaN(no) && no >= 1 && no <= TOTAL_SEATS) {
-                            newSeats[no - 1].name = name;
-                        }
+                
+                if (data && Array.isArray(data)) {
                     const ns = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
                     data.forEach(item => { 
                         const no = parseInt(item.NO || item.no); 
                         const name = item.NAME || item.name || ""; 
                         if (no >= 1 && no <= TOTAL_SEATS) ns[no - 1].name = name; 
-});
-
-                    seats = newSeats;
+                    });
                     seats = ns; 
-renderMap();
-                    
-                    const now = new Date();
-                    lastUpdatedEl.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    renderMap();
                     const now = new Date(); 
                     el.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-}
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                lastUpdatedEl.textContent = "Sync Disconnected";
+                }
             } catch (e) { 
                 el.textContent = "Sync Error"; 
-}
-}
+            }
+        }
 
-        window.onload = function() {
-            renderMap();
-            updateData();
         window.onload = () => { 
             renderMap(); 
             updateData(); 
-setInterval(updateData, 30000); 
-};
-</script>
+            setInterval(updateData, 30000); 
+        };
+    </script>
+</body>
+</html>
