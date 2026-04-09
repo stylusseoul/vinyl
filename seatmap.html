@@ -19,7 +19,7 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-            --seat-size: clamp(74px, 21vw, 94px);
+            --seat-size: clamp(76px, 22vw, 96px); /* 크기를 미세하게 상향 */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -38,7 +38,7 @@
         .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); opacity: 0.95; }
         .page-title { font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; }
 
-        main { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; }
+        main { padding: 0 16px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; }
         
         .seat-section { margin-top: 15px; text-align: center; }
         .seat-grid-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; width: 100%; }
@@ -47,24 +47,23 @@
         .seat {
             width: var(--seat-size);
             height: var(--seat-size);
-            /* 원형에서 라운드 렉탱글로 변경 */
-            border-radius: 18px;
+            border-radius: 20px; /* 라운드 값 최적화 */
             border: 1px solid var(--border);
             background: var(--surface);
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(14px, 4vw, 18px);
+            font-size: clamp(14px, 4.5vw, 19px);
             font-weight: 300; color: var(--sub);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center; 
-            line-height: 1.25; 
+            line-height: 1.2; 
             word-break: keep-all; 
-            padding: 8px;
+            padding: 10px; /* 패딩을 늘려 글자가 테두리에 붙지 않게 방어 */
             overflow: hidden;
         }
 
         .seat.sweet-spot { border-color: var(--accent); color: var(--accent); }
         
-        /* 점유된 좌석: 2줄 노출 및 중앙 정렬 최적화 */
+        /* 점유된 좌석: 2줄 자동 줄바꿈 및 중앙 정렬 */
         .seat.occupied { 
             border-color: var(--sub2); 
             color: var(--text); 
@@ -73,6 +72,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
+            word-break: break-all; /* 긴 단어 강제 줄바꿈으로 넘침 방지 */
         }
         
         .seat.sweet-spot.occupied { 
@@ -159,10 +160,16 @@
                 const n = (s.name || "").trim();
                 if (n !== "") { 
                     d.classList.add('occupied'); d.textContent = n; 
-                    // 글자 길이에 따른 폰트 사이즈 유동적 조절
-                    if (n.length >= 7) d.style.fontSize = 'clamp(10px, 2.8vw, 12px)'; 
-                    else if (n.length >= 4) d.style.fontSize = 'clamp(12px, 3.2vw, 14px)'; 
-                } else d.textContent = s.no;
+                    
+                    // 글자 길이에 따른 폰트 사이즈 조절 로직 강화
+                    if (n.length >= 8) d.style.fontSize = 'clamp(9px, 2.6vw, 11px)'; 
+                    else if (n.length >= 5) d.style.fontSize = 'clamp(11px, 3.2vw, 13px)'; 
+                    else if (n.length >= 3) d.style.fontSize = 'clamp(13px, 3.8vw, 15px)';
+                    else d.style.fontSize = 'clamp(15px, 4.2vw, 18px)';
+                } else {
+                    d.textContent = s.no;
+                    d.style.fontSize = ''; 
+                }
                 if (s.no <= 4) r1.appendChild(d); else r2.appendChild(d);
             });
         }
@@ -174,9 +181,15 @@
                 const data = await res.json();
                 if (data && Array.isArray(data)) {
                     const ns = Array.from({ length: TOTAL_SEATS }, (_, i) => ({ no: i + 1, name: "" }));
-                    data.forEach(item => { const no = parseInt(item.NO || item.no); const name = item.NAME || item.name || ""; if (no >= 1 && no <= TOTAL_SEATS) ns[no - 1].name = name; });
-                    seats = ns; renderMap();
-                    const now = new Date(); el.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    data.forEach(item => { 
+                        const no = parseInt(item.NO || item.no); 
+                        const name = item.NAME || item.name || ""; 
+                        if (no >= 1 && no <= TOTAL_SEATS) ns[no - 1].name = name; 
+                    });
+                    seats = ns; 
+                    renderMap();
+                    const now = new Date(); 
+                    el.textContent = `LAST SYNC: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 }
             } catch (e) { el.textContent = "Sync Error"; }
         }
