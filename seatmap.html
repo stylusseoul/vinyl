@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>STYLUS | Seat Map</title>
+    <title>Stylus Seat Map</title>
     <script src="config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,8 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-            --seat-size: clamp(76px, 22vw, 96px);
+            /* 모바일 대응을 위해 최소 크기 및 vw 비율 미세 조정 */
+            --seat-size: clamp(68px, 20vw, 92px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -32,17 +33,46 @@
 
         header { 
             position: relative; background: var(--bg);
-            padding: 40px 24px 10px; 
+            padding: 40px 20px 20px; 
             text-align: center; display: flex; flex-direction: column; align-items: center;
         }
-        .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); opacity: 0.95; }
-        .page-title { font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; }
+        .logo-img { height: 28px; width: auto; margin-bottom: 8px; filter: brightness(0) invert(1); opacity: 0.95; }
+        
+        /* 타이틀 아래 라인 */
+        .page-title { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--accent); 
+            letter-spacing: 0.18em; 
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 1px;
+            background: var(--accent);
+            opacity: 0.6;
+        }
 
         main { padding: 0 16px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; }
         
         .seat-section { margin-top: 15px; text-align: center; }
         .seat-grid-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; width: 100%; }
-        .seat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; width: 100%; }
+        
+        /* 그리드 간격 및 정렬 최적화 */
+        .seat-row { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px; 
+            justify-items: center; 
+            width: 100%; 
+        }
 
         .seat {
             width: var(--seat-size);
@@ -51,37 +81,28 @@
             border: 1px solid var(--border);
             background: var(--surface);
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(14px, 4.5vw, 19px);
+            font-size: clamp(13px, 4vw, 18px);
             font-weight: 300; color: var(--sub);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center; 
             line-height: 1.25; 
             word-break: break-all; 
-            padding: 10px;
+            padding: 8px;
             overflow: hidden;
         }
 
         .seat.sweet-spot { border-color: var(--accent); color: var(--accent); }
         
-        /* 점유된 좌석: 최대 3줄 표시 및 말줄임 처리 */
         .seat.occupied { 
             border-color: var(--sub2); 
             color: var(--text); 
             background-color: #1a1a1a; 
             font-weight: 400;
-            display: -webkit-box;
-            -webkit-line-clamp: 3; /* 최대 3줄 */
-            -webkit-box-orient: vertical;
-            text-overflow: ellipsis;
-            /* Flex 느낌의 중앙 정렬을 위한 설정 */
-            -webkit-box-pack: center;
-            -webkit-box-align: center;
-            display: flex; /* 하위 브라우저 호환성 및 중앙 정렬 유지 */
+            display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        /* 말줄임을 위한 컨테이너 스타일 (3줄 제한 실제 적용) */
         .seat-name-label {
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -141,12 +162,18 @@
 <body>
     <header>
         <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img">
-        <div class="page-title">Seat Map</div>
+        <div class="page-title">Stylus Seat Map</div>
     </header>
     <main>
         <section class="seat-section">
-            <div class="seat-grid-container"><div class="seat-row" id="row1"></div><div class="seat-row" id="row2"></div></div>
-            <div class="refresh-status eng"><div class="status-header"><i class="ph ph-circle-notch"></i> Live Connected</div><div class="last-sync-time" id="lastUpdated">Syncing</div></div>
+            <div class="seat-grid-container">
+                <div class="seat-row" id="row1"></div>
+                <div class="seat-row" id="row2"></div>
+            </div>
+            <div class="refresh-status eng">
+                <div class="status-header"><i class="ph ph-circle-notch"></i> Live Connected</div>
+                <div class="last-sync-time" id="lastUpdated">Syncing</div>
+            </div>
         </section>
         <section class="guide-section">
             <h3 class="guide-title"><i class="ph ph-info"></i> 좌석 안내</h3>
@@ -175,18 +202,15 @@
                 const n = (s.name || "").trim();
                 if (n !== "") { 
                     d.classList.add('occupied');
-                    
-                    // 3줄 말줄임을 위한 내부 스팬 추가
                     const label = document.createElement('span');
                     label.className = 'seat-name-label';
                     label.textContent = n;
                     d.appendChild(label);
                     
-                    // 폰트 크기 하한선을 높여 가독성 확보 (최소 11px)
-                    if (n.length >= 10) d.style.fontSize = 'clamp(11px, 2.8vw, 12px)'; 
-                    else if (n.length >= 6) d.style.fontSize = 'clamp(12px, 3.2vw, 14px)'; 
-                    else if (n.length >= 4) d.style.fontSize = 'clamp(14px, 3.8vw, 16px)';
-                    else d.style.fontSize = 'clamp(16px, 4.2vw, 18px)';
+                    if (n.length >= 10) d.style.fontSize = 'clamp(10px, 2.6vw, 11px)'; 
+                    else if (n.length >= 6) d.style.fontSize = 'clamp(11px, 3vw, 13px)'; 
+                    else if (n.length >= 4) d.style.fontSize = 'clamp(13px, 3.5vw, 15px)';
+                    else d.style.fontSize = 'clamp(15px, 4vw, 17px)';
                 } else {
                     d.textContent = s.no;
                     d.style.fontSize = ''; 
