@@ -103,6 +103,8 @@
         .delay-2 { animation-delay: 0.15s; }
         .delay-3 { animation-delay: 0.2s; }
         .delay-4 { animation-delay: 0.25s; }
+        .delay-5 { animation-delay: 0.3s; }
+        .delay-6 { animation-delay: 0.35s; }
 
         .hero-container {
             display: flex;
@@ -160,7 +162,7 @@
             max-width: 440px;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: 1fr; /* [수정] 모든 카드가 동일한 행 높이를 공유하여 '맞춤' 상태 유지 */
+            grid-auto-rows: 1fr; 
             gap: 12px;
         }
 
@@ -172,7 +174,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start; 
-            gap: 8px; /* [수정] 아이콘과 텍스트 사이 간격 미세 조정 */
+            gap: 8px; 
             text-decoration: none;
             position: relative;
             overflow: hidden;
@@ -193,7 +195,7 @@
             justify-content: space-between;
             align-items: center; 
             width: 100%;
-            height: 28px; /* [수정] 헤더 높이 명시적 지정으로 모든 카드 정렬 기준 통일 */
+            height: 28px; 
         }
 
         .card-icon { 
@@ -236,7 +238,6 @@
         }
 
         .span-2 { grid-column: span 2; }
-        /* [수정] aspect-ratio 제거하여 그리드 auto-rows에 맞춰 높이가 자동 정렬되도록 함 */
         
         .live-badge {
             display: inline-flex;
@@ -252,7 +253,6 @@
             letter-spacing: 0.08em;
             text-transform: uppercase;
             height: 24px; 
-            /* [수정] 배지가 헤더 중앙에 오도록 함 */
         }
         .live-dot {
             width: 6px; height: 6px;
@@ -289,18 +289,8 @@
     </div>
 
     <div class="bento-grid">
-        <a href="https://stylusseoul.github.io/vinyl/seatmap.html" class="bento-card span-2 animate-up delay-1">
-            <div class="card-header">
-                <div class="live-badge eng"><div class="live-dot"></div>Live</div>
-                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
-            </div>
-            <div class="card-content">
-                <h2 class="card-title">실시간 좌석 확인</h2>
-                <p class="card-subtitle eng">Live Seat Map</p>
-            </div>
-        </a>
-
-        <a href="https://stylusseoul.github.io/vinyl/directions.html" target="_blank" class="bento-card animate-up delay-2">
+        <!-- 1. 오시는 길 -->
+        <a href="https://stylusseoul.github.io/vinyl/direction.html" class="bento-card animate-up delay-1">
             <div class="card-header">
                 <i class="ph-fill ph-map-pin card-icon"></i>
                 <i class="ph-bold ph-arrow-up-right card-arrow"></i>
@@ -311,7 +301,8 @@
             </div>
         </a>
 
-        <a href="https://stylusseoul.github.io/vinyl/userguide.html" class="bento-card animate-up delay-3">
+        <!-- 2. 이용 안내 -->
+        <a href="https://stylusseoul.github.io/vinyl/userguide.html" class="bento-card animate-up delay-2">
             <div class="card-header">
                 <i class="ph-fill ph-book-open-text card-icon"></i>
                 <i class="ph-bold ph-arrow-up-right card-arrow"></i>
@@ -322,6 +313,19 @@
             </div>
         </a>
 
+        <!-- 3. 실시간 좌석 확인 -->
+        <a href="https://stylusseoul.github.io/vinyl/seatmap.html" class="bento-card span-2 animate-up delay-3">
+            <div class="card-header">
+                <div class="live-badge eng"><div class="live-dot"></div>Live</div>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">실시간 좌석 확인</h2>
+                <p class="card-subtitle eng">Live Seat Map</p>
+            </div>
+        </a>
+
+        <!-- 4. 바이닐 검색기 -->
         <a href="https://stylusseoul.github.io/vinyl/" class="bento-card span-2 animate-up delay-4">
             <div class="card-header">
                 <i class="ph-fill ph-vinyl-record card-icon"></i>
@@ -332,9 +336,33 @@
                 <p class="card-subtitle eng">Vinyl Explorer</p>
             </div>
         </a>
+
+        <!-- 5. 신청곡 이용안내 -->
+        <a href="https://stylusseoul.github.io/vinyl/requestguide.html" class="bento-card animate-up delay-5">
+            <div class="card-header">
+                <i class="ph-fill ph-music-notes card-icon"></i>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">신청곡 이용안내</h2>
+                <p class="card-subtitle eng">Request Manual</p>
+            </div>
+        </a>
+
+        <!-- 6. 의견 남기기 -->
+        <a href="https://stylusseoul.github.io/vinyl/feedback.html" class="bento-card animate-up delay-6">
+            <div class="card-header">
+                <i class="ph-fill ph-chat-centered-dots card-icon"></i>
+                <i class="ph-bold ph-arrow-up-right card-arrow"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">의견 남기기</h2>
+                <p class="card-subtitle eng">Feedback</p>
+            </div>
+        </a>
     </div>
 
-    <div class="footer animate-up delay-4 eng">
+    <div class="footer animate-up delay-6 eng">
         © Stylus Seoul. All rights reserved.
     </div>
 
