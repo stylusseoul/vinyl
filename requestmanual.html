@@ -19,11 +19,13 @@
             --sub2:    rgba(255,255,255,0.18);
             --accent:  #EF7C1C;
             --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-            /* 1200x2450 비율: 폭 대비 높이가 약 2.04배 */
+            /* 1200x2450 비율 대응 */
             --img-ratio: 1200 / 2450;
         }
 
+        /* 가로 스크롤 방지 및 기본 설정 */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { overflow-x: hidden; width: 100%; position: relative; }
         
         body { 
             background: var(--bg); color: var(--text); font-family: var(--font); 
@@ -57,7 +59,7 @@
             width: 20px; height: 1px; background: var(--accent); opacity: 0.6;
         }
 
-        main { padding: 0 0 80px; width: 100%; flex: 1; display: flex; flex-direction: column; gap: 48px; }
+        main { padding: 0 0 80px; width: 100%; max-width: 500px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; gap: 48px; }
 
         .section-header { padding: 0 24px; margin-bottom: 16px; }
         .info-title {
@@ -66,7 +68,7 @@
         }
         .info-title i { color: var(--accent); font-size: 22px; }
 
-        /* Rules */
+        /* Rules Card */
         .rules-container { padding: 0 20px; }
         .rules-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
@@ -86,16 +88,15 @@
         .slider-track {
             display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
             scrollbar-width: none; -ms-overflow-style: none;
-            padding: 0 45px; /* 좌우 카드 Peek 효과를 위한 여백 */
+            padding: 0 45px; /* 좌우 카드 Peek 효과 */
             gap: 16px;
         }
         .slider-track::-webkit-scrollbar { display: none; }
 
         .step-slide { 
-            flex: 0 0 72%; /* 이미지 너비를 화면의 72%로 줄여서 높이 밸런스 조정 */
+            flex: 0 0 72%; /* 카드 너비를 조절하여 세로 높이 과부하 방지 */
             scroll-snap-align: center; 
             display: flex; flex-direction: column; gap: 16px; 
-            transition: opacity 0.3s;
         }
         
         .step-img-box { 
@@ -174,36 +175,40 @@
             </div>
             <div class="slider-box">
                 <div class="slider-track" onscroll="syncDots(this, 0.72)">
+                    <!-- Step 01 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_01.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 01</span>
                             <h4 class="step-title">앨범 탐색</h4>
-                            <p class="step-desc">바이닐 탐색기에서 감상하고 싶은 아티스트나 앨범명을 검색합니다.</p>
+                            <p class="step-desc">바이닐 탐색기에서 감상하고 싶은 아티스트나 앨범명을 검색 후 선택합니다.</p>
                         </div>
                     </div>
+                    <!-- Step 02 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_02.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 02</span>
                             <h4 class="step-title">상세 정보 확인</h4>
-                            <p class="step-desc">검색된 앨범을 클릭하여 수록된 트랙 리스트를 확인합니다.</p>
+                            <p class="step-desc">앨범 상세에서 신청할 트랙을 선택합니다.</p>
                         </div>
                     </div>
+                    <!-- Step 03 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_03.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 03</span>
                             <h4 class="step-title">곡 신청</h4>
-                            <p class="step-desc">원하는 곡 옆의 '신청' 버튼을 눌러 신청 폼으로 이동합니다.</p>
+                            <p class="step-desc">신청자 및 메모(선택)를 입력 후 신청하기 버튼을 누릅니다.</p>
                         </div>
                     </div>
+                    <!-- Step 04 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_04.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 04</span>
                             <h4 class="step-title">신청 완료</h4>
-                            <p class="step-desc">닉네임과 짧은 메시지를 입력하고 신청하기 버튼을 누르면 완료됩니다.</p>
+                            <p class="step-desc">신청이 완료되었다는 메시지를 확인합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -218,20 +223,22 @@
             </div>
             <div class="slider-box">
                 <div class="slider-track" onscroll="syncDots(this, 0.72)">
+                    <!-- Step 05 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_05.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 05</span>
                             <h4 class="step-title">실시간 재생 정보</h4>
-                            <p class="step-desc">실시간 현황 탭에서 현재 공간에 흐르고 있는 곡 정보를 확인합니다.</p>
+                            <p class="step-desc">바이닐 탐색기 하단의 Requests 버튼을 선택합니다.</p>
                         </div>
                     </div>
+                    <!-- Step 06 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_06.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 06</span>
                             <h4 class="step-title">대기 목록 및 순서</h4>
-                            <p class="step-desc">Queue 리스트에서 본인의 신청곡이 몇 번째 순서인지 체크할 수 있습니다.</p>
+                            <p class="step-desc">나와 다른 사람들의 신청곡 현황을 확인합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -246,20 +253,22 @@
             </div>
             <div class="slider-box">
                 <div class="slider-track" onscroll="syncDots(this, 0.72)">
+                    <!-- Step 07 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_07.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 07</span>
                             <h4 class="step-title">이미지 카드 생성</h4>
-                            <p class="step-desc">'이미지로 저장'을 클릭하여 오늘 감상한 곡들이 담긴 카드를 생성합니다.</p>
+                            <p class="step-desc">Requests 우측 상단의 저장하기 버튼을 선택합니다.</p>
                         </div>
                     </div>
+                    <!-- Step 08 -->
                     <div class="step-slide">
                         <div class="step-img-box"><img src="https://stylusseoul.github.io/vinyl/images/requestmanual/requestmanual_08.jpg" alt=""></div>
                         <div class="step-info">
                             <span class="step-label eng">STEP 08</span>
                             <h4 class="step-title">소장하기</h4>
-                            <p class="step-desc">생성된 이미지 카드를 갤러리에 저장하여 오늘의 취향을 기록하세요.</p>
+                            <p class="step-desc">오늘 들은 곡들로 이루어진 플레이리스트를 이미지로 저장할 수 있습니다.</p>
                         </div>
                     </div>
                 </div>
@@ -275,7 +284,11 @@
 
     <script>
         function syncDots(track, ratio) {
-            const index = Math.round(track.scrollLeft / (track.offsetWidth * ratio));
+            // 카드의 너비(72%)와 트랙의 너비를 기준으로 정확한 인덱스 계산
+            const scrollLeft = track.scrollLeft;
+            const cardWidth = track.offsetWidth * ratio;
+            const index = Math.round(scrollLeft / cardWidth);
+            
             const dots = track.parentElement.querySelectorAll('.dot');
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === index);
