@@ -137,7 +137,6 @@
         .action-btn:active { background: var(--sub2); transform: scale(0.97); }
         .action-btn i { font-size: 18px; color: var(--accent); }
 
-        /* Transit Info */
         .transit-item {
             display: flex; gap: 14px; padding: 12px 0;
             border-bottom: 1px solid var(--border);
@@ -155,7 +154,8 @@
         .step-item { display: flex; flex-direction: column; gap: 14px; }
         .step-header { display: flex; align-items: center; gap: 10px; }
         .step-num { 
-            width: 22px; height: 22px; background: var(--accent); color: #000; 
+            width: 22px; height: 22px; 
+            background: #fff; color: #000; 
             font-size: 12px; font-weight: 800; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center;
         }
@@ -179,7 +179,6 @@
         }
         .step-desc { font-size: 13px; color: var(--sub); line-height: 1.6; word-break: keep-all; padding-left: 2px; }
 
-        /* Toast */
         #toast {
             position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
             background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 999px;
@@ -188,7 +187,6 @@
         }
         #toast.show { opacity: 1; transform: translate(-50%, -10px); }
 
-        /* Footer - 수정: 여백 축소 및 위아래 균등화 */
         .list-footer {
             padding: 30px 24px; 
             border-top: 1px solid var(--border);
@@ -207,7 +205,7 @@
 
     <header class="animate-up">
         <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img">
-        <div class="page-title">Directions</div>
+        <div class="page-title">Stylus Directions</div>
     </header>
 
     <main>
@@ -269,6 +267,7 @@
             <h3 class="info-title"><i class="ph-fill ph-compass"></i> 상세 경로 안내</h3>
             <div class="route-guide-list">
                 
+                <!-- Step 01 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">1</span>
@@ -276,11 +275,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_01.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_01.jpg" alt="[충무로역 8번 출구]">
                     </div>
                     <p class="step-desc"><span class="highlight">충무로역 8번 출구</span>로 나옵니다.</p>
                 </div>
 
+                <!-- Step 02 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">2</span>
@@ -288,11 +288,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_02.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_02.jpg" alt="[국민은행 방향]">
                     </div>
                     <p class="step-desc"><span class="highlight">좌회전</span>하여 국민은행 쪽으로 갑니다.</p>
                 </div>
 
+                <!-- Step 03 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">3</span>
@@ -300,23 +301,25 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_03.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_03.jpg" alt="[국민은행 코너]">
                     </div>
                     <p class="step-desc"><span class="highlight">국민은행을 끼고 우회전</span> 합니다.</p>
                 </div>
 
+                <!-- Step 04 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">4</span>
-                        <h4 class="step-title">경찰서 사거리</h4>
+                        <h4 class="step-title">경찰서 삼거리</h4>
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_04.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_04.jpg" alt="[경찰서 방향]">
                     </div>
                     <p class="step-desc">골목 끝에 보이는 <span class="highlight">경찰서를 마주보고 좌회전</span> 합니다.</p>
                 </div>
 
+                <!-- Step 05 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">5</span>
@@ -324,11 +327,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_05.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_05.jpg" alt="[인현시장 입구]">
                     </div>
                     <p class="step-desc"><span class="highlight">인현시장 입구</span>로 들어갑니다.</p>
                 </div>
 
+                <!-- Step 06 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">6</span>
@@ -336,11 +340,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_06.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_06.jpg" alt="[시장 내부]">
                     </div>
                     <p class="step-desc"><span class="highlight">군침을 흘리며</span> 직진합니다.</p>
                 </div>
 
+                <!-- Step 07 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">7</span>
@@ -348,11 +353,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_07.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_07.jpg" alt="[초가집 간판 사거리]">
                     </div>
                     <p class="step-desc">오른쪽에 <span class="highlight">초가집 간판</span>이 보일 때 왼쪽 골목으로 좌회전합니다.</p>
                 </div>
 
+                <!-- Step 08 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">8</span>
@@ -360,11 +366,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_08.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_08.jpg" alt="[직진 경로]">
                     </div>
                     <p class="step-desc">직진합니다.</p>
                 </div>
 
+                <!-- Step 09 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">9</span>
@@ -372,11 +379,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_09.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_09.jpg" alt="[스타일러스 건물]">
                     </div>
                     <p class="step-desc">길 왼쪽에 사진처럼 생긴 <span class="highlight">평범한(?) 건물</span>을 찾습니다.</p>
                 </div>
 
+                <!-- Step 10 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">10</span>
@@ -384,11 +392,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_10.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_10.jpg" alt="[계단 오르기]">
                     </div>
                     <p class="step-desc">계단을 올라옵니다.</p>
                 </div>
 
+                <!-- Step 11 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">11</span>
@@ -396,11 +405,12 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_11.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_11.jpg" alt="[301호 앞]">
                     </div>
                     <p class="step-desc"><span class="highlight">301호 문 앞</span>에서 신발을 갈아신고 입장합니다.</p>
                 </div>
 
+                <!-- Step 12 -->
                 <div class="step-item">
                     <div class="step-header">
                         <span class="step-num eng">12</span>
@@ -408,7 +418,7 @@
                     </div>
                     <div class="step-img-box">
                         <i class="ph ph-image-square"></i>
-                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_12.jpg" alt="">
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_12.jpg" alt="[스타일러스 내부]">
                     </div>
                     <p class="step-desc"><span class="highlight">마참내 드디어</span> 스타일러스 입장!</p>
                 </div>
@@ -448,5 +458,3 @@
 
 </body>
 </html>
-
-```
