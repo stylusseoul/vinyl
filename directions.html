@@ -1,0 +1,453 @@
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>STYLUS | Directions</title>
+    <!-- 외부 설정 파일 로드 -->
+    <script src="config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@200;400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <style>
+        :root {
+            --bg:      #080808;
+            --surface: #111;
+            --border:  rgba(255,255,255,0.05);
+            --text:    #fff;
+            --sub:     rgba(255,255,255,0.38);
+            --sub2:    rgba(255,255,255,0.18);
+            --accent:  #EF7C1C;
+            --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); color: var(--text); font-family: var(--font); 
+            line-height: 1.6; -webkit-font-smoothing: antialiased; 
+            min-height: 100vh; display: flex; flex-direction: column; 
+        }
+
+        .eng { font-family: 'Outfit', sans-serif; }
+
+        @keyframes fadeUp { 
+            from { opacity: 0; transform: translateY(15px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .animate-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        /* Header */
+        header { 
+            position: relative; background: var(--bg);
+            padding: 40px 24px 10px; 
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+        }
+        .logo-img { height: 28px; width: auto; margin-bottom: 6px; filter: brightness(0) invert(1); opacity: 0.95; }
+        .page-title { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--accent); 
+            letter-spacing: 0.18em; 
+            text-transform: uppercase; 
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 1px;
+            background: var(--accent);
+            opacity: 0.6;
+        }
+
+        /* Main Content */
+        main { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; gap: 40px; }
+
+        /* Info Groups */
+        .info-group { display: flex; flex-direction: column; gap: 12px; }
+        .info-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 4px;
+        }
+        .info-title i { color: var(--accent); font-size: 20px; }
+
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        /* Address Box */
+        .address-box { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 15px;
+        }
+        .address-text { 
+            font-size: 14px; color: var(--text); line-height: 1.6; 
+            word-break: keep-all; flex: 1;
+        }
+        .copy-trigger {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+            color: var(--accent); padding: 8px 14px; border-radius: 10px; 
+            font-size: 11px; font-weight: 700; flex-shrink: 0;
+            cursor: pointer; transition: 0.2s;
+        }
+        .copy-trigger:active { background: var(--accent); color: #fff; }
+
+        /* Map Embed */
+        .map-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 0.65;
+            background: #1a1a1a;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+        }
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            filter: grayscale(1) invert(0.9) contrast(1.2); 
+            opacity: 0.8;
+        }
+
+        .map-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+        .action-btn {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+            padding: 14px; color: var(--text); text-decoration: none; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .action-btn:active { background: var(--sub2); transform: scale(0.97); }
+        .action-btn i { font-size: 18px; color: var(--accent); }
+
+        /* Transit Info */
+        .transit-item {
+            display: flex; gap: 14px; padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .transit-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .transit-item:first-child { padding-top: 0; }
+        .transit-icon { font-size: 20px; color: var(--sub); margin-top: 2px; }
+        .transit-info { display: flex; flex-direction: column; gap: 2px; }
+        .transit-label { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; }
+        .transit-desc { font-size: 13px; color: var(--sub); word-break: keep-all; }
+        .highlight { color: var(--text); font-weight: 500; }
+
+        /* Route Guide */
+        .route-guide-list { display: flex; flex-direction: column; gap: 40px; margin-top: 8px; }
+        .step-item { display: flex; flex-direction: column; gap: 14px; }
+        .step-header { display: flex; align-items: center; gap: 10px; }
+        .step-num { 
+            width: 22px; height: 22px; background: var(--accent); color: #000; 
+            font-size: 12px; font-weight: 800; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .step-title { font-size: 14px; font-weight: 600; color: var(--text); }
+        
+        .step-img-box { 
+            aspect-ratio: 16 / 9; 
+            background: #1a1a1a; 
+            border-radius: 16px; 
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .step-img-box i { font-size: 32px; color: var(--sub2); }
+        .step-img-box img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            position: absolute; top: 0; left: 0;
+        }
+        .step-desc { font-size: 13px; color: var(--sub); line-height: 1.6; word-break: keep-all; padding-left: 2px; }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 999px;
+            font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 1000;
+            pointer-events: none;
+        }
+        #toast.show { opacity: 1; transform: translate(-50%, -10px); }
+
+        /* Footer - 수정: 여백 축소 및 위아래 균등화 */
+        .list-footer {
+            padding: 30px 24px; 
+            border-top: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+        }
+        .footer-desc { font-size: 12px; font-weight: 300; color: var(--sub); line-height: 1.85; letter-spacing: 0.01em; font-style: italic; max-width: 320px; }
+        .footer-insta {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            text-decoration: none; color: var(--sub); font-size: 12px; font-weight: 500;
+            letter-spacing: 0.04em; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
+        }
+        .footer-insta svg { width: 15px; height: 15px; display: block; }
+    </style>
+</head>
+<body>
+
+    <header class="animate-up">
+        <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img">
+        <div class="page-title">Directions</div>
+    </header>
+
+    <main>
+        <!-- 주소 안내 -->
+        <section class="info-group animate-up delay-1">
+            <h3 class="info-title"><i class="ph-fill ph-map-pin"></i> 주소 안내</h3>
+            <div class="info-card">
+                <div class="address-box">
+                    <p class="address-text">
+                        <span class="highlight">서울특별시 중구 퇴계로41가길 15, 301호</span>
+                    </p>
+                    <button class="copy-trigger eng" onclick="copyAddr()">COPY</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 지도 & 길찾기 -->
+        <section class="info-group animate-up delay-1">
+            <div class="map-wrapper">
+                <iframe 
+                    src="https://maps.google.com/maps?q=서울특별시%20중구%20퇴계로41가길%2015&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+            <div class="map-actions">
+                <a href="https://naver.me/FswTe1QM" target="_blank" class="action-btn">
+                    <i class="ph-fill ph-navigation-arrow"></i> 네이버 지도
+                </a>
+                <a href="https://kko.to/osG65Pu7x-" target="_blank" class="action-btn">
+                    <i class="ph-fill ph-map-trifold"></i> 카카오맵
+                </a>
+            </div>
+        </section>
+
+        <!-- Transit Info -->
+        <section class="info-group animate-up delay-2">
+            <h3 class="info-title"><i class="ph-fill ph-train"></i> 대중교통 및 주차</h3>
+            <div class="info-card">
+                <div class="transit-item">
+                    <i class="ph ph-train transit-icon"></i>
+                    <div class="transit-info">
+                        <span class="transit-label eng">Subway</span>
+                        <p class="transit-desc"><span class="highlight">충무로역(3,4호선) 8번 출구</span> 도보 약 5분 소요</p>
+                    </div>
+                </div>
+                <div class="transit-item">
+                    <i class="ph ph-car transit-icon"></i>
+                    <div class="transit-info">
+                        <span class="transit-label eng">Parking</span>
+                        <p class="transit-desc">전용 주차장이 없습니다. <span class="highlight">인근 유료 주차장</span> 이용 권장</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Route Guide: Step-by-Step -->
+        <section class="info-group animate-up delay-3">
+            <h3 class="info-title"><i class="ph-fill ph-compass"></i> 상세 경로 안내</h3>
+            <div class="route-guide-list">
+                
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">1</span>
+                        <h4 class="step-title">출발지 안내</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_01.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">충무로역 8번 출구</span>로 나옵니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">2</span>
+                        <h4 class="step-title">방향 전환</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_02.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">좌회전</span>하여 국민은행 쪽으로 갑니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">3</span>
+                        <h4 class="step-title">코너 돌기</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_03.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">국민은행을 끼고 우회전</span> 합니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">4</span>
+                        <h4 class="step-title">경찰서 사거리</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_04.jpg" alt="">
+                    </div>
+                    <p class="step-desc">골목 끝에 보이는 <span class="highlight">경찰서를 마주보고 좌회전</span> 합니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">5</span>
+                        <h4 class="step-title">인현시장 입구</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_05.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">인현시장 입구</span>로 들어갑니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">6</span>
+                        <h4 class="step-title">시장 거리 직진</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_06.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">군침을 흘리며</span> 직진합니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">7</span>
+                        <h4 class="step-title">골목 진입</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_07.jpg" alt="">
+                    </div>
+                    <p class="step-desc">오른쪽에 <span class="highlight">초가집 간판</span>이 보일 때 왼쪽 골목으로 좌회전합니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">8</span>
+                        <h4 class="step-title">마지막 직진</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_08.jpg" alt="">
+                    </div>
+                    <p class="step-desc">직진합니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">9</span>
+                        <h4 class="step-title">건물 찾기</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_09.jpg" alt="">
+                    </div>
+                    <p class="step-desc">길 왼쪽에 사진처럼 생긴 <span class="highlight">평범한(?) 건물</span>을 찾습니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">10</span>
+                        <h4 class="step-title">계단 이용</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_10.jpg" alt="">
+                    </div>
+                    <p class="step-desc">계단을 올라옵니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">11</span>
+                        <h4 class="step-title">입장 준비</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_11.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">301호 문 앞</span>에서 신발을 갈아신고 입장합니다.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-header">
+                        <span class="step-num eng">12</span>
+                        <h4 class="step-title">도착</h4>
+                    </div>
+                    <div class="step-img-box">
+                        <i class="ph ph-image-square"></i>
+                        <img src="https://stylusseoul.github.io/vinyl/images/directions/directions_12.jpg" alt="">
+                    </div>
+                    <p class="step-desc"><span class="highlight">마참내 드디어</span> 스타일러스 입장!</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="list-footer animate-up delay-3">
+        <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
+        <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+            </svg>
+            <span>stylus.seoul</span>
+        </a>
+    </footer>
+
+    <div id="toast">주소가 복사되었습니다.</div>
+
+    <script>
+        function copyAddr() {
+            // 호수를 제외한 도로명 주소만 복사
+            const addr = "서울특별시 중구 퇴계로41가길 15";
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = addr;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+
+</body>
+</html>
+
+```
