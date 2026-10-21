@@ -1,191 +1,20 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-  <title>Stylus Vinyl Explorer</title>
-  <meta name="description" content="스타일러스에 있는 바이닐을 검색합니다">
-  <meta name="theme-color" content="#0a0a0a">
-
-  <!-- 🚀 핵심 최적화: 구글 시트 및 이미지 서버와 미리 통신망 연결 -->
-  <link rel="preconnect" href="https://docs.google.com" crossorigin>
-  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://stylusseoul.github.io/vinyl/">
-  <meta property="og:title" content="Stylus Vinyl Explorer">
-  <meta property="og:description" content="스타일러스에 있는 바이닐을 검색합니다">
-  <meta property="og:image" content="https://stylusseoul.github.io/vinyl/images/opengraph.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Stylus Vinyl Explorer">
-  <meta name="twitter:description" content="스타일러스에 있는 바이닐을 검색합니다">
-  <meta name="twitter:image" content="https://stylusseoul.github.io/vinyl/images/og.jpg">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  
-  <link rel="icon" type="image/png" href="https://stylusseoul.github.io/vinyl/images/favicon.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stylus Vinyl Explorer</title>
+<link rel="canonical" href="https://stylusdiggingclub.com/stylus/">
+<meta http-equiv="refresh" content="0; url=https://stylusdiggingclub.com/stylus/">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Stylus Vinyl Explorer">
+<meta property="og:url" content="https://stylusdiggingclub.com/stylus/">
+<meta property="og:image" content="https://stylusdiggingclub.com/stylus/static/images/opengraph.jpg">
+<meta name="theme-color" content="#080808">
+<script>location.replace("https://stylusdiggingclub.com/stylus/" + location.search + location.hash);</script>
+<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#080808;color:rgba(255,255,255,.5);font:13px -apple-system,BlinkMacSystemFont,sans-serif}a{color:#EF7C1C}</style>
 </head>
 <body>
-
-<div id="app">
-
-  <!-- ===== LIST VIEW ===== -->
-  <div id="listView" class="view">
-
-    <header class="list-header">
-      <div class="header-top">
-       <a href="https://stylusseoul.github.io/vinyl/" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-          <img src="https://stylusseoul.github.io/vinyl/images/logo.png" alt="Stylus" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-          <span class="logo-text" style="display:none">STYLUS</span>
-        </a>
-        <button id="btnToggleSearch" class="icon-btn" aria-label="검색">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-        </button>
-      </div>
-
-      <div id="searchWrap" class="search-wrap collapsed">
-        <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input id="searchInput" type="search" placeholder="아티스트, 앨범, 트랙…" autocomplete="off" />
-          <button id="btnClear" class="clear-btn" aria-label="초기화">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="genre-scroll">
-        <button class="genre-chip active" data-genre="all" id="chipAll">All</button>
-        <div id="genreChips"></div>
-      </div>
-    </header>
-
-    <main class="list-main">
-      <div id="loading" class="loading-state">
-        <div class="spinner"></div>
-      </div>
-      
-      <div id="emptyState" class="empty-state hidden">
-        <p>검색 결과가 없어요</p>
-      </div>
-      
-      <p id="countLabel" class="count-label"></p>
-      
-      <div id="grid" class="grid"></div>
-      <div id="moreWrap" class="more-wrap"></div>
-    </main>
-
-    <footer class="list-footer">
-      <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
-      <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-          <circle cx="12" cy="12" r="4.5"/>
-          <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>stylus.seoul</span>
-      </a>
-    </footer>
-
-  </div>
-
-  <!-- ===== DETAIL VIEW ===== -->
-  <div id="detailView" class="view hidden">
-
-    <header class="detail-header">
-      <button id="btnBack" class="back-btn" aria-label="뒤로가기">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-      </button>
-      <span class="detail-header-label">VINYL</span>
-      <div style="width:36px"></div>
-    </header>
-
-    <main class="detail-main">
-      <div class="detail-cover-wrap">
-        <div class="detail-cover-box">
-          <img id="dCover" class="detail-cover" alt="앨범 커버" loading="lazy">
-        </div>
-      </div>
-
-      <div class="detail-info">
-        <h1 id="dAlbum" class="detail-album"></h1>
-        <p id="dArtist" class="detail-artist"></p>
-        <div id="dMeta" class="detail-meta-row"></div>
-      </div>
-
-      <div class="detail-tracks-section">
-        <div class="tracks-header">
-          <span class="tracks-label">Tracklist</span>
-          <span id="dTrackCount" class="tracks-count"></span>
-        </div>
-        <ul id="dTracks" class="track-list"></ul>
-      </div>
-      
-      <!-- 하단 바텀 시트 (곡 신청 폼) -->
-      <div id="requestFormArea" class="request-bottom-sheet hidden">
-        <div class="request-sheet-header">
-          <h3 id="selectedTrackName" class="request-sheet-title">선택된 곡 이름</h3>
-          <p class="request-sheet-subtitle">이 곡을 재생 목록에 신청합니다.</p>
-        </div>
-        
-        <div class="request-sheet-body">
-          <input id="reqName" type="text" placeholder="신청자(필수)" maxlength="15" class="request-sheet-input">
-          <input id="reqNote" type="text" placeholder="메모(선택)" maxlength="30" class="request-sheet-input">
-        </div>
-        
-        <div class="request-sheet-footer">
-          <button id="btnSubmitRequest" class="request-sheet-submit">신청하기</button>
-        </div>
-      </div>
-
-    </main>
-
-    <footer class="detail-footer">
-      <p class="footer-desc">A small room designed for listening, where sound is free to breathe and time is never in a hurry.</p>
-      <a class="footer-insta" href="https://www.instagram.com/stylus.seoul" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-          <circle cx="12" cy="12" r="4.5"/>
-          <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>stylus.seoul</span>
-      </a>
-    </footer>
-
-  </div>
-
-</div>
-
-<!-- ===== 메인 화면: 하단 플로팅 버튼 (Requests) - ★ ID 추가 + 기본 숨김 ===== -->
-<a href="requests.html" id="requestsBtn" class="floating-requests-btn" style="display: none;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9 18V5l12-2v13"></path>
-    <circle cx="6" cy="18" r="3"></circle>
-    <circle cx="18" cy="16" r="3"></circle>
-  </svg>
-  <span>Requests</span>
-</a>
-
-<!-- 🚀 다시 바디 하단으로 복귀시켜 즉시 데이터 패치 시작 -->
-<script src="config.js"></script>
-<script src="script.js"></script>
+<p>주소가 바뀌었습니다. <a href="https://stylusdiggingclub.com/stylus/">새 주소로 이동</a></p>
 </body>
 </html>
